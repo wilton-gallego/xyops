@@ -1,0 +1,537 @@
+// Admin Page -- Monitors Config
+
+Page.Monitors = class Monitors extends Page.Base {
+	
+	onInit() {
+		// called once at page load
+		this.default_sub = 'list';
+		this.dom_prefix = 'em';
+	}
+	
+	onActivate(args) {
+		// page activation
+		if (!this.requireLogin(args)) return true;
+		
+		if (!args) args = {};
+		if (!args.sub) args.sub = this.default_sub;
+		this.args = args;
+		
+		app.showSidebar(true);
+		app.setHeaderTitle( '<i class="mdi mdi-chart-areaspline">&nbsp;</i>Monitor Setup' );
+		
+		this.loading();
+		this['gosub_'+args.sub](args);
+		
+		return true;
+	}
+	
+	gosub_list(args) {
+		// show monitor list
+		app.setWindowTitle( "Monitors" );
+		
+		// this.loading();
+		// app.api.post( 'app/get_monitors', copy_object(args), this.receive_monitors.bind(this) );
+		
+		// kill drag operation if in progress (i.e. from onDataUpdate)
+		this.cancelGridDrag( this.div.find('div.data_grid') );
+		
+		// use monitors in app cache
+		this.receive_monitors({
+			code: 0,
+			rows: app.monitors,
+			list: { length: app.monitors.length }
+		});
+	}
+	
+	receive_monitors(resp) {
+		// receive all monitors from server, render them sorted
+		var html = '';
+		
+		if (!resp.rows) resp.rows = [];
+		this.monitors = resp.rows;
+		
+		// NOTE: Don't change these columns without also changing the responsive css column collapse rules in style.css
+		var cols = ['<i class="mdi mdi-menu"></i>', 'Monitor Title', 'Monitor ID', 'Groups', 'Author', 'Created', 'Actions'];
+		
+		html += '<div class="box">';
+		html += '<div class="box_title">';
+			html += 'Monitors';
+		html += '</div>';
+		html += '<div class="box_content table">';
+		
+		var self = this;
+		html += this.getBasicGrid( this.monitors, cols, 'monitor', function(item, idx) {
+			var actions = [];
+			actions.push( '<span class="link" onMouseUp="$P().edit_monitor('+idx+')"><b>Edit</b></span>' );
+			actions.push( '<span class="link" onMouseUp="$P().delete_monitor('+idx+')"><b>Delete</b></span>' );
+			
+			var tds = [
+				'<div class="td_drag_handle" draggable="true" title="Drag to reorder"><i class="mdi mdi-menu"></i></div>',
+				'<b>' + self.getNiceMonitor(item, true) + '</b>',
+				'<span class="mono">' + item.id + '</span>',
+				self.getNiceGroupList(item.groups, '', 3),
+				self.getNiceUser(item.username, app.isAdmin()),
+				'<span title="'+self.getNiceDateTimeText(item.created)+'">'+self.getNiceDate(item.created)+'</span>',
+				actions.join(' | ')
+			];
+			
+			if (!item.display) tds.className = 'disabled';
+			return tds;
+		} ); // getBasicTable
+		
+		html += '</div>'; // box_content
+		
+		html += '<div class="box_buttons">';
+			html += '<div class="button secondary" onMouseUp="$P().edit_monitor(-1)">Add Monitor...</div>';
+		html += '</div>'; // box_buttons
+		
+		html += '</div>'; // box
+		
+		this.div.html( html );
+		this.setupBoxButtonFloater();
+		
+		this.setupDraggableGrid({
+			table_sel: this.div.find('div.data_grid'), 
+			handle_sel: 'div.td_drag_handle', 
+			drag_ghost_sel: 'div:nth-child(2)', 
+			drag_ghost_x: 5, 
+			drag_ghost_y: 10, 
+			callback: this.monitor_move.bind(this)
+		});
+	}
+	
+	monitor_move($rows) {
+		// a drag operation has been completed
+		var items = [];
+		
+		$rows.each( function(idx) {
+			var $row = $(this);
+			items.push({
+				id: $row.data('id'),
+				sort_order: idx
+			});
+		});
+		
+		var data = {
+			items: items
+		};
+		app.api.post( 'app/multi_update_monitor', data, function(resp) {
+			// done
+		} );
+	}
+	
+	edit_monitor(idx) {
+		// jump to edit sub
+		if (idx > -1) Nav.go( '#Monitors?sub=edit&id=' + this.monitors[idx].id );
+		else Nav.go( '#Monitors?sub=new' );
+	}
+	
+	delete_monitor(idx) {
+		// delete monitor from search results
+		this.monitor = this.monitors[idx];
+		this.show_delete_monitor_dialog();
+	}
+	
+	gosub_new(args) {
+		// create new monitor
+		var html = '';
+		app.setWindowTitle( "New Monitor" );
+		
+		html += '<div class="box">';
+		html += '<div class="box_title">';
+			html += 'New Monitor';
+			html += '<div class="box_subtitle"><a href="#Monitors?sub=list">&laquo; Back to Monitor List</a></div>';
+		html += '</div>';
+		html += '<div class="box_content">';
+		
+		this.monitor = {
+			"id": "",
+			"title": "",
+			"source": "",
+			"data_type": "float",
+			"suffix": "",
+			"groups": [],
+			"display": true
+		};
+		
+		html += this.get_monitor_edit_html();
+		
+		html += '</div>'; // box_content
+		
+		// buttons at bottom
+		html += '<div class="box_buttons">';
+			html += '<div class="button" onMouseUp="$P().cancel_monitor_edit()">Cancel</div>';
+			html += '<div class="button primary" onMouseUp="$P().do_new_monitor()"><i class="mdi mdi-floppy">&nbsp;</i>Create Monitor</div>';
+		html += '</div>'; // box_buttons
+		
+		html += '</div>'; // box
+		
+		this.div.html( html );
+		
+		SingleSelect.init( this.div.find('#fe_em_icon') );
+		MultiSelect.init( this.div.find('select[multiple]') );
+		$('#fe_em_title').focus();
+		this.setupBoxButtonFloater();
+	}
+	
+	cancel_monitor_edit() {
+		// cancel editing monitor and return to list
+		Nav.go( '#Monitors?sub=list' );
+	}
+	
+	do_new_monitor(force) {
+		// create new monitor
+		app.clearError();
+		var monitor = this.get_monitor_form_json();
+		if (!monitor) return; // error
+		
+		this.monitor = monitor;
+		
+		Dialog.showProgress( 1.0, "Creating Monitor..." );
+		app.api.post( 'app/create_monitor', monitor, this.new_monitor_finish.bind(this) );
+	}
+	
+	new_monitor_finish(resp) {
+		// new monitor created successfully
+		Dialog.hideProgress();
+		if (!this.active) return; // sanity
+		
+		Nav.go('Monitors?sub=list');
+		app.showMessage('success', "The new monitor was created successfully.");
+	}
+	
+	gosub_edit(args) {
+		// edit monitor subpage
+		this.loading();
+		app.api.post( 'app/get_monitor', { id: args.id }, this.receive_monitor.bind(this), this.fullPageError.bind(this) );
+	}
+	
+	receive_monitor(resp) {
+		// edit existing monitor
+		var html = '';
+		this.monitor = resp.monitor;
+		if (!this.active) return; // sanity
+		
+		app.setWindowTitle( "Editing Monitor \"" + (this.monitor.title) + "\"" );
+		
+		html += '<div class="box">';
+		html += '<div class="box_title">';
+			html += 'Editing Monitor &ldquo;' + (this.monitor.title) + '&rdquo;';
+			html += '<div class="box_subtitle"><a href="#Monitors?sub=list">&laquo; Back to Monitor List</a></div>';
+		html += '</div>';
+		html += '<div class="box_content">';
+		
+		html += this.get_monitor_edit_html();
+		
+		html += '</div>'; // box_content
+		
+		// buttons at bottom
+		html += '<div class="box_buttons">';
+			html += '<div class="button" onMouseUp="$P().cancel_monitor_edit()">Cancel</div>';
+			html += '<div class="button danger" onMouseUp="$P().show_delete_monitor_dialog()">Delete Monitor...</div>';
+			html += '<div class="button primary" onMouseUp="$P().do_save_monitor()"><i class="mdi mdi-floppy">&nbsp;</i>Save Changes</div>';
+		html += '</div>'; // box_buttons
+		
+		html += '</div>'; // box
+		
+		this.div.html( html );
+		
+		// lock ID for editing
+		$('#fe_em_id').attr('disabled', true);
+		SingleSelect.init( this.div.find('#fe_em_icon') );
+		MultiSelect.init( this.div.find('select[multiple]') );
+		this.setupBoxButtonFloater();
+	}
+	
+	do_save_monitor() {
+		// save changes to monitor
+		app.clearError();
+		var monitor = this.get_monitor_form_json();
+		if (!monitor) return; // error
+		
+		this.monitor = monitor;
+		
+		Dialog.showProgress( 1.0, "Saving Monitor..." );
+		app.api.post( 'app/update_monitor', monitor, this.save_monitor_finish.bind(this) );
+	}
+	
+	save_monitor_finish(resp) {
+		// new monitor saved successfully
+		Dialog.hideProgress();
+		if (!this.active) return; // sanity
+		
+		Nav.go( 'Monitors?sub=list' );
+		app.showMessage('success', "The monitor was saved successfully.");
+	}
+	
+	show_delete_monitor_dialog() {
+		// show dialog confirming monitor delete action
+		var self = this;
+		
+		Dialog.confirmDanger( 'Delete Monitor', "Are you sure you want to <b>permanently delete</b> the monitor &ldquo;" + this.monitor.title + "&rdquo;?  There is no way to undo this action.", 'Delete', function(result) {
+			if (result) {
+				Dialog.showProgress( 1.0, "Deleting Monitor..." );
+				app.api.post( 'app/delete_monitor', self.monitor, self.delete_monitor_finish.bind(self) );
+			}
+		} );
+	}
+	
+	delete_monitor_finish(resp) {
+		// finished deleting monitor
+		var self = this;
+		Dialog.hideProgress();
+		if (!this.active) return; // sanity
+		
+		Nav.go('Monitors?sub=list', 'force');
+		app.showMessage('success', "The monitor &ldquo;" + this.monitor.title + "&rdquo; was deleted successfully.");
+	}
+	
+	get_monitor_edit_html() {
+		// get html for editing an monitor (or creating a new one)
+		var html = '';
+		var monitor = this.monitor;
+		
+		// title
+		html += this.getFormRow({
+			label: 'Monitor Title:',
+			content: this.getFormText({
+				id: 'fe_em_title',
+				spellcheck: 'false',
+				value: monitor.title,
+				onChange: '$P().suggestIDFromTitle()'
+			}),
+			caption: 'Enter the title of the monitor, for display purposes.'
+		});
+		
+		// monitor id
+		html += this.getFormRow({
+			label: 'Monitor ID:',
+			content: this.getFormText({
+				id: 'fe_em_id',
+				class: 'monospace',
+				spellcheck: 'false',
+				onChange: '$P().checkMonitorExists(this)',
+				value: monitor.id
+			}),
+			suffix: '<div class="checker"></div>',
+			caption: 'Enter a unique ID for the monitor (alphanumerics only).  Once created this cannot be changed.'
+		});
+		
+		// status
+		html += this.getFormRow({
+			label: 'Display:',
+			content: this.getFormCheckbox({
+				id: 'fe_em_display',
+				label: 'Show Monitor Graphs',
+				checked: monitor.display
+			}),
+			caption: 'Select whether this monitor should display a visible graph or not.'
+		});
+		
+		// icon
+		html += this.getFormRow({
+			label: 'Custom Icon:',
+			content: this.getFormMenuSingle({
+				id: 'fe_em_icon',
+				title: 'Select icon for monitor',
+				placeholder: 'Select icon for monitor...',
+				options: [['', '(None)']].concat( iconFontNames.map( function(name) { return { id: name, title: name, icon: name }; } ) ),
+				value: monitor.icon || '',
+				// 'data-shrinkwrap': 1
+			}),
+			caption: 'Optionally choose an icon for the monitor.'
+		});
+		
+		// groups
+		html += this.getFormRow({
+			label: 'Server Groups:',
+			content: this.getFormMenuMulti({
+				id: 'fe_em_groups',
+				title: 'Select groups for the monitor',
+				placeholder: '(All Groups)',
+				options: app.groups,
+				values: monitor.groups,
+				default_icon: 'server-network',
+				'data-hold': 1
+				// 'data-shrinkwrap': 1
+			}),
+			caption: 'Select which server group(s) the monitor should apply to.'
+		});
+		
+		// data source
+		html += this.getFormRow({
+			label: 'Data Source:',
+			content: this.getFormText({
+				id: 'fe_em_source',
+				class: 'monospace',
+				spellcheck: 'false',
+				value: monitor.source
+			}),
+			suffix: '<div class="form_suffix_icon mdi mdi-magnify" title="Open Server Data Explorer" onMouseUp="$P().showHostDataExplorer(\'#fe_em_source\')"></div>',
+			caption: 'Enter an expression for evaluating the data source, e.g. <code>[stats/network/conns]</code>.  If you need help, you can use the <span class="link" onMouseUp="$P().showHostDataExplorer(\'#fe_em_source\')">Server Data Explorer</span>, or view the <a href="https://github.com/jhuckaby/orchestra/blob/main/docs/Monitoring.md#data-sources" target="_blank">documentation</a>.'
+		});
+		
+		// data match
+		html += this.getFormRow({
+			label: 'Data Match:',
+			content: this.getFormText({
+				id: 'fe_em_data_match',
+				class: 'monospace',
+				spellcheck: 'false',
+				value: monitor.data_match
+			}),
+			caption: 'Optionally enter a regular expression to grab the desired data value out of a string.  Surround the match with parenthesis to isolate it.  This is mainly for custom commands.'
+		});
+		
+		// data type
+		var type_items = [
+			['integer', "Integer"],
+			['float', "Float"],
+			['bytes', "Bytes"],
+			['seconds', "Seconds"],
+			['milliseconds', "Milliseconds"]
+			// ['percent', "Percent"]
+		];
+		html += this.getFormRow({
+			label: 'Data Type:',
+			content: this.getFormMenu({
+				id: 'fe_em_data_type',
+				options: type_items,
+				value: monitor.data_type
+			}),
+			caption: 'Select the data type for the monitor, which controls how the value is read and displayed.'
+		});
+		
+		// delta
+		var delta_value = '';
+		if (monitor.delta && monitor.divide_by_delta) delta_value = 'delta_div';
+		else if (monitor.delta) delta_value = 'delta';
+		
+		html += this.getFormRow({
+			label: 'Delta:',
+			content: this.getFormMenu({
+				id: 'fe_em_delta',
+				options: [
+					['', "(Disabled)"],
+					['delta', "Calculate as Delta"],
+					['delta_div', "Calculate as Delta and Divide by Time"],
+				],
+				value: monitor.data_type
+			}),
+			caption: 'Optionally interpret the data value as a delta, and optionally divided by time.  This is mainly for values that continually count upwards, but we want to graph the difference over time, instead of the absolute value.'
+		});
+		
+		// suffix
+		html += this.getFormRow({
+			label: 'Data Suffix:',
+			content: this.getFormText({
+				id: 'fe_em_suffix',
+				spellcheck: 'false',
+				value: monitor.suffix
+			}),
+			caption: 'Optionally enter a suffix to be displayed after the data value, e.g. <code>/sec</code>.'
+		});
+		
+		// notes
+		html += this.getFormRow({
+			label: 'Notes:',
+			content: this.getFormTextarea({
+				id: 'fe_em_notes',
+				rows: 5,
+				value: monitor.notes
+			}),
+			caption: 'Optionally enter any notes for the monitor, for your own use.'
+		});
+		
+		return html;
+	}
+	
+	get_monitor_form_json() {
+		// get api key elements from form, used for new or edit
+		var monitor = this.monitor;
+		
+		monitor.id = $('#fe_em_id').val().replace(/\W+/g, '').toLowerCase();
+		monitor.title = $('#fe_em_title').val().trim();
+		monitor.display = $('#fe_em_display').is(':checked') ? true : false;
+		monitor.icon = $('#fe_em_icon').val();
+		monitor.groups = $('#fe_em_groups').val();
+		monitor.source = $('#fe_em_source').val();
+		monitor.data_match = $('#fe_em_data_match').val();
+		monitor.data_type = $('#fe_em_data_type').val();
+		monitor.suffix = $('#fe_em_suffix').val();
+		monitor.notes = $('#fe_em_notes').val();
+		
+		switch ($('#fe_em_delta').val()) {
+			case 'delta':
+				monitor.delta = true;
+				monitor.divide_by_delta = false;
+			break;
+			
+			case 'delta_div':
+				monitor.delta = true;
+				monitor.divide_by_delta = true;
+			break;
+			
+			default:
+				monitor.delta = false;
+				delete monitor.divide_by_delta;
+			break;
+		}
+		
+		if (!monitor.id.length) {
+			return app.badField('#fe_em_id', "Please enter a unique alphanumeric ID for the monitor.");
+		}
+		if (!monitor.title.length) {
+			return app.badField('#fe_em_title', "Please enter a title for the monitor.");
+		}
+		if (!monitor.source.length) {
+			return app.badField('#fe_em_source', "Please enter a data source for the monitor.");
+		}
+		
+		return monitor;
+	}
+	
+	checkMonitorExists(field) {
+		// check if monitor exists, update UI checkbox
+		// called after field changes
+		var $field = $(field);
+		var id = trim( $field.val().toLowerCase() );
+		var $elem = $field.closest('.form_row').find('.fr_suffix .checker');
+		
+		if (id.match(/^\w+$/)) {
+			// check with cache
+			if (find_object(app.monitors, { id: id })) {
+				// monitor taken
+				$elem.css('color','red').html('<span class="mdi mdi-alert-circle"></span>').attr('title', "Monitor ID is taken.");
+				$field.addClass('warning');
+			}
+			else {
+				// monitor is valid and available!
+				$elem.css('color','green').html('<span class="mdi mdi-check-circle"></span>').attr('title', "Monitor ID is available!");
+				$field.removeClass('warning');
+			}
+		}
+		else if (id.length) {
+			// bad id
+			$elem.css('color','red').html('<span class="mdi mdi-alert-decagram"></span>').attr('title', "Monitor ID is malformed.");
+			$field.addClass('warning');
+		}
+		else {
+			// empty
+			$elem.html('').removeAttr('title');
+			$field.removeClass('warning');
+		}
+	}
+	
+	onDataUpdate(key, data) {
+		// refresh list if monitors were updated
+		if ((key == 'monitors') && (this.args.sub == 'list')) this.gosub_list(this.args);
+	}
+	
+	onDeactivate() {
+		// called when page is deactivated
+		this.div.html( '' );
+		return true;
+	}
+	
+};

@@ -1,0 +1,1644 @@
+// Job Details Pages
+
+Page.Job = class Job extends Page.Base {
+	
+	onInit() {
+		// called once at page load
+		this.colors = app.colors;
+	}
+	
+	onActivate(args) {
+		// page activation
+		if (!this.requireLogin(args)) return true;
+		
+		if (!args) args = {};
+		this.args = args;
+		
+		app.showSidebar(true);
+		app.setHeaderTitle( '...' );
+		
+		this.job = null;
+		this.converter = new AnsiUp();
+		this.liveLogReady = false;
+		this.snapEpoch = null;
+		this.emptyLogMessage = false;
+		this.redraw = "";
+		this.metaRowCount = 0;
+		
+		this.loading();
+		app.api.get( 'app/get_job', { id: args.id }, this.receive_job.bind(this), this.fullPageError.bind(this) );
+		return true;
+	}
+	
+	receive_job(resp) {
+		// render job details
+		this.token = resp.token;
+		this.job = resp.job;
+		var job = this.job;
+		
+		if (!this.active) return; // sanity
+		
+		// sanity
+		if (!job.timelines) job.timelines = {};
+		if (!job.timelines.second) job.timelines.second = [];
+		if (!job.timelines.minute) job.timelines.minute = [];
+		
+		if (job.state == 'complete') {
+			// complete
+			app.setHeaderTitle( '<i class="mdi mdi-timer-' + (job.code ? 'alert' : 'check') + '-outline">&nbsp;</i>Completed Job' );
+			app.setWindowTitle( "Completed Job: #" + job.id );
+			
+			if (job.timelines && job.timelines.minute && job.timelines.minute.length) {
+				// completed job: default snap to first minute
+				this.snapEpoch = job.timelines.minute[0].epoch;
+			}
+		}
+		else {
+			// in progress
+			app.setHeaderTitle( '<i class="mdi mdi-timer-play-outline">&nbsp;</i>Live Job Progress' );
+			app.setWindowTitle( "Live Job Progress: #" + job.id );
+		}
+		
+		var html = '';
+		
+		if (job.state == 'complete') {
+			// show completion banner at top
+			var banner_class = 'success';
+			if (job.code) {
+				banner_class = 'error';
+				if (job.code == 'warning') banner_class = 'warning';
+				else if (job.code == 'critical') banner_class = 'critical';
+				else if (job.code == 'abort') banner_class = 'abort';
+				if (!job.description) job.description = 'Unknown Error (no description provided).';
+			}
+			else {
+				if (!job.description) job.description = 'Job completed successfully.';
+			}
+			
+			var banner_icon = '';
+			var prefix = '';
+			switch (banner_class) {
+				case 'success': banner_icon = 'check-circle'; break;
+				case 'warning': banner_icon = 'alert-rhombus'; prefix = 'Warning: '; break;
+				case 'error': banner_icon = 'alert-decagram'; prefix = 'Error (' + job.code + '): '; break;
+				case 'critical': banner_icon = 'flash-alert'; prefix = 'Critical: '; break;
+				case 'abort': banner_icon = 'cancel'; prefix = 'Job Aborted: '; break;
+			}
+			
+			html += '<div class="box message inline ' + banner_class + '">';
+				html += '<div class="message_inner">';
+					html += '<i class="mdi mdi-' + banner_icon + '">&nbsp;&nbsp;&nbsp;</i>';
+					html += prefix + encode_entities( job.description );
+				html += '</div>';
+			html += '</div>';
+		} // complete
+		
+		// nice retry count
+		var nice_retry_count = '(Initial)';
+		if (job.retry_count) {
+			nice_retry_count = '<i class="mdi mdi-refresh">&nbsp;</i>Retry #' + job.retry_count;
+			if (job.retry_prev) {
+				nice_retry_count += ' (<a href="#Job?id=' + job.retry_prev + '">Previous</a>)';
+			}
+		}
+		
+		// check if user will be notified on job completion
+		var notify_me = !!find_object( job.actions, { trigger: 'complete', type: 'email', email: app.user.email } );
+		var notify_icon = notify_me ? 'checkbox-marked-circle-outline' : 'email-outline';
+		
+		// summary
+		html += '<div class="box">';
+			html += '<div class="box_title">';
+				// html += 'Job Summary';
+				
+				if (job.state == 'complete') {
+					// job is complete
+					html += 'Job Summary';
+					
+					html += '<div class="button right" onMouseUp="$P().do_run_again()"><i class="mdi mdi-run-fast">&nbsp;</i>Run Again</div>';
+					html += '<div class="button right danger" onMouseUp="$P().do_delete_job()"><i class="mdi mdi-trash-can-outline">&nbsp;</i>Delete Job...</div>';
+					html += '<div class="clear"></div>';
+				}
+				else {
+					// job is in progress
+					html += '<div id="d_live_progress_bar_cont" class="progress_bar_container" style="width:196px; float:left;">';
+						html += '<div id="d_live_progress_bar" class="progress_bar_inner" style="width:0px;"></div>';
+					html += '</div>';
+					html += '<div id="d_live_pct" style="float:left; margin-left:15px;"></div>';
+					
+					html += '<div class="button right danger" onMouseUp="$P().do_abort_job()"><i class="mdi mdi-cancel">&nbsp;</i>Abort Job...</div>';
+					html += '<div class="button right" id="btn_job_notify" onMouseUp="$P().do_notify_me()"><i class="mdi mdi-' + notify_icon + '">&nbsp;</i>Notify Me</div>';
+					html += '<div class="clear"></div>';
+				}
+			html += '</div>';
+			
+			html += '<div class="box_content table">';
+				html += '<div class="summary_grid">';
+					
+					// column 1
+					html += '<div>';
+						html += '<div class="info_label">Job ID</div>';
+						html += '<div class="info_value">' + this.getNiceJob(job.id) + '</div>';
+						
+						html += '<div class="info_label">Event</div>';
+						html += '<div class="info_value">' + this.getNiceEvent(job.event, true) + '</div>';
+						
+						html += '<div class="info_label">Workflow</div>';
+						html += '<div class="info_value">' + this.getNiceWorkflow(job.workflow, true) + '</div>';
+						
+						html += '<div class="info_label">Source</div>';
+						html += '<div class="info_value">' + this.getNiceJobSource(job) + '</div>';
+					html += '</div>';
+					
+					// column 2
+					html += '<div>';
+						html += '<div class="info_label">Category</div>';
+						html += '<div class="info_value">' + this.getNiceCategory(job.category, true) + '</div>';
+						
+						html += '<div class="info_label">Plugin</div>';
+						html += '<div class="info_value">' + this.getNicePlugin(job.plugin, true) + '</div>';
+						
+						html += '<div class="info_label">Tags</div>';
+						html += '<div class="info_value">' + this.getNiceTagList(job.tags, true, ', ') + '</div>';
+						
+						html += '<div class="info_label">Attempt</div>';
+						html += '<div class="info_value">' + nice_retry_count + '</div>';
+					html += '</div>';
+					
+					// column 3
+					html += '<div>';
+						html += '<div class="info_label">Targets</div>';
+						html += '<div class="info_value">' + this.getNiceTargetList(job.targets, ', ', 3) + '</div>';
+						
+						html += '<div class="info_label">Server</div>';
+						html += '<div class="info_value">' + this.getNiceServer(job.server, true) + '</div>';
+						
+						html += '<div class="info_label">Avg CPU</div>';
+						html += '<div class="info_value" id="d_live_cpu"><i class="mdi mdi-chip">&nbsp;</i>' + this.getNiceJobAvgCPU(job) + '</div>';
+						
+						html += '<div class="info_label">Avg Mem</div>';
+						html += '<div class="info_value" id="d_live_mem"><i class="mdi mdi-memory">&nbsp;</i>' + this.getNiceJobAvgMem(job) + '</div>';
+						
+						// html += '<div class="info_label">Process ID</div>';
+						// html += '<div class="info_value"><i class="mdi mdi-console">&nbsp;</i>' + (job.pid || 'n/a') + '</div>';
+					html += '</div>';
+					
+					// column 4
+					html += '<div>';
+						html += '<div class="info_label">Job State</div>';
+						html += '<div class="info_value" id="d_live_state">' + this.getNiceJobState(job) + '</div>';
+						
+						html += '<div class="info_label">Job Started</div>';
+						html += '<div class="info_value">' + this.getNiceDateTime( job.started ) + '</div>';
+						
+						if (job.state == 'complete') {
+							html += '<div class="info_label">Job Completed</div>';
+							html += '<div class="info_value">' + this.getNiceDateTime( job.completed ) + '</div>';
+						}
+						
+						html += '<div class="info_label">Elapsed Time</div>';
+						html += '<div class="info_value"><span id="s_live_elapsed">' + this.getNiceJobElapsedTime(job) + '</span></div>';
+						
+						if (job.state != 'complete') {
+							html += '<div class="info_label">Remaining Time</div>';
+							html += '<div class="info_value"><span id="s_live_remain"></span></div>';
+						}
+					html += '</div>';
+					
+				html += '</div>';
+			html += '</div>';
+		html += '</div>';
+		
+		// alerts (hidden unless needed)
+		html += '<div class="box" id="d_job_alerts" style="display:none">';
+			html += '<div class="box_title">';
+				html += 'Server Alerts';
+			html += '</div>';
+			html += '<div class="box_content table">';
+				html += '<div class="loading_container"><div class="loading"></div></div>';
+			html += '</div>'; // box_content
+		html += '</div>'; // box
+		
+		// additional jobs (completed job only)
+		if ((job.state == 'complete') && job.jobs && job.jobs.length) {
+			html += '<div class="box" id="d_job_add_jobs">';
+				html += '<div class="box_title">';
+					html += 'Additional Jobs';
+				html += '</div>';
+				html += '<div class="box_content table">';
+					html += '<div class="loading_container"><div class="loading"></div></div>';
+				html += '</div>'; // box_content
+			html += '</div>'; // box
+		}
+		
+		// user content (table, html, perf)
+		html += '<div class="box" id="d_job_user_table" style="display:none">';
+			html += '<div class="box_title"></div>';
+			html += '<div class="box_content table"></div>';
+		html += '</div>'; // box
+		html += '<div class="box" id="d_job_user_html" style="display:none">';
+			html += '<div class="box_title"></div>';
+			html += '<div class="box_content table"></div>';
+		html += '</div>'; // box
+		html += '<div class="box" id="d_job_user_perf" style="display:none">';
+			html += '<div class="box_title">Performance Metrics</div>';
+			html += '<div class="box_content table"></div>';
+		html += '</div>'; // box
+		html += '<div class="box" id="d_job_user_counters" style="display:none">';
+			html += '<div class="box_title">Performance Counters</div>';
+			html += '<div class="box_content table"></div>';
+		html += '</div>'; // box
+		
+		// charts
+		html += '<div class="box">';
+			html += '<div class="box_content">';
+				html += '<div class="chart_grid_horiz">';
+				
+					html += '<div><canvas id="c_live_cpu" class="chart"></canvas></div>';
+					html += '<div><canvas id="c_live_mem" class="chart"></canvas></div>';
+					
+					html += '<div><canvas id="c_live_disk" class="chart"></canvas></div>';
+					html += '<div><canvas id="c_live_net" class="chart"></canvas></div>';
+				
+				html += '</div>';
+			html += '</div>';
+		html += '</div>';
+		
+		// pid table
+		html += '<div class="box">';
+			html += '<div class="box_title">';
+				html += 'Job Processes';
+			html += '</div>';
+			html += '<div class="box_content table">';
+				html += '<div id="d_process_table">' + this.getProcessTable() + '</div>';
+			html += '</div>'; // box_content
+		html += '</div>'; // box
+		
+		// uploaded files (completed job only)
+		if ((job.state == 'complete') && job.files && job.files.length) {
+			html += '<div class="box" id="d_job_files">';
+				html += '<div class="box_title">';
+					html += 'Job Files';
+				html += '</div>';
+				html += '<div class="box_content table">';
+					html += this.getFileTable();
+				html += '</div>'; // box_content
+			html += '</div>'; // box
+		}
+		
+		// job log
+		html += '<div class="box">';
+			html += '<div class="box_title">';
+				if (job.state == 'complete') {
+					html += 'Job Output (' + get_text_from_bytes(job.log_file_size || 0) + ')';
+					if (job.log_file_size) {
+						html += '<div class="button right" onMouseUp="$P().do_view_job_log()"><i class="mdi mdi-open-in-new">&nbsp;</i>View Raw...</div>';
+						html += '<div class="button right" onMouseUp="$P().do_download_job_log()"><i class="mdi mdi-cloud-download-outline">&nbsp;</i>Download...</div>';
+					}
+					html += '<div class="clear"></div>';
+				}
+				else html += 'Live Job Output';
+			html += '</div>';
+			html += '<div class="box_content table">';
+				html += '<div id="d_live_job_log"></div>';
+			html += '</div>'; // box_content
+		html += '</div>'; // box
+		
+		// meta log
+		html += '<div class="box" id="d_job_meta">';
+			html += '<div class="box_title">';
+				html += 'Metadata Log';
+			html += '</div>';
+			html += '<div class="box_content table">';
+				html += this.getMetaLog();
+			html += '</div>'; // box_content
+		html += '</div>'; // box
+		
+		this.div.html(html);
+		
+		if (job.state != 'complete') {
+			// in progress
+			this.updateLiveJobStats();
+			this.setupLiveJobLog();
+		}
+		else {
+			// completed
+			this.getCompletedJobLog();
+			this.getAdditionalJobs();
+		}
+		
+		this.setupCharts();
+		this.updateUserContent();
+		this.getJobAlerts();
+	}
+	
+	getJobAlerts() {
+		// get info on alerts that happened during job's life
+		var self = this;
+		var job = this.job;
+		
+		var opts = {
+			query: 'jobs:' + job.id,
+			offset: 0,
+			limit: config.items_per_page,
+			sort_by: '_id',
+			sort_dir: -1,
+			ttl: 1
+		};
+		
+		app.api.get( 'app/search_alerts', opts, function(resp) {
+			self.alerts = resp.rows || [];
+			self.renderJobAlerts();
+		});
+	}
+	
+	renderJobAlerts() {
+		// render details on job alerts
+		var self = this;
+		if (!this.active) return; // sanity
+		
+		if (!this.alerts || !this.alerts.length) {
+			$('#d_job_alerts').hide();
+			return;
+		}
+		
+		var alerts = this.alerts;
+		var cols = ["Alert ID", "Title", "Message", "Server", "Status", "Started", "Duration"];
+		var html = '';
+		
+		var grid_args = {
+			rows: alerts,
+			cols: cols,
+			data_type: 'alert'
+		};
+		
+		html += this.getBasicGrid( grid_args, function(item, idx) {
+			return [
+				'<b>' + self.getNiceAlertID(item, true) + '</b>',
+				self.getNiceAlert(item.alert, false),
+				item.message,
+				self.getNiceServer(item.server, false),
+				self.getNiceAlertStatus(item),
+				self.getNiceDateTime(item.date),
+				self.getNiceAlertElapsedTime(item, true, true)
+			];
+		}); // grid
+		
+		$('#d_job_alerts > div.box_content').html( html );
+		$('#d_job_alerts').show();
+	}
+	
+	getAdditionalJobs() {
+		// get info on possible additional jobs launched as a result of the current job completing
+		var self = this;
+		var job = this.job;
+		if (!job.jobs || !job.jobs.length) return;
+		var ids = job.jobs.map( function(item) { return item.id; } );
+		
+		app.api.post( 'app/get_jobs', { ids: ids }, function(resp) {
+			if (!self.active) return; // sanity
+			
+			var jobs = resp.jobs || [];
+			var cols = ["Job ID", "Reason", "Event", "Category", "Plugin", "Server", "Actions"];
+			var html = '';
+			
+			var grid_args = {
+				rows: jobs,
+				cols: cols,
+				data_type: 'job',
+				class: 'data_grid job_additional'
+			};
+			
+			html += this.getBasicGrid( grid_args, function(item, idx) {
+				var reason = job.jobs[idx].reason;
+				return [
+					self.getNiceJob(item.id, true),
+					ucfirst(reason),
+					self.getNiceEvent(item.event, true),
+					self.getNiceCategory(item.category, true),
+					self.getNicePlugin(item.plugin, true),
+					self.getNiceServer(item.server, true),
+					'<a href="#Job?id=' + item.id + '">Details</a>'
+				];
+			}); // grid
+			
+			$('#d_job_add_jobs > div.box_content').html( html );
+		} ); // api.get
+	}
+	
+	updateUserContent() {
+		// render user table and/or html sections
+		var job = this.job;
+		
+		// don't bash the dom
+		if (job.redraw == this.redraw) return;
+		this.redraw = job.redraw;
+		
+		// simple 2D data table
+		if (job.table && job.table.header && job.table.rows) {
+			var $box = this.div.find('#d_job_user_table');
+			$box.show();
+			
+			if (job.table.title) $box.find('div.box_title').show().html( job.table.title );
+			else $box.find('div.box_title').hide();
+			
+			var html = '';
+			html += this.getBasicTable({
+				compact: true,
+				cols: job.table.header,
+				rows: job.table.rows,
+				data_type: 'item',
+				callback: function(row) { return row; }
+			});
+			
+			if (job.table.caption) html += '<div class="user_caption">' + job.table.caption + '</div>';
+			$box.find('div.box_content').html( html );
+		} // table
+		
+		// custom HTML
+		// TODO: need filtering here?  prevent <script> elements, etc.?
+		// (also in job.description)
+		if (job.html) {
+			var $html = this.div.find('#d_job_user_html');
+			$html.show();
+			
+			if (job.html.title) $html.find('div.box_title').show().html( job.html.title );
+			else $html.find('div.box_title').hide();
+			
+			var html = '';
+			html += job.html.content;
+			if (job.html.caption) html += '<div class="user_caption">' + job.html.caption + '</div>';
+			$html.find('div.box_content').html( html );
+		} // html
+		
+		if (job.perf) this.updateUserPerf();
+	}
+	
+	generatePieGradient(metrics) {
+		var self = this;
+		var total_perf = Object.values(metrics).reduce((acc, cur) => acc + cur, 0);
+		var perf_keys = Object.keys(metrics).sort();
+		var color_idx = 0;
+		var pct = 0;
+		var slices = [];
+		
+		// special case for single slice (entire pie is single color)
+		if (perf_keys.length == 1) {
+			return this.colors[ color_idx ];
+		}
+		
+		perf_keys.forEach( function(pkey, idx) {
+			var value = metrics[pkey];
+			pct += ((value / total_perf) * 100);
+			var color = self.colors[ color_idx ];
+			color_idx = (color_idx + 1) % self.colors.length;
+			
+			if (idx == 0) {
+				slices.push( color + ' ' + Math.round(pct) + '%' );
+			}
+			else if (idx == perf_keys.length - 1) {
+				slices.push( color + ' 0' );
+			}
+			else {
+				slices.push( color + ' 0 ' + Math.round(pct) + '%' );
+			}
+		});
+		
+		return 'conic-gradient(' + slices.join(',') + ')';
+	}
+	
+	updateUserPerf() {
+		// render user perf metrics into simple bar chart
+		var self = this;
+		var job = this.job;
+		var $perf = this.div.find('#d_job_user_perf');
+		var pscale = 1;
+		var perf = deep_copy_object(job.perf);
+		var counters = {};
+		var metrics = {};
+		var html = '';
+		
+		if (typeof(perf) == 'string') perf = parse_query_string( perf.replace(/\;/g, '&') );
+		if (perf.scale) { pscale = perf.scale; delete perf.scale; }
+		if (perf.counters) counters = perf.counters;
+		if (perf.perf) perf = perf.perf;
+		
+		// keep c_ counters out of metrics, and omit total
+		for (var key in perf) {
+			if (key.match(/^c_(.+)$/)) {
+				counters[ RegExp.$1 ] = perf[key];
+			}
+			else if (!key.match(/^(t|total)$/)) {
+				metrics[key] = perf[key];
+			}
+		}
+		
+		var max_height = 150;
+		var max_perf = (Math.max.apply( Math, Object.values(metrics) ) || 1) / pscale;
+		var total_perf = Object.values(metrics).reduce((acc, cur) => acc + cur, 0) / pscale;
+		var perf_keys = Object.keys(metrics).sort();
+		var color_idx = 0;
+		
+		if (perf_keys.length) {
+			html += '<div class="job_perf_container" style="grid-template-columns:repeat(' + Math.floor(perf_keys.length + 1) + ',1fr);">';
+					
+			// pie chart on left
+			html += '<div class="job_perf_pie" style="background:' + this.generatePieGradient(metrics) + ';"></div>';
+			
+			perf_keys.forEach( function(pkey) {
+				var value = metrics[pkey] / pscale;
+				var height = Math.floor( (value / max_perf) * max_height );
+				var color = self.colors[ color_idx ];
+				color_idx = (color_idx + 1) % self.colors.length;
+				
+				var nice_value = '';
+				if (value < 1.0) nice_value = short_float(value * 1000) + ' ms';
+				else if (value < 60) nice_value = short_float(value) + ' sec';
+				else nice_value = get_text_from_seconds(value, true, true);
+				
+				var pct = Math.round( (value / total_perf) * 100 );
+				var nice_pct = '';
+				if (height > 12) nice_pct = '' + pct + '%';
+				
+				html += '<div class="job_perf_unit">';
+					html += '<div class="job_perf_value">' + nice_value + '</div>';
+					html += '<div class="job_perf_bar" style="height:' + height + 'px; line-height:' + height + 'px; background-color:' + color + ';">' + nice_pct + '</div>';
+					html += '<div class="job_perf_label">' + pkey + '</div>';
+				html += '</div>';
+			} );
+			
+			html += '</div>';
+			$perf.show().find('div.box_content').html( html );
+		} // perf_keys
+		
+		if (num_keys(counters)) {
+			var $counters = this.div.find('#d_job_user_counters');
+			html = '';
+			
+			max_perf = Math.max.apply( Math, Object.values(counters) ) || 1;
+			perf_keys = Object.keys(counters).sort();
+			
+			// html += '<div style="height:25px"></div>';
+			html += '<div class="job_perf_container" style="grid-template-columns:repeat(' + perf_keys.length + ',1fr);">';
+			
+			perf_keys.forEach( function(pkey) {
+				var value = counters[pkey];
+				var height = Math.floor( (value / max_perf) * max_height ) || 1;
+				var color = self.colors[ color_idx ];
+				color_idx = (color_idx + 1) % self.colors.length;
+				
+				html += '<div class="job_perf_unit">';
+					html += '<div class="job_perf_value">' + self.commify(value) + '</div>';
+					html += '<div class="job_perf_bar" style="height:' + height + 'px; background-color:' + color + ';"></div>';
+					html += '<div class="job_perf_label">' + pkey + '</div>';
+				html += '</div>';
+			});
+			
+			html += '</div>';
+			$counters.show().find('div.box_content').html( html );
+		} // counters
+	}
+	
+	getCompletedJobLog() {
+		// fetch completed log file
+		var self = this;
+		var job = this.job;
+		var $cont = this.div.find('#d_live_job_log');
+		
+		if (!job.log_file_size) {
+			$cont.html('<div class="log_message">(Job log is empty.)</div>');
+			return;
+		}
+		if (job.log_file_size > 1024 * 1024 * 10) {
+			$cont.html('<div class="log_message">(Job log is over 10 MB.)</div>');
+			return;
+		}
+		
+		$cont.html( '<div class="loading_container"><div class="loading"></div></div>' );
+		
+		var url = app.base_api_url + "/app/get_job_log?id=" + job.id;
+		var opts = { headers: { 'X-Session-ID': app.getPref('session_id') } };
+		Debug.trace('api', "Fetching job log: " + url);
+		
+		window.fetch( url, opts )
+			.then( function(res) {
+				if (!res.ok) throw new Error("HTTP " + res.status + " " + res.statusText);
+				if (res.status == 204) throw "IGNORE";
+				return res.text();
+			} )
+			.then(function(text) {
+				// use setTimeout to avoid insanity with the stupid fetch promise
+				setTimeout( function() {
+					$cont.html('');
+					
+					if (text.length) {
+						// render it progressively as to not hang the browser
+						self.logSpool = text.split(/\n/);
+						self.spoolNextLogChunk();
+					}
+					else $cont.html('<div class="log_message">(Job log is empty.)</div>');
+					
+				}, 1 );
+			} )
+			.catch( function(err) {
+				if (err == "IGNORE") Debug.trace('api', "Got HTTP 204, will wait for log_uploaded event");
+				else app.doError( err.message || err );
+			} );
+	}
+	
+	spoolNextLogChunk() {
+		// spool chunk of completed log into DIV, then RAF for next
+		// (this is so we don't hang the main thread trying to render MBs of log data with ansi_to_html in the mix)
+		var self = this;
+		var $cont = this.div.find('#d_live_job_log');
+		if (!$cont.length) return; // user may have navigated away from page
+		
+		var chunk = this.logSpool.splice(0, 256); // render 256 lines at a time
+		$cont.append( chunk.map( function(line) { return '<p>' + self.converter.ansi_to_html(line) + '</p>'; } ).join("\n") );
+		
+		if (this.logSpool.length) requestAnimationFrame( this.spoolNextLogChunk.bind(this) );
+		else delete this.logSpool;
+	}
+	
+	setupLiveJobLog() {
+		// this.term = new Terminal();
+		// this.term.open( document.getElementById('d_live_job_log') );
+        // this.term.write( 'Hello from \x1B[1;3;31mxterm.js\x1B[0m $ ' );
+		var self = this;
+		this.emptyLogMessage = true;
+		
+		app.api.get( 'app/tail_live_job_log', { id: this.job.id }, function(resp) {
+			if (!self.active) return; // sanity
+			
+			var text = resp.text;
+			if (text.length) self.appendLiveJobLog(text);
+			else self.div.find('#d_live_job_log').append( '<div class="loading_container"><div class="loading"></div></div>' );
+			
+			// set flag so live log updates can now come through
+			self.liveLogReady = true;
+		});
+	}
+	
+	appendLiveJobLog(text) {
+		// append text to live server log, and possibly pin-scroll to the bottom
+		var self = this;
+		var $cont = this.div.find('#d_live_job_log');
+		var scroll_y = $cont.scrollTop();
+		var scroll_max = Math.max(0, $cont.prop('scrollHeight') - $cont.height());
+		var need_scroll = ((scroll_max - scroll_y) <= 10);
+		
+		if (this.emptyLogMessage) {
+			$cont.find('div.loading_container').remove();
+			$cont.addClass('active');
+			this.emptyLogMessage = false;
+		}
+		
+		var html = this.converter.ansi_to_html(text);
+		$cont.append( html.split(/\n/).map( function(line) { return '<p>' + line + '</p>'; } ).join("\n") );
+		
+		// only keep latest 1K chunks
+		var $children = $cont.children();
+		if ($children.length > 1000) {
+			$children.slice( 0, $children.length - 1000 ).remove();
+		}
+		
+		if (need_scroll) $cont.scrollTop( $cont.prop('scrollHeight') );
+	}
+	
+	formatMetaRow(row) {
+		// convert meta log row into table columns
+		var nice_timestamp = this.formatDate(row.epoch, { 
+			year: 'numeric',
+			month: 'numeric',
+			day: 'numeric',
+			// weekday: 'long',
+			hour: 'numeric',
+			minute: '2-digit',
+			second: '2-digit'
+		});
+		
+		var nice_server = 'n/a';
+		if (row.server) {
+			if (row.server.match(/^\w+$/)) nice_server = this.getNiceServer(row.server);
+			else nice_server = this.getNiceMaster(row.server);
+		}
+		
+		return [
+			nice_timestamp,
+			nice_server,
+			row.msg
+		];
+	}
+	
+	getMetaLog() {
+		// get HTML for job meta log (will append in real-time)
+		var self = this;
+		var job = this.job;
+		var activity = job.activity || [];
+		var html = '';
+		
+		html += this.getBasicTable({
+			compact: true,
+			cols: ['Timestamp', 'Server', 'Message'],
+			rows: activity,
+			data_type: 'row',
+			callback: function(row) {
+				return self.formatMetaRow(row);
+			}
+		});
+		
+		// save row count to compare on live updates
+		this.metaRowCount = activity.length;
+		
+		return html;
+	}
+	
+	updateLiveMetaLog() {
+		// compare latest meta to what we have rendered, append as needed
+		var self = this;
+		var job = this.job;
+		var activity = job.activity || [];
+		if (activity.length <= this.metaRowCount) return;
+		
+		var $table = this.div.find('#d_job_meta table');
+		activity.slice(this.metaRowCount).forEach( function(row) {
+			$table.append( '<tr><td>' + self.formatMetaRow(row).join('</td><td>') + '</td></tr>' );
+		} );
+		
+		this.metaRowCount = activity.length;
+	}
+	
+	updateLiveJobStats() {
+		// update progress and other indicators while job is live
+		var job = this.job;
+		var $prog_cont = this.div.find('#d_live_progress_bar_cont');
+		var $prog_bar = this.div.find('#d_live_progress_bar');
+		var $prog_pct = this.div.find('#d_live_pct');
+		
+		if (!job.progress || (job.progress == 1.0)) {
+			// indeterminate
+			if (!$prog_cont.hasClass('indeterminate')) {
+				$prog_cont.addClass('indeterminate');
+				$prog_bar.css('width', 196);
+				$prog_pct.html('');
+			}
+		}
+		else if ((job.progress > 0) && (job.progress < 1.0)) {
+			if ($prog_cont.hasClass('indeterminate')) $prog_cont.removeClass('indeterminate');
+			var cx = Math.floor( job.progress * 196 );
+			$prog_bar.css('width', cx);
+			$prog_pct.html( pct(job.progress, 1.0, true) );
+		}
+		
+		this.div.find('#s_live_elapsed').html( this.getNiceJobElapsedTime(job) );
+		this.div.find('#s_live_remain').html( this.getNiceJobRemainingTime(job) );
+		
+		this.div.find('#d_live_state').html( this.getNiceJobState(job) );
+		this.div.find('#d_live_cpu').html( '<i class="mdi mdi-chip">&nbsp;</i>' + this.getNiceJobAvgCPU(job) );
+		this.div.find('#d_live_mem').html( '<i class="mdi mdi-memory">&nbsp;</i>' + this.getNiceJobAvgMem(job) );
+	}
+	
+	getChartLayers(timeline, pkey, chart) {
+		// get chart layers for CPU, Mem, Disk or Net graph
+		var pids = {};
+		var color_keys = { cpu:0, memRss:1, disk:2, net:3 };
+		if (!timeline || !timeline.length) return [];
+		
+		if (chart._procLayers) {
+			// layers for each proc
+			timeline.forEach( function(item) {
+				var x = item.epoch;
+				
+				for (var pid in item.procs) {
+					var proc = item.procs[pid];
+					
+					if (!(pid in pids)) pids[pid] = { title: proc.command + ' (' + pid + ')', data: [], _first: x };
+					pids[pid].data.push({ x, y: proc[pkey] || 0 });
+				}
+			} );
+			
+			var sorted = sort_by( Object.values(pids), '_first', { type: 'number', dir: 1 } );
+			return sorted;
+		}
+		else {
+			// flat mode, single layer
+			var layer = { title: "Total", data: [], color: this.colors[ color_keys[pkey] ], fill: 0.5 };
+			
+			timeline.forEach( function(item) {
+				var x = item.epoch;
+				var y = 0;
+				
+				for (var pid in item.procs) {
+					var proc = item.procs[pid];
+					y += (proc[pkey] || 0);
+				}
+				
+				layer.data.push({ x, y });
+			} );
+			
+			return [layer];
+		}
+	}
+	
+	setupCharts() {
+		// pixl-charts go!
+		var self = this;
+		var job = this.job;
+		var timelines = job.timelines;
+		var tline = ((job.state == 'complete') && (job.elapsed > 300)) ? 'minute' : 'second';
+		this.charts = {};
+		
+		this.charts.cpu = new Chart({
+			"canvas": '#c_live_cpu',
+			"title": "CPU Usage %",
+			"dataType": "integer",
+			"dataSuffix": "%",
+			"fill": false,
+			"legend": !!app.getPref('job_chart_layers_cpu'),
+			
+			"_timeline": tline,
+			"_procKey": "cpu",
+			"_procLayers": !!app.getPref('job_chart_layers_cpu')
+		});
+		this.charts.cpu.addLayers( this.getChartLayers(timelines[tline], 'cpu', this.charts.cpu) );
+		
+		this.charts.mem = new Chart({
+			"canvas": '#c_live_mem',
+			"title": "Memory Usage",
+			"dataType": "bytes",
+			"dataSuffix": "",
+			"fill": false,
+			"legend": !!app.getPref('job_chart_layers_mem'),
+			
+			"_timeline": tline,
+			"_procKey": "memRss",
+			"_procLayers": !!app.getPref('job_chart_layers_mem')
+		});
+		this.charts.mem.addLayers( this.getChartLayers(timelines[tline], 'memRss', this.charts.mem) );
+		
+		this.charts.disk = new Chart({
+			"canvas": '#c_live_disk',
+			"title": "I/O Activity",
+			"dataType": "bytes",
+			"dataSuffix": "/sec",
+			"fill": false,
+			"delta": true,
+			"divideByDelta": true,
+			"legend": !!app.getPref('job_chart_layers_disk'),
+			
+			"_timeline": tline,
+			"_procKey": "disk",
+			"_procLayers": !!app.getPref('job_chart_layers_disk')
+		});
+		this.charts.disk.addLayers( this.getChartLayers(timelines[tline], 'disk', this.charts.disk) );
+		
+		this.charts.net = new Chart({
+			"canvas": '#c_live_net',
+			"title": "Network Transfer",
+			"dataType": "bytes",
+			"dataSuffix": "/sec",
+			"fill": false,
+			"legend": !!app.getPref('job_chart_layers_net'),
+			
+			"_timeline": tline,
+			"_procKey": "net",
+			"_procLayers": !!app.getPref('job_chart_layers_net')
+		});
+		this.charts.net.addLayers( this.getChartLayers(timelines[tline], 'net', this.charts.net) );
+		
+		var render_chart_overlay = function(key) {
+			var toggle_zoom_html = (timelines.minute && timelines.minute.length > 5) ? ('<div class="chart_icon ci_tz" title="Toggle Zoom" onClick="$P().chartToggleZoom(\'' + key + '\')"><i class="mdi mdi-image-search-outline"></i></div>') : '';
+			
+			$('.pxc_tt_overlay').html(
+				'<div class="chart_toolbar ct_' + key + '">' + 
+					'<div class="chart_icon ci_tl" title="Toggle Layers" onClick="$P().chartToggleLayers(\'' + key + '\')"><i class="mdi mdi-layers-outline"></i></div>' + 
+					toggle_zoom_html + 
+					'<div class="chart_icon ci_di" title="Download Image" onClick="$P().chartDownload(\'' + key + '\')"><i class="mdi mdi-cloud-download-outline"></i></div>' + 
+					'<div class="chart_icon ci_cl" title="Copy Image Link" onClick="$P().chartCopyLink(\'' + key + '\',this)"><i class="mdi mdi-clipboard-pulse-outline"></i></div>' + 
+				'</div>' 
+			);
+		};
+		
+		this.charts.cpu.on('mouseover', function(event) { render_chart_overlay('cpu'); });
+		this.charts.mem.on('mouseover', function(event) { render_chart_overlay('mem'); });
+		this.charts.disk.on('mouseover', function(event) { render_chart_overlay('disk'); });
+		this.charts.net.on('mouseover', function(event) { render_chart_overlay('net'); });
+		
+		ChartManager.check();
+	}
+	
+	refreshLiveCharts() {
+		// refresh charts for underlying data change
+		var self = this;
+		var job = this.job;
+		var timelines = job.timelines;
+		
+		['cpu', 'mem', 'disk', 'net'].forEach( function(key) {
+			var chart = self.charts[key];
+			chart.layers = [];
+			chart.addLayers( self.getChartLayers(timelines[ chart._timeline ], chart._procKey, chart) );
+		} );
+		
+		ChartManager.check();
+	}
+	
+	chartToggleLayers(key) {
+		// toggle chart between multi-layer or flat
+		var job = this.job;
+		var timelines = job.timelines;
+		var chart = this.charts[key];
+		var pref_key = 'job_chart_layers_' + key;
+		
+		app.setPref(pref_key, !app.getPref(pref_key));
+		if (!app.getPref(pref_key)) app.deletePref(pref_key); // cleanup
+		
+		chart._procLayers = !!app.getPref(pref_key);
+		chart.legend = chart._procLayers;
+		
+		chart.layers = [];
+		chart.addLayers( this.getChartLayers(timelines[ chart._timeline ], chart._procKey, chart) );
+		chart.update();
+	}
+	
+	chartToggleZoom(key) {
+		// toggle chart between second/minute zoom
+		var job = this.job;
+		var timelines = job.timelines;
+		var chart = this.charts[key];
+		
+		chart._timeline = (chart._timeline == 'minute') ? 'second' : 'minute';
+		chart.layers = [];
+		chart.addLayers( this.getChartLayers(timelines[ chart._timeline ], chart._procKey, chart) );
+		chart.update();
+	}
+	
+	chartDownload(key) {
+		// download chart image with custom filename
+		// (this all happens client-side)
+		var chart = this.charts[key];
+		var filename = 'orchestra-job-' + this.job.id + '-' + get_unique_id(8) + '-' + key + '.png';
+		
+		chart.download({
+			filename: filename,
+			format: 'png', 
+			quality: 1.0, 
+			width: 1024, 
+			height: 512, 
+			density: 1
+		});
+	}
+	
+	chartCopyLink(key, elem) {
+		// upload image to server and copy link to it
+		var chart = this.charts[key];
+		var $elem = $(elem);
+		
+		// generate unique ID client-side and "predict" the URL
+		// so we can copy it to the clipboard in the click thread
+		var filename = 'job-' + this.job.id + '-' + get_unique_id(8) + '-' + key + '.png';
+		var clip_url = location.origin + '/files/' + app.username + '/' + filename;
+		copyToClipboard(clip_url);
+		
+		// show intermediate progress in icon
+		$elem.find('i').removeClass().addClass('mdi mdi-clipboard-arrow-up-outline');
+		
+		var opts = {
+			type: 'blob', 
+			format: 'png', 
+			quality: 1.0, 
+			width: 1024, 
+			height: 512, 
+			density: 1
+		};
+		chart.snapshot(opts, function(blob) {
+			// next, upload our blob
+			var form = new FormData();
+			form.append( 'file1', blob, filename );
+			
+			app.api.upload('app/upload_files', form, function(resp) {
+				// file uploaded successfully!  show check in icon
+				$elem.find('i').removeClass().addClass('mdi mdi-clipboard-check-outline success');
+			});
+		}); // snapshot
+	}
+	
+	getProcessTable() {
+		// get table for process list
+		var self = this;
+		var job = this.job;
+		var html = '';
+		var procs = job.procs;
+		var conns = job.conns || [];
+		var rows = [];
+		
+		/* "30835": {
+			"pid": 30835,
+			"parentPid": 30824,
+			"name": "test-plugin.js",
+			"cpu": 69,
+			"cpuu": 0,
+			"cpus": 0,
+			"mem": 0.7,
+			"priority": 31,
+			"memVsz": 409401328,
+			"memRss": 239206400,
+			"nice": 0,
+			"started": 1657514820,
+			"state": "running",
+			"tty": "ttys001",
+			"user": "jhuckaby",
+			"command": "test-plugin.js",
+			"params": "",
+			"path": "node bin"
+		} */
+		
+		var cols = ['Command', 'User', 'PID', 'Parent', 'CPU', 'Memory', 'Age', 'State'];
+		
+		if (this.snapEpoch) {
+			// viewing snapshot
+			var len = job.timelines.minute.length;
+			var idx = find_object_idx( job.timelines.minute, { epoch: this.snapEpoch } );
+			var snap = job.timelines.minute[idx];
+			procs = snap.procs;
+			conns = snap.conns || [];
+			
+			var nice_date_time = this.formatDate(this.snapEpoch, { 
+				year: 'numeric',
+				month: 'short',
+				day: 'numeric',
+				hour: 'numeric',
+				minute: '2-digit'
+			});
+			cols.headerCenter = 'Snapshot (' + nice_date_time + ')';
+			
+			cols.headerRight = '<div class="proc_pagination">';
+			// cols.headerRight += '<i class="mdi mdi-chevron-triple-left" onClick="$P().jumpSnapshotDelta(-60)"></i>';
+			cols.headerRight += '<i class="mdi mdi-chevron-double-left" onClick="$P().jumpSnapshotDelta(-10)" title="Jump 10 min back">&nbsp;</i>';
+			cols.headerRight += '<i class="mdi mdi-chevron-left" onClick="$P().jumpSnapshotDelta(-1)" title="Jump 1 min back">&nbsp;</i>';
+			cols.headerRight += '&nbsp;' + Math.floor(idx + 1) + ' of ' + len + '&nbsp;';
+			cols.headerRight += '<i class="mdi mdi-chevron-right" onClick="$P().jumpSnapshotDelta(1)" title="Jump 1 min forward">&nbsp;</i>';
+			cols.headerRight += '<i class="mdi mdi-chevron-double-right" onClick="$P().jumpSnapshotDelta(10)" title="Jump 10 min forward">&nbsp;</i>';
+			// cols.headerRight += '<i class="mdi mdi-chevron-triple-right" onClick="$P().jumpSnapshotDelta(60)">&nbsp;</i>';
+			cols.headerRight += '</div>';
+		}
+		else if (procs) {
+			// real-time view
+			cols.headerCenter = 'Real-Time View';
+			
+			if (job.timelines.minute.length) {
+				// completed job: default snap to first minute
+				cols.headerRight = '<span class="link" onClick="$P().jumpSnapshotDelta(-1)"><i class="mdi mdi-chevron-double-left">&nbsp;</i>Snapshots</span>';
+			}
+		}
+		else {
+			return '<div style="margin:50px; text-align:center; font-style:italic;">No processes found for job.</div>';
+		}
+		
+		// sort pids by parent/child relationship
+		var root_proc = procs[job.pid];
+		if (!root_proc) return '<div style="margin:50px; text-align:center; font-style:italic;">Root process not found for job.</div>';
+		
+		rows.push( root_proc );
+		var add_children = function(parent, indent) {
+			find_objects(procs, { parentPid: parent.pid }).forEach( function(proc) {
+				proc.indent = indent;
+				rows.push( proc );
+				add_children( proc, indent + 1 );
+			} );
+		};
+		add_children( root_proc, 1 );
+		
+		// get basis for proc age
+		var ref_time = this.snapEpoch || time_now();
+		
+		html += this.getBasicGrid( rows, cols, 'process', function(proc, idx) {
+			var classes = [];
+			var indent_px = Math.floor( (proc.indent || 0) * 16 );
+			
+			var cmd = '<span style="padding-left:' + Math.floor(indent_px - 16) + 'px; font-weight:bold;">';
+			if (indent_px) cmd += '<i class="mdi mdi-subdirectory-arrow-right" style="color:var(--icon-color);">&nbsp;</i>';
+			// cmd += '<i class="mdi mdi-console-network-outline">&nbsp;</i>';
+			// if (proc.path) cmd += proc.path + '/';
+			// cmd += proc.command;
+			// if (proc.params) cmd += ' ' + proc.params;
+			cmd += self.getNiceProcess(proc, true);
+			cmd += '</span>';
+			
+			var tds = [
+				cmd,
+				proc.user,
+				proc.pid,
+				proc.parentPid,
+				pct( proc.cpu, 100 ),
+				get_text_from_bytes( proc.memRss ),
+				get_text_from_seconds( Math.max(0, ref_time - proc.started), true, true ),
+				ucfirst(proc.state || 'unknown')
+			];
+			
+			if (classes.length) tds.className = classes.join(' ');
+			return tds;
+		} ); // grid (procs)
+		
+		// include network conns just below procs
+		if (conns.length) {
+			cols = ['Protocol', 'State', 'Local Address', 'Peer Address', 'Process', 'Age', 'Transferred', 'Avg. Rate'];
+			cols.headerCenter = '&nbsp;';
+			cols.headerRight = '&nbsp;';
+			
+			html += '<div style="height:20px;"></div>';
+			
+			var opts = {
+				cols: cols,
+				rows: conns,
+				data_type: 'connection',
+				class: 'data_grid job_conn_grid'
+			};
+			
+			html += this.getBasicGrid( opts, function(item, idx) {
+				var nice_state = item.state.toString().split(/_/).map( function(word) { return ucfirst(word); } ).join(' ');
+				var age = item.started ? Math.max(0, ref_time - item.started) : 0;
+				var proc = item.pid ? procs[item.pid] : null;
+				return [
+					item.type.toUpperCase(),
+					nice_state,
+					item.local_addr,
+					item.remote_addr,
+					proc ? self.getNiceProcess(proc, true) : (item.pid || '(None)'),
+					get_text_from_seconds( age, true, true ),
+					get_text_from_bytes( item.bytes || 0 ),
+					get_text_from_bytes( Math.floor( (item.bytes || 0) / (age || 1) ) ) + '/sec'
+				];
+			}); // grid (conns)
+		}
+		
+		return html;
+	}
+	
+	showProcessInfo(pid) {
+		// pop dialog with process details
+		var self = this;
+		var job = this.job;
+		var html = '';
+		var procs = job.procs;
+		
+		if (this.snapEpoch) {
+			// viewing snapshot
+			var idx = find_object_idx( job.timelines.minute, { epoch: this.snapEpoch } );
+			var snap = job.timelines.minute[idx];
+			procs = snap.procs;
+		}
+		
+		var proc = procs[pid];
+		if (!proc) return app.doError("Process not found: " + pid);
+		
+		var cmd = '';
+		if (proc.path) cmd += proc.path + '/';
+		cmd += proc.command;
+		if (proc.params) cmd += ' ' + proc.params;
+		
+		html += '<div class="dialog_box_content maximize" style="width:600px; max-height:75vh; overflow-x:hidden; overflow-y:auto;">';
+		
+		// command
+		html += '<div class="summary_grid single" style="margin-top:10px; margin-bottom:20px;">';
+			html += '<div>';
+				html += '<div class="info_label">Command</div>';
+				html += '<div class="info_value overflow" style="word-break:break-word;">' + cmd + '</div>';
+			html += '</div>';
+		html += '</div>';
+		
+		// grid
+		html += '<div class="summary_grid triple">';
+		
+		// pid
+		html += '<div>';
+			html += '<div class="info_label">Process ID</div>';
+			html += '<div class="info_value">' + proc.pid + '</div>';
+		html += '</div>';
+		
+		// parent pid
+		html += '<div>';
+			html += '<div class="info_label">Parent PID</div>';
+			html += '<div class="info_value">' + proc.parentPid + '</div>';
+		html += '</div>';
+		
+		// user
+		html += '<div>';
+			html += '<div class="info_label">User</div>';
+			html += '<div class="info_value">' + (proc.user || 'n/a') + '</div>';
+		html += '</div>';
+		
+		// cpu
+		html += '<div>';
+			html += '<div class="info_label">CPU %</div>';
+			html += '<div class="info_value">' + short_float(proc.cpu || 0) + '%</div>';
+		html += '</div>';
+		
+		// cpuu (user)
+		html += '<div>';
+			html += '<div class="info_label">CPU % (User)</div>';
+			html += '<div class="info_value">' + short_float(proc.cpuu || 0) + '%</div>';
+		html += '</div>';
+		
+		// cpus (system)
+		html += '<div>';
+			html += '<div class="info_label">CPU % (System)</div>';
+			html += '<div class="info_value">' + short_float(proc.cpus || 0) + '%</div>';
+		html += '</div>';
+		
+		// mem (%)
+		html += '<div>';
+			html += '<div class="info_label">Memory %</div>';
+			html += '<div class="info_value">' + short_float(proc.mem || 0) + '%</div>';
+		html += '</div>';
+		
+		// memVsz (virtual)
+		html += '<div>';
+			html += '<div class="info_label">Virtual Memory</div>';
+			html += '<div class="info_value">' + get_text_from_bytes(proc.memVsz || 0) + '</div>';
+		html += '</div>';
+		
+		// memRss (resident)
+		html += '<div>';
+			html += '<div class="info_label">Resident Memory</div>';
+			html += '<div class="info_value">' + get_text_from_bytes(proc.memRss || 0) + '</div>';
+		html += '</div>';
+		
+		// started (age)
+		html += '<div>';
+			html += '<div class="info_label">Age</div>';
+			html += '<div class="info_value">' + get_text_from_seconds( proc.age || 0, false, true ) + '</div>';
+		html += '</div>';
+		
+		// state
+		html += '<div>';
+			html += '<div class="info_label">State</div>';
+			html += '<div class="info_value">' + ucfirst(proc.state) + '</div>';
+		html += '</div>';
+		
+		// tty
+		html += '<div>';
+			html += '<div class="info_label">TTY</div>';
+			html += '<div class="info_value">' + (proc.tty || 'n/a') + '</div>';
+		html += '</div>';
+		
+		// priority
+		html += '<div>';
+			html += '<div class="info_label">Priority</div>';
+			html += '<div class="info_value">' + (proc.priority || 'n/a') + '</div>';
+		html += '</div>';
+		
+		// nice
+		html += '<div>';
+			html += '<div class="info_label">Nice</div>';
+			html += '<div class="info_value">' + (proc.nice || 'n/a') + '</div>';
+		html += '</div>';
+		
+		// disk
+		html += '<div>';
+			html += '<div class="info_label">Total I/O</div>';
+			html += '<div class="info_value">' + get_text_from_bytes(proc.disk || 0) + '</div>';
+		html += '</div>';
+		
+		// conns
+		html += '<div>';
+			html += '<div class="info_label">Net Connections</div>';
+			html += '<div class="info_value">' + commify(proc.conns || 0) + '</div>';
+		html += '</div>';
+		
+		// net
+		html += '<div>';
+			html += '<div class="info_label">Net Throughput</div>';
+			html += '<div class="info_value">' + get_text_from_bytes(proc.net || 0) + '/sec</div>';
+		html += '</div>';
+		
+		html += '</div>'; // summary_grid
+		html += '</div>'; // wrapper
+		
+		var buttons_html = "";
+		// buttons_html += '<div class="button" onMouseUp="$P().copy_unit_results('+idx+')">Copy to Clipboard</div>';
+		buttons_html += '<div class="button primary" onMouseUp="Dialog.confirm_click(true)">Close</div>';
+		
+		Dialog.showSimpleDialog('Process Details', html, buttons_html);
+		
+		// special mode for key capture
+		Dialog.active = 'confirmation';
+		Dialog.confirm_callback = function(result) { 
+			if (result) Dialog.hide(); 
+		};
+	}
+	
+	jumpSnapshotDelta(delta) {
+		// jump forward or backward in snapshot time
+		var job = this.job;
+		var idx = -1;
+		var len = job.timelines.minute.length;
+		
+		// special case: jumping from real-time drops us on the last snap
+		if (!this.snapEpoch) {
+			idx = len;
+			delta = -1;
+		}
+		else {
+			idx = find_object_idx( job.timelines.minute, { epoch: this.snapEpoch } );
+		}
+		
+		// special case: if we're sitting on the very last snapshot in the array
+		// and jumping forward, and the job is in progress, switch to real-time
+		if ((idx == len - 1) && (delta > 0) && (job.state != 'complete')) {
+			this.snapEpoch = null;
+		}
+		else {
+			idx += delta;
+			if (idx < 0) idx = 0;
+			else if (idx >= job.timelines.minute.length) idx = job.timelines.minute.length - 1;
+			var snap = job.timelines.minute[idx];
+			this.snapEpoch = snap.epoch;
+		}
+		
+		this.div.find('#d_process_table').html( this.getProcessTable() );
+	}
+	
+	updateLiveProcessTable() {
+		// update process table if we're live, and it is visible
+		var $div = this.div.find('#d_process_table');
+		if (!this.snapEpoch && $div.visible(true)) {
+			$div.html( this.getProcessTable() );
+		}
+	}
+	
+	updateSecondTimeline() {
+		// add new row to second timeline
+		// called from onStatusUpdate (every 1s)
+		var job = this.job;
+		var timelines = job.timelines;
+		
+		// second
+		var last_second = timelines.second.length ? timelines.second[timelines.second.length - 1].epoch : 0;
+		if (!last_second || (last_second != job.updated)) {
+			timelines.second.push({ epoch: job.updated, procs: job.procs });
+			if (timelines.second.length > 300) timelines.second.shift();
+		}
+	}
+	
+	updateMinuteTimeline(updates) { // TODO: is this function dead?  it has a console.log in it!
+		// special handler for updating minute timeline data
+		// comes in from special page data event, every 1m
+		var cur_min_epoch = updates.epoch;
+		var procs = updates.procs;
+		var conns = updates.conns;
+		
+		console.log( "Got here, in updateMinuteTimeline", updates );
+		
+		var job = this.job;
+		var timelines = job.timelines;
+		
+		if (!timelines.minute.length || (timelines.minute[ timelines.minute.length - 1 ].epoch != cur_min_epoch)) {
+			timelines.minute.push({ 
+				epoch: cur_min_epoch, 
+				procs: procs || {}, 
+				conns: conns || [] 
+			});
+			if (timelines.minute.length > 1440) timelines.minute.shift();
+		}
+	}
+	
+	getFileTable() {
+		// get table of job files, with download links
+		var self = this;
+		var job = this.job;
+		var files = job.files;
+		var html = '';
+		var cols = ['Filename', 'Size', 'Job', 'Server', 'Actions'];
+		
+		html += this.getBasicGrid( files, cols, 'file', function(file, idx) {
+			var filename = basename(file.path || '(Unknown)');
+			var url = '/' + file.path;
+			var classes = [];
+			var actions = [
+				'<a href="' + url + '" target="_blank"><b>View</b></a>',
+				'<a href="' + url + '?download=1"><b>Download</b></a>',
+				'<span class="link" onMouseUp="$P().do_delete_file(' + idx + ')"><b>Delete</b></span>'
+			];
+			
+			var tds = [
+				'<b>' + self.getNiceFile(filename, url) + '</b>',
+				get_text_from_bytes( file.size || 0 ),
+				self.getNiceJob(file.job || job.id),
+				self.getNiceServer(file.server || job.server),
+				actions.join(' | ')
+			];
+			
+			if (classes.length) tds.className = classes.join(' ');
+			return tds;
+		} ); // getBasicGrid
+		
+		return html;
+	}
+	
+	do_delete_file(idx) {
+		// delete file from job
+		var self = this;
+		var job = this.job;
+		var file = job.files[idx];
+		var filename = basename(file.path || '(Unknown)');
+		
+		Dialog.confirmDanger( 'Delete File', "Are you sure you want to permanently delete the job file &ldquo;<b>" + filename + "</b>&rdquo;?  There is no way to undo this operation.", 'Delete', function(result) {
+			if (!result) return;
+			app.clearError();
+			Dialog.showProgress( 1.0, "Deleting File..." );
+			
+			app.api.post( 'app/delete_job_file', { id: job.id, path: file.path }, function(resp) {
+				Dialog.hideProgress();
+				app.showMessage('success', "Job file &ldquo;<b>" + filename + "</b>&rdquo; was deleted successfully.");
+				
+				if (!self.active) return; // sanity
+				
+				job.files.splice( idx, 1 );
+				self.div.find('#d_job_files > .box_content').html( self.getFileTable() );
+			} ); // api.post
+		} ); // confirm
+	}
+	
+	do_delete_job() {
+		// delete job and leave page
+		var self = this;
+		var job = this.job;
+		
+		Dialog.confirmDanger( 'Delete Job', "Are you sure you want to permanently delete the current job, including all logs and files?  There is no way to undo this operation.", 'Delete', function(result) {
+			if (!result) return;
+			app.clearError();
+			Dialog.showProgress( 1.0, "Deleting Job..." );
+			
+			app.api.post( 'app/delete_job', { id: job.id }, function(resp) {
+				Dialog.hideProgress();
+				app.showMessage('success', "Job ID &ldquo;<b>" + job.id + "</b>&rdquo; was deleted successfully.");
+				
+				if (!self.active) return; // sanity
+				
+				Nav.go('#Events?sub=view&id=' + job.event);
+			} ); // api.post
+		} ); // confirm
+	}
+	
+	do_abort_job() {
+		// abort current job (page should automatically update via data stream)
+		var self = this;
+		var job = this.job;
+		
+		Dialog.confirmDanger( 'Abort Job', "Are you sure you want to abort the current job?", 'Abort', function(result) {
+			if (!result) return;
+			app.clearError();
+			Dialog.showProgress( 1.0, "Aborting Job..." );
+			
+			app.api.post( 'app/abort_job', { id: job.id }, function(resp) {
+				Dialog.hideProgress();
+				app.showMessage('success', "The job was aborted successfully.");
+			} ); // api.post
+		} ); // confirm
+	}
+	
+	do_run_again() {
+		// run current job again
+		var self = this;
+		var job = this.job;
+		var event = find_object( app.events, { id: job.event } );
+		if (!event) return app.doError("Failed to locate event ID: " + job.event);
+		
+		var new_job = deep_copy_object(event);
+		new_job.params = job.params;
+		new_job.parent = job.parent;
+		
+		Dialog.showProgress( 1.0, "Launching Job..." );
+		
+		app.api.post( 'app/run_event', new_job, function(resp) {
+			Dialog.hideProgress();
+			app.showMessage('success', "The job was started successfully.");
+			
+			if (!self.active) return; // sanity
+			
+			// jump immediately to live details page
+			Nav.go('Job?id=' + resp.id);
+		} );
+	}
+	
+	do_notify_me() {
+		// toggle email notification for current user
+		var job = this.job;
+		var notify_me = !!find_object( job.actions, { trigger: 'complete', type: 'email', email: app.user.email } );
+		
+		if (!notify_me) {
+			// add notification
+			job.actions.push({ trigger: 'complete', type: 'email', email: app.user.email });
+			notify_me = true;
+		}
+		else {
+			// remove notification
+			delete_object( job.actions, { trigger: 'complete', type: 'email', email: app.user.email } );
+			notify_me = false;
+		}
+		
+		app.clearError();
+		app.api.post( 'app/update_job', { id: job.id, actions: job.actions }, function(resp) {
+			app.showMessage('success', notify_me ? 'You will be notified via email when the job completes.' : 'You will no longer be notified regarding this job.');
+		} ); // api.post
+		
+		var notify_icon = notify_me ? 'checkbox-marked-circle-outline' : 'email-outline';
+		this.div.find('#btn_job_notify > i').removeClass().addClass('mdi mdi-' + notify_icon);
+	}
+	
+	do_download_job_log() {
+		// download raw complete job log (no ANSI decoding)
+		var job = this.job;
+		window.location = '/api/app/download_job_log?id=' + job.id + '&t=' + this.token;
+	}
+	
+	do_view_job_log() {
+		// download raw complete job log (no ANSI decoding)
+		var job = this.job;
+		window.open( app.base_api_url + '/app/view_job_log?id=' + job.id + '&t=' + this.token );
+	}
+	
+	kill_chart_hover() {
+		// remove hover on all charts, for page update (e.g. alerts)
+		if (this.charts) {
+			for (var key in this.charts) {
+				this.charts[key].cancelHover();
+			}
+		}
+		$('.pxc_tt_overlay').remove();
+	}
+	
+	onStatusUpdate(data) {
+		// hook main app status update (every 1s)
+		// use this as a trigger to update live job in progress
+		// and to detect job completion
+		if (!this.job || (this.job.state == 'complete')) return;
+		
+		var updates = app.activeJobs[ this.job.id ];
+		if (updates) {
+			for (var key in updates) this.job[key] = updates[key];
+			this.updateLiveJobStats();
+			this.updateSecondTimeline();
+			this.refreshLiveCharts();
+			this.updateLiveProcessTable();
+			this.updateUserContent();
+		}
+		
+		// special behavior for queued jobs, they are NOT in app.activeJobs client-side, so just wait for it to appear
+		if (this.job.state == 'queued') {
+			this.updateLiveJobStats(); // basically for elapsed time
+			return;
+		}
+		
+		if (!updates || (updates.state == 'complete')) {
+			// job has completed under our noses!  reload page!
+			Debug.trace('job', "Job has completed, refreshing page");
+			Nav.refresh();
+		}
+	}
+	
+	onPageUpdate(pcmd, pdata) {
+		// receive data packet for this page specifically (i.e. live log append)
+		if (!this.job) return;
+		
+		switch (pcmd) {
+			case 'log_append':
+				var text = pdata.text;
+				if (this.liveLogReady) this.appendLiveJobLog(text);
+			break;
+			
+			case 'log_uploaded':
+				this.getCompletedJobLog();
+			break;
+			
+			case 'minute_append':
+				this.updateMinuteTimeline(pdata);
+			break;
+		} // switch
+	}
+	
+	onDataUpdate(key, data) {
+		// refresh things as needed
+		switch (key) {
+			case 'activeAlerts': this.getJobAlerts(); this.kill_chart_hover(); break;
+		}
+	}
+	
+	onDeactivate() {
+		// called when page is deactivated
+		delete this.job;
+		delete this.logSpool;
+		
+		// destroy charts if applicable
+		if (this.charts) {
+			for (var key in this.charts) {
+				this.charts[key].destroy();
+			}
+			delete this.charts;
+		}
+		
+		this.div.html( '' );
+		return true;
+	}
+	
+};

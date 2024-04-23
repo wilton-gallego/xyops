@@ -1,0 +1,4392 @@
+{
+	"storage": [
+		[
+			"listPush",
+			"global/categories",
+			{
+				"id": "cat1",
+				"title": "Computer Games",
+				"enabled": true,
+				"sort_order": 1,
+				"username": "admin",
+				"modified": 1650697335,
+				"created": 1650697335,
+				"notes": "",
+				"limits": [],
+				"actions": []
+			}
+		],
+		[
+			"listPush",
+			"global/categories",
+			{
+				"id": "cat2",
+				"title": "Ranching",
+				"enabled": true,
+				"sort_order": 2,
+				"username": "admin",
+				"modified": 1650653457,
+				"created": 1650653457,
+				"notes": "",
+				"limits": [],
+				"actions": []
+			}
+		],
+		[
+			"listPush",
+			"global/categories",
+			{
+				"id": "cat3",
+				"title": "Restaurants",
+				"enabled": true,
+				"sort_order": 3,
+				"username": "admin",
+				"modified": 1651073992,
+				"created": 1651073992,
+				"notes": "",
+				"limits": [],
+				"actions": []
+			}
+		],
+		[
+			"listPush",
+			"global/categories",
+			{
+				"id": "cat4",
+				"title": "Hospital & Health Care",
+				"enabled": true,
+				"sort_order": 4,
+				"username": "admin",
+				"modified": 1650832720,
+				"created": 1650832720,
+				"notes": "",
+				"limits": [],
+				"actions": []
+			}
+		],
+		[
+			"listPush",
+			"global/categories",
+			{
+				"id": "cat5",
+				"title": "Public Relations and Communications",
+				"enabled": true,
+				"sort_order": 5,
+				"username": "admin",
+				"modified": 1650843029,
+				"created": 1650843029,
+				"notes": "",
+				"limits": [],
+				"actions": []
+			}
+		],
+		[
+			"listPush",
+			"global/categories",
+			{
+				"id": "cat6",
+				"title": "Legislative Office",
+				"enabled": true,
+				"sort_order": 6,
+				"username": "admin",
+				"modified": 1650584560,
+				"created": 1650584560,
+				"notes": "",
+				"limits": [],
+				"actions": []
+			}
+		],
+		[
+			"listPush",
+			"global/categories",
+			{
+				"id": "cat7",
+				"title": "Luxury Goods & Jewelry",
+				"enabled": true,
+				"sort_order": 7,
+				"username": "admin",
+				"modified": 1650954433,
+				"created": 1650954433,
+				"notes": "",
+				"limits": [],
+				"actions": []
+			}
+		],
+		[
+			"listPush",
+			"global/categories",
+			{
+				"id": "cat8",
+				"title": "Public Policy",
+				"enabled": true,
+				"sort_order": 8,
+				"username": "admin",
+				"modified": 1650852918,
+				"created": 1650852918,
+				"notes": "",
+				"limits": [],
+				"actions": []
+			}
+		],
+		[
+			"listPush",
+			"global/categories",
+			{
+				"id": "cat9",
+				"title": "Maritime",
+				"enabled": true,
+				"sort_order": 9,
+				"username": "admin",
+				"modified": 1650883758,
+				"created": 1650883758,
+				"notes": "",
+				"limits": [],
+				"actions": []
+			}
+		],
+		[
+			"listPush",
+			"global/categories",
+			{
+				"id": "cat10",
+				"title": "Performing Arts",
+				"enabled": true,
+				"sort_order": 10,
+				"username": "admin",
+				"modified": 1651081174,
+				"created": 1651081174,
+				"notes": "",
+				"limits": [],
+				"actions": []
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event1",
+				"title": "Reverse-engineered mission-critical Graphic Interface",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650962945,
+				"created": 1650962945,
+				"category": "cat1",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 52,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"minutes": [
+							50
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event2",
+				"title": "Re-engineered web-enabled conglomeration",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650662810,
+				"created": 1650662810,
+				"category": "cat7",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 55;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"weekdays": [
+							2
+						],
+						"hours": [
+							15
+						],
+						"minutes": [
+							17
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event3",
+				"title": "Optional 24/7 support",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651033086,
+				"created": 1651033086,
+				"category": "cat6",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 43,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"months": [
+							1
+						],
+						"days": [
+							21
+						],
+						"hours": [
+							1
+						],
+						"minutes": [
+							9
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event4",
+				"title": "Optional empowering Graphic Interface",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650735555,
+				"created": 1650735555,
+				"category": "cat4",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 34,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"weekdays": [
+							5
+						],
+						"hours": [
+							8
+						],
+						"minutes": [
+							26
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event5",
+				"title": "Pre-emptive needs-based workforce",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650816836,
+				"created": 1650816836,
+				"category": "cat6",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 7;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"hours": [
+							3
+						],
+						"minutes": [
+							28
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event6",
+				"title": "Digitized cohesive firmware",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651330905,
+				"created": 1651330905,
+				"category": "cat9",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"years": [
+							2022
+						],
+						"months": [
+							6
+						],
+						"days": [
+							17
+						],
+						"hours": [
+							8
+						],
+						"minutes": [
+							54
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event7",
+				"title": "Customizable 24 hour solution",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650830538,
+				"created": 1650830538,
+				"category": "cat7",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 50;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"years": [
+							2023
+						],
+						"months": [
+							3
+						],
+						"days": [
+							11
+						],
+						"hours": [
+							19
+						],
+						"minutes": [
+							11
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event8",
+				"title": "Intuitive contextually-based toolset",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650694854,
+				"created": 1650694854,
+				"category": "cat8",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"minutes": [
+							40
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event9",
+				"title": "Business-focused bifurcated success",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650572027,
+				"created": 1650572027,
+				"category": "cat10",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							19
+						],
+						"hours": [
+							20
+						],
+						"minutes": [
+							57
+						]
+					},
+					{
+						"type": "catchup",
+						"enabled": true
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event10",
+				"title": "Virtual tertiary framework",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651340454,
+				"created": 1651340454,
+				"category": "cat2",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 51,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							14
+						],
+						"hours": [
+							7
+						],
+						"minutes": [
+							16
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event11",
+				"title": "Cross-group client-driven application",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651225274,
+				"created": 1651225274,
+				"category": "cat10",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"months": [
+							8
+						],
+						"days": [
+							12
+						],
+						"hours": [
+							9
+						],
+						"minutes": [
+							25
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event12",
+				"title": "Digitized 4th generation moderator",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651200511,
+				"created": 1651200511,
+				"category": "cat10",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 20;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"years": [
+							2023
+						],
+						"months": [
+							3
+						],
+						"days": [
+							19
+						],
+						"hours": [
+							3
+						],
+						"minutes": [
+							51
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event13",
+				"title": "Decentralized tertiary artificial intelligence",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651245058,
+				"created": 1651245058,
+				"category": "cat10",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"months": [
+							4
+						],
+						"days": [
+							7
+						],
+						"hours": [
+							15
+						],
+						"minutes": [
+							38
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event14",
+				"title": "Progressive web-enabled application",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651074246,
+				"created": 1651074246,
+				"category": "cat3",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"weekdays": [
+							3
+						],
+						"hours": [
+							15
+						],
+						"minutes": [
+							24
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event15",
+				"title": "Quality-focused demand-driven collaboration",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650621536,
+				"created": 1650621536,
+				"category": "cat9",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 11;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							30
+						],
+						"hours": [
+							21
+						],
+						"minutes": [
+							28
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event16",
+				"title": "Visionary attitude-oriented forecast",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650523557,
+				"created": 1650523557,
+				"category": "cat9",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 17,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							26
+						],
+						"hours": [
+							15
+						],
+						"minutes": [
+							51
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event17",
+				"title": "Phased 24/7 complexity",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650668899,
+				"created": 1650668899,
+				"category": "cat5",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 40,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"months": [
+							2
+						],
+						"days": [
+							16
+						],
+						"hours": [
+							15
+						],
+						"minutes": [
+							1
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event18",
+				"title": "Networked clear-thinking moratorium",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651201744,
+				"created": 1651201744,
+				"category": "cat8",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 50;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							11
+						],
+						"hours": [
+							19
+						],
+						"minutes": [
+							44
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event19",
+				"title": "Intuitive directional knowledge user",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651336622,
+				"created": 1651336622,
+				"category": "cat6",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 39;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"hours": [
+							19
+						],
+						"minutes": [
+							28
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event20",
+				"title": "Sharable encompassing neural-net",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650975681,
+				"created": 1650975681,
+				"category": "cat10",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 42,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"years": [
+							2022
+						],
+						"months": [
+							12
+						],
+						"days": [
+							29
+						],
+						"hours": [
+							22
+						],
+						"minutes": [
+							5
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event21",
+				"title": "Managed homogeneous access",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650973206,
+				"created": 1650973206,
+				"category": "cat1",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 5;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"weekdays": [
+							0
+						],
+						"hours": [
+							6
+						],
+						"minutes": [
+							31
+						]
+					},
+					{
+						"type": "catchup",
+						"enabled": true
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event22",
+				"title": "Re-contextualized user-facing challenge",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650524246,
+				"created": 1650524246,
+				"category": "cat9",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 57,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"years": [
+							2023
+						],
+						"months": [
+							3
+						],
+						"days": [
+							2
+						],
+						"hours": [
+							22
+						],
+						"minutes": [
+							19
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event23",
+				"title": "Integrated didactic interface",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651039548,
+				"created": 1651039548,
+				"category": "cat7",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 11;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"minutes": [
+							44
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event24",
+				"title": "Persistent bottom-line leverage",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650777825,
+				"created": 1650777825,
+				"category": "cat1",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 46,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							14
+						],
+						"hours": [
+							19
+						],
+						"minutes": [
+							48
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event25",
+				"title": "Polarised non-volatile toolset",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651172347,
+				"created": 1651172347,
+				"category": "cat6",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 23;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							3
+						],
+						"hours": [
+							6
+						],
+						"minutes": [
+							14
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event26",
+				"title": "Innovative scalable hierarchy",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651075575,
+				"created": 1651075575,
+				"category": "cat3",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"months": [
+							12
+						],
+						"days": [
+							13
+						],
+						"hours": [
+							2
+						],
+						"minutes": [
+							9
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event27",
+				"title": "Switchable homogeneous support",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651117054,
+				"created": 1651117054,
+				"category": "cat1",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"hours": [
+							4
+						],
+						"minutes": [
+							27
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event28",
+				"title": "Horizontal systematic knowledge base",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650780983,
+				"created": 1650780983,
+				"category": "cat2",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 56,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"weekdays": [
+							5
+						],
+						"hours": [
+							14
+						],
+						"minutes": [
+							54
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event29",
+				"title": "Robust web-enabled hub",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650905033,
+				"created": 1650905033,
+				"category": "cat3",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 56;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"hours": [
+							6
+						],
+						"minutes": [
+							16
+						]
+					},
+					{
+						"type": "catchup",
+						"enabled": true
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event30",
+				"title": "Enhanced client-server throughput",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650918769,
+				"created": 1650918769,
+				"category": "cat1",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"hours": [
+							14
+						],
+						"minutes": [
+							38
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event31",
+				"title": "Profit-focused leading edge adapter",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651039009,
+				"created": 1651039009,
+				"category": "cat7",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 49;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							14
+						],
+						"hours": [
+							16
+						],
+						"minutes": [
+							30
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event32",
+				"title": "Team-oriented even-keeled protocol",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651376201,
+				"created": 1651376201,
+				"category": "cat4",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 3,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							23
+						],
+						"hours": [
+							23
+						],
+						"minutes": [
+							30
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event33",
+				"title": "Multi-tiered foreground access",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651018451,
+				"created": 1651018451,
+				"category": "cat1",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 56;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "single",
+						"enabled": true,
+						"epoch": 1665894413
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event34",
+				"title": "Operative incremental conglomeration",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650594765,
+				"created": 1650594765,
+				"category": "cat6",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"minutes": [
+							5
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event35",
+				"title": "Optimized systematic open system",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651174538,
+				"created": 1651174538,
+				"category": "cat6",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 9;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"hours": [
+							20
+						],
+						"minutes": [
+							46
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event36",
+				"title": "Inverse non-volatile portal",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650801340,
+				"created": 1650801340,
+				"category": "cat3",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 2,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"hours": [
+							9
+						],
+						"minutes": [
+							54
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event37",
+				"title": "Monitored intangible software",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650682722,
+				"created": 1650682722,
+				"category": "cat3",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							2
+						],
+						"hours": [
+							20
+						],
+						"minutes": [
+							1
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event38",
+				"title": "Reactive foreground secured line",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650941104,
+				"created": 1650941104,
+				"category": "cat10",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 55,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "single",
+						"enabled": true,
+						"epoch": 1667416063
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event39",
+				"title": "Exclusive executive benchmark",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651031059,
+				"created": 1651031059,
+				"category": "cat2",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 37;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							20
+						],
+						"hours": [
+							10
+						],
+						"minutes": [
+							53
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event40",
+				"title": "Optional zero administration contingency",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650680796,
+				"created": 1650680796,
+				"category": "cat9",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 28,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							28
+						],
+						"hours": [
+							6
+						],
+						"minutes": [
+							46
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event41",
+				"title": "Upgradable modular core",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651166368,
+				"created": 1651166368,
+				"category": "cat6",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 23,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							27
+						],
+						"hours": [
+							14
+						],
+						"minutes": [
+							27
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event42",
+				"title": "Exclusive intangible definition",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650532715,
+				"created": 1650532715,
+				"category": "cat5",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"minutes": [
+							40
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event43",
+				"title": "Synergistic zero defect intranet",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651143360,
+				"created": 1651143360,
+				"category": "cat3",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "single",
+						"enabled": true,
+						"epoch": 1673253342
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event44",
+				"title": "Open-architected fresh-thinking task-force",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651239688,
+				"created": 1651239688,
+				"category": "cat7",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 45;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							28
+						],
+						"hours": [
+							1
+						],
+						"minutes": [
+							10
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event45",
+				"title": "Object-based scalable artificial intelligence",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650716546,
+				"created": 1650716546,
+				"category": "cat7",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							27
+						],
+						"hours": [
+							5
+						],
+						"minutes": [
+							25
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event46",
+				"title": "Phased modular capability",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651154635,
+				"created": 1651154635,
+				"category": "cat5",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"hours": [
+							5
+						],
+						"minutes": [
+							54
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event47",
+				"title": "Profit-focused 3rd generation capacity",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650661566,
+				"created": 1650661566,
+				"category": "cat4",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 3,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "single",
+						"enabled": true,
+						"epoch": 1658166171
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event48",
+				"title": "Distributed real-time attitude",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651231459,
+				"created": 1651231459,
+				"category": "cat3",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"months": [
+							9
+						],
+						"days": [
+							26
+						],
+						"hours": [
+							19
+						],
+						"minutes": [
+							48
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event49",
+				"title": "Fundamental client-driven capacity",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650747973,
+				"created": 1650747973,
+				"category": "cat4",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							21
+						],
+						"hours": [
+							7
+						],
+						"minutes": [
+							7
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event50",
+				"title": "Reduced modular concept",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651098947,
+				"created": 1651098947,
+				"category": "cat2",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 44,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"minutes": [
+							11
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event51",
+				"title": "Extended interactive alliance",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651196554,
+				"created": 1651196554,
+				"category": "cat1",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 24;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"hours": [
+							8
+						],
+						"minutes": [
+							28
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event52",
+				"title": "Open-source holistic interface",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650575527,
+				"created": 1650575527,
+				"category": "cat4",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 14;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"years": [
+							2022
+						],
+						"months": [
+							6
+						],
+						"days": [
+							27
+						],
+						"hours": [
+							19
+						],
+						"minutes": [
+							9
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event53",
+				"title": "Total bandwidth-monitored workforce",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650606719,
+				"created": 1650606719,
+				"category": "cat5",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"months": [
+							11
+						],
+						"days": [
+							22
+						],
+						"hours": [
+							11
+						],
+						"minutes": [
+							57
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event54",
+				"title": "Sharable fault-tolerant Graphic Interface",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651090352,
+				"created": 1651090352,
+				"category": "cat4",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 21,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							29
+						],
+						"hours": [
+							0
+						],
+						"minutes": [
+							33
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event55",
+				"title": "Diverse didactic strategy",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651223396,
+				"created": 1651223396,
+				"category": "cat7",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 9,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							7
+						],
+						"hours": [
+							3
+						],
+						"minutes": [
+							31
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event56",
+				"title": "Business-focused 5th generation application",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651118777,
+				"created": 1651118777,
+				"category": "cat6",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "single",
+						"enabled": true,
+						"epoch": 1679775812
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event57",
+				"title": "Organic tertiary matrix",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650564695,
+				"created": 1650564695,
+				"category": "cat9",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"minutes": [
+							34
+						]
+					},
+					{
+						"type": "catchup",
+						"enabled": true
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event58",
+				"title": "Multi-lateral composite array",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651218368,
+				"created": 1651218368,
+				"category": "cat5",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 54;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"years": [
+							2022
+						],
+						"months": [
+							8
+						],
+						"days": [
+							24
+						],
+						"hours": [
+							8
+						],
+						"minutes": [
+							4
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event59",
+				"title": "Diverse optimizing process improvement",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650902131,
+				"created": 1650902131,
+				"category": "cat7",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 23;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"months": [
+							5
+						],
+						"days": [
+							3
+						],
+						"hours": [
+							12
+						],
+						"minutes": [
+							1
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event60",
+				"title": "Quality-focused next generation pricing structure",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650865372,
+				"created": 1650865372,
+				"category": "cat7",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 15;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"years": [
+							2023
+						],
+						"months": [
+							1
+						],
+						"days": [
+							29
+						],
+						"hours": [
+							14
+						],
+						"minutes": [
+							53
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event61",
+				"title": "Adaptive explicit flexibility",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650962153,
+				"created": 1650962153,
+				"category": "cat2",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 17;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"hours": [
+							0
+						],
+						"minutes": [
+							17
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event62",
+				"title": "Business-focused even-keeled policy",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651062402,
+				"created": 1651062402,
+				"category": "cat6",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"minutes": [
+							9
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event63",
+				"title": "Horizontal systemic policy",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651330788,
+				"created": 1651330788,
+				"category": "cat2",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 19,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"years": [
+							2023
+						],
+						"months": [
+							2
+						],
+						"days": [
+							1
+						],
+						"hours": [
+							11
+						],
+						"minutes": [
+							51
+						]
+					},
+					{
+						"type": "catchup",
+						"enabled": true
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event64",
+				"title": "Diverse zero tolerance monitoring",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650915241,
+				"created": 1650915241,
+				"category": "cat10",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 7;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"minutes": [
+							54
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event65",
+				"title": "Proactive upward-trending algorithm",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651305513,
+				"created": 1651305513,
+				"category": "cat2",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"months": [
+							2
+						],
+						"days": [
+							23
+						],
+						"hours": [
+							0
+						],
+						"minutes": [
+							15
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event66",
+				"title": "Open-architected 4th generation hierarchy",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650811990,
+				"created": 1650811990,
+				"category": "cat6",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "single",
+						"enabled": true,
+						"epoch": 1663971182
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event67",
+				"title": "Advanced 24/7 parallelism",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651327164,
+				"created": 1651327164,
+				"category": "cat5",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 56;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"months": [
+							4
+						],
+						"days": [
+							17
+						],
+						"hours": [
+							12
+						],
+						"minutes": [
+							17
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event68",
+				"title": "Balanced systematic structure",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650852295,
+				"created": 1650852295,
+				"category": "cat4",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 29,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"weekdays": [
+							1
+						],
+						"hours": [
+							16
+						],
+						"minutes": [
+							0
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event69",
+				"title": "Optional contextually-based leverage",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650691760,
+				"created": 1650691760,
+				"category": "cat2",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 7,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							21
+						],
+						"hours": [
+							19
+						],
+						"minutes": [
+							5
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event70",
+				"title": "Customer-focused 24/7 hub",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650653132,
+				"created": 1650653132,
+				"category": "cat2",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 33;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"years": [
+							2022
+						],
+						"months": [
+							6
+						],
+						"days": [
+							2
+						],
+						"hours": [
+							12
+						],
+						"minutes": [
+							14
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event71",
+				"title": "User-centric national adapter",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650650674,
+				"created": 1650650674,
+				"category": "cat2",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"hours": [
+							10
+						],
+						"minutes": [
+							35
+						]
+					},
+					{
+						"type": "catchup",
+						"enabled": true
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event72",
+				"title": "Configurable neutral process improvement",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650894514,
+				"created": 1650894514,
+				"category": "cat10",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"hours": [
+							9
+						],
+						"minutes": [
+							45
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event73",
+				"title": "Virtual interactive customer loyalty",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650523135,
+				"created": 1650523135,
+				"category": "cat4",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 56;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"years": [
+							2022
+						],
+						"months": [
+							7
+						],
+						"days": [
+							8
+						],
+						"hours": [
+							17
+						],
+						"minutes": [
+							32
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event74",
+				"title": "Polarised attitude-oriented solution",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651333560,
+				"created": 1651333560,
+				"category": "cat9",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 13,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"months": [
+							2
+						],
+						"days": [
+							18
+						],
+						"hours": [
+							18
+						],
+						"minutes": [
+							56
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event75",
+				"title": "Sharable value-added secured line",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651072705,
+				"created": 1651072705,
+				"category": "cat10",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 41;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "single",
+						"enabled": true,
+						"epoch": 1673863699
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event76",
+				"title": "Re-contextualized scalable circuit",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650567937,
+				"created": 1650567937,
+				"category": "cat3",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"weekdays": [
+							4
+						],
+						"hours": [
+							3
+						],
+						"minutes": [
+							47
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event77",
+				"title": "User-friendly encompassing array",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650876159,
+				"created": 1650876159,
+				"category": "cat4",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 29,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"weekdays": [
+							5
+						],
+						"hours": [
+							10
+						],
+						"minutes": [
+							33
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event78",
+				"title": "Organized upward-trending model",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650995324,
+				"created": 1650995324,
+				"category": "cat8",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 23;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							9
+						],
+						"hours": [
+							11
+						],
+						"minutes": [
+							51
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event79",
+				"title": "Configurable incremental portal",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651156434,
+				"created": 1651156434,
+				"category": "cat3",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"minutes": [
+							23
+						]
+					},
+					{
+						"type": "catchup",
+						"enabled": true
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event80",
+				"title": "Advanced hybrid toolset",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651070572,
+				"created": 1651070572,
+				"category": "cat2",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 31,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"years": [
+							2022
+						],
+						"months": [
+							7
+						],
+						"days": [
+							16
+						],
+						"hours": [
+							1
+						],
+						"minutes": [
+							50
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event81",
+				"title": "Profit-focused systemic attitude",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650811312,
+				"created": 1650811312,
+				"category": "cat4",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"hours": [
+							14
+						],
+						"minutes": [
+							28
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event82",
+				"title": "Public-key radical circuit",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651249934,
+				"created": 1651249934,
+				"category": "cat3",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 37,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							16
+						],
+						"hours": [
+							20
+						],
+						"minutes": [
+							31
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event83",
+				"title": "Persevering tangible groupware",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651368006,
+				"created": 1651368006,
+				"category": "cat5",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"months": [
+							2
+						],
+						"days": [
+							21
+						],
+						"hours": [
+							6
+						],
+						"minutes": [
+							17
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event84",
+				"title": "Re-engineered tertiary definition",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651067861,
+				"created": 1651067861,
+				"category": "cat10",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 30,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"years": [
+							2023
+						],
+						"months": [
+							3
+						],
+						"days": [
+							22
+						],
+						"hours": [
+							15
+						],
+						"minutes": [
+							29
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event85",
+				"title": "Programmable executive frame",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650876812,
+				"created": 1650876812,
+				"category": "cat5",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							12
+						],
+						"hours": [
+							9
+						],
+						"minutes": [
+							29
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event86",
+				"title": "Cloned context-sensitive moratorium",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651364106,
+				"created": 1651364106,
+				"category": "cat1",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							17
+						],
+						"hours": [
+							2
+						],
+						"minutes": [
+							57
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event87",
+				"title": "Horizontal encompassing time-frame",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651058884,
+				"created": 1651058884,
+				"category": "cat3",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"weekdays": [
+							3
+						],
+						"hours": [
+							0
+						],
+						"minutes": [
+							43
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event88",
+				"title": "Profit-focused optimal groupware",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651091167,
+				"created": 1651091167,
+				"category": "cat1",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 20;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"minutes": [
+							7
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event89",
+				"title": "Focused composite application",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650696998,
+				"created": 1650696998,
+				"category": "cat2",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 9,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							4
+						],
+						"hours": [
+							18
+						],
+						"minutes": [
+							14
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event90",
+				"title": "Synchronised global instruction set",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650925502,
+				"created": 1650925502,
+				"category": "cat7",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 6,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"minutes": [
+							3
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event91",
+				"title": "Optional contextually-based customer loyalty",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650768527,
+				"created": 1650768527,
+				"category": "cat8",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							5
+						],
+						"hours": [
+							14
+						],
+						"minutes": [
+							53
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event92",
+				"title": "Persevering incremental intranet",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651114145,
+				"created": 1651114145,
+				"category": "cat9",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 46,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"minutes": [
+							27
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event93",
+				"title": "Cross-platform content-based projection",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650515161,
+				"created": 1650515161,
+				"category": "cat5",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "single",
+						"enabled": true,
+						"epoch": 1664488502
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event94",
+				"title": "Monitored dynamic archive",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650765345,
+				"created": 1650765345,
+				"category": "cat2",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 13;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"weekdays": [
+							5
+						],
+						"hours": [
+							13
+						],
+						"minutes": [
+							32
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event95",
+				"title": "Reverse-engineered disintermediate infrastructure",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651223918,
+				"created": 1651223918,
+				"category": "cat1",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"months": [
+							8
+						],
+						"days": [
+							14
+						],
+						"hours": [
+							23
+						],
+						"minutes": [
+							1
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event96",
+				"title": "Organized interactive service-desk",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650765173,
+				"created": 1650765173,
+				"category": "cat2",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 10;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"days": [
+							31
+						],
+						"hours": [
+							3
+						],
+						"minutes": [
+							14
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event97",
+				"title": "Decentralized client-driven forecast",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1650528239,
+				"created": 1650528239,
+				"category": "cat1",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "testplug",
+				"params": {
+					"duration": 22,
+					"action": "Success",
+					"progress": true,
+					"burn": false,
+					"secret": "foo"
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"months": [
+							7
+						],
+						"days": [
+							28
+						],
+						"hours": [
+							3
+						],
+						"minutes": [
+							35
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event98",
+				"title": "Extended actuating open architecture",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651237794,
+				"created": 1651237794,
+				"category": "cat6",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "urlplug",
+				"params": {
+					"method": "GET",
+					"url": "http://localhost:3012/api/app/echo",
+					"headers": "",
+					"data": "",
+					"timeout": 30,
+					"success_match": "",
+					"error_match": "",
+					"follow": false,
+					"ssl_cert_bypass": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"minutes": [
+							5
+						]
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event99",
+				"title": "Self-enabling needs-based customer loyalty",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651236720,
+				"created": 1651236720,
+				"category": "cat1",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 48;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "single",
+						"enabled": true,
+						"epoch": 1663659049
+					}
+				]
+			}
+		],
+		[
+			"listPush",
+			"global/events",
+			{
+				"id": "event100",
+				"title": "Diverse heuristic complexity",
+				"enabled": true,
+				"username": "admin",
+				"modified": 1651348186,
+				"created": 1651348186,
+				"category": "cat9",
+				"targets": [
+					"main"
+				],
+				"notes": "",
+				"limits": [],
+				"actions": [],
+				"plugin": "shellplug",
+				"params": {
+					"script": "#!/bin/bash\n\nsleep 43;\necho HELLO;\n",
+					"annotate": false,
+					"json": false
+				},
+				"timings": [
+					{
+						"type": "schedule",
+						"enabled": true,
+						"hours": [
+							19
+						],
+						"minutes": [
+							6
+						]
+					}
+				]
+			}
+		]
+	]
+}
