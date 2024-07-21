@@ -39,7 +39,7 @@ app.extend({
 		'^notice': { icon: 'information-outline', label: 'Notice' },
 		'^group': { icon: 'server-network', label: 'Group' },
 		'^command': { icon: 'console', label: 'Command' },
-		'^server': { icon: 'desktop-classic', label: 'Server' },
+		'^server': { icon: 'server', label: 'Server' },
 		'^master': { icon: 'database', label: 'Master' },
 		'^peer': { icon: 'database', label: 'Master' },
 		'^monitor': { icon: 'chart-line', label: 'Monitor' },
@@ -496,7 +496,7 @@ app.extend({
 		
 		for (var id in this.activeJobs) {
 			var job = this.activeJobs[id];
-			if (!this.hasCategoryAccess(job.category) || !this.hasGroupAccessMulti(job.targets)) {
+			if (!this.hasCategoryAccess(job.category) || !this.hasGroupAccessAll(job.targets)) {
 				delete this.activeJobs[id];
 			}
 		}
@@ -509,7 +509,7 @@ app.extend({
 		
 		for (var idx = 0, len = this.events.length; idx < len; idx++) {
 			var item = this.events[idx];
-			if (this.hasCategoryAccess(item.category) && this.hasGroupAccessMulti(item.targets)) {
+			if (this.hasCategoryAccess(item.category) && this.hasGroupAccessAll(item.targets)) {
 				new_items.push(item);
 			}
 		}
@@ -550,7 +550,7 @@ app.extend({
 		
 		for (var server_id in this.servers) {
 			var server = this.servers[server_id];
-			if (this.hasGroupAccess(server.group)) new_servers[server_id] = server;
+			if (this.hasGroupAccessAny(server.groups)) new_servers[server_id] = server;
 		}
 		
 		this.servers = new_servers;
@@ -563,7 +563,7 @@ app.extend({
 		
 		for (var id in this.activeAlerts) {
 			var alert = this.activeAlerts[id];
-			if (this.hasGroupAccess(alert.group)) new_alerts[id] = alert;
+			if (this.hasGroupAccessAny(alert.groups)) new_alerts[id] = alert;
 		}
 		
 		this.activeAlerts = new_alerts;
@@ -589,13 +589,22 @@ app.extend({
 		return app.user.categories.includes(cat_id);
 	},
 	
-	hasGroupAccessMulti: function(targets) {
+	hasGroupAccessAll: function(targets) {
 		// check if user has access to a list of targets
 		// user must have access to ALL targets in list
 		for (var idx = 0, len = targets.length; idx < len; idx++) {
 			if (!this.hasGroupAccess(targets[idx])) return false;
 		}
 		return true;
+	},
+	
+	hasGroupAccessAny: function(targets) {
+		// check if user has access to a list of targets
+		// user must have access to ANY targets in list
+		for (var idx = 0, len = targets.length; idx < len; idx++) {
+			if (this.hasGroupAccess(targets[idx])) return true;
+		}
+		return false;
 	},
 	
 	hasGroupAccess: function(grp_id) {
@@ -624,6 +633,14 @@ app.extend({
 		if (!app.user || !app.user.privileges) return false;
 		if (app.user.privileges.admin) return true;
 		return( !!app.user.privileges[priv_id] );
+	},
+	
+	includesAny: function(haystack, needles) {
+		// return true if haystack contains any needles
+		for (var idx = 0, len = needles.length; idx < len; idx++) {
+			if (haystack.includes(needles[idx])) return true;
+		}
+		return false;
 	},
 	
 	getLastDayInMonth: function(year, month) {

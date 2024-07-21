@@ -207,7 +207,7 @@ Page.Alerts = class Alerts extends Page.Base {
 		
 		if (args.alert) query += ' alert:' + args.alert;
 		if (args.server) query += ' server:' + args.server;
-		if (args.group) query += ' group:' + args.group;
+		if (args.group) query += ' groups:' + args.group;
 		
 		if (args.date) {
 			query += ' ' + this.getDateRangeQuery('start', args.date);
@@ -383,8 +383,8 @@ Page.Alerts = class Alerts extends Page.Base {
 					html += '</div>';
 					
 					html += '<div>';
-						html += '<div class="info_label">Group</div>';
-						html += '<div class="info_value">' + this.getNiceGroup(alert.group, true) + '</div>';
+						html += '<div class="info_label">Groups</div>';
+						html += '<div class="info_value">' + this.getNiceGroupList(alert.groups) + '</div>';
 					html += '</div>';
 					
 					html += '<div>';
