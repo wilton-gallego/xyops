@@ -14,15 +14,15 @@ div.header {
 	top: 0;
 	background-color: var(--background-color);
 	box-shadow: 0px 0px 8px 8px var(--background-color);
-	z-index: 2;
+	z-index: 100;
 }
 
-div.header > div.header_title {
+/* div.header > div.header_title {
 	color: var(--theme-color);
 }
 div.header > div.header_title > i {
 	color: var(--theme-color);
-}
+} */
 
 div.header_clock {
 	position: relative;
@@ -30,10 +30,15 @@ div.header_clock {
 	height: 30px;
 	margin-top: 9px;
 	margin-left: 12px;
+	padding-left: 7px;
+	padding-right: 7px;
 	color: var(--label-color);
-	border: 1px solid transparent;
+	background: var(--box-background-color);
+	border: 1px solid var(--border-color);
+	border-radius: 4px;
 	font-size: 12px;
 	line-height: 29px;
+	cursor: default;
 }
 
 div.box_title {
@@ -136,6 +141,15 @@ div.box_title_left {
 	/* margin-left: 15px; */
 	/* display: flex;
 	align-items: center; */
+}
+
+div.box_title_note {
+	float: right;
+	font-size: 13px;
+	font-weight: normal;
+	font-style: italic;
+	text-transform: none;
+	color: var(--label-color);
 }
 
 div.inline_page_message {
@@ -457,7 +471,7 @@ body.dark div.dash_unit_box {
 }
 
 .markdown-body blockquote {
-	border-left: 2px solid var(--header-text-color);
+	border-left: 2px solid var(--border-color);
 	margin-left: 0;
 	padding-left: 30px;
 	font-style: italic;
@@ -1424,6 +1438,16 @@ div.data_grid > ul.grid_row_header > div.st_col_header.active {
 	
 	div.header > div.header_title {
 		padding-left: 20px;
+	}
+	
+	a.header_nav_item {
+		display: none;
+	}
+	.header_nav_sep {
+		display: none;
+	}
+	.header_nav_cont .color_label {
+		display: none;
 	}
 	
 	body.sidebar {
