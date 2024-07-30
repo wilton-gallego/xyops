@@ -313,6 +313,7 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		app.setHeaderTitle( '...' );
 		
 		this.snapshot = null;
+		this.charts = {};
 		
 		this.loading();
 		app.api.get( 'app/search_snapshots', { query: '#id:' + args.id, verbose: 1 }, this.receive_snapshot.bind(this), this.fullPageError.bind(this) );
@@ -437,6 +438,16 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 			html += '</div>'; // box_content
 		html += '</div>'; // box
 		
+		// quickmon charts
+		html += '<div class="box" id="d_vs_quickmon">';
+			html += '<div class="box_title">';
+				html += 'Quick Look &mdash; Last Minute';
+			html += '</div>';
+			html += '<div class="box_content table">';
+				html += '<div class="loading_container"><div class="loading"></div></div>';
+			html += '</div>'; // box_content
+		html += '</div>'; // box
+		
 		// monitor dash grid
 		html += '<div class="dash_grid">';
 			html += this.getMonitorGrid(snapshot);
@@ -510,6 +521,7 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		
 		this.getSnapshotAlerts();
 		this.getSnapshotJobs();
+		this.setupQuickMonitors();
 	}
 	
 	getSnapshotAlerts() {
@@ -541,6 +553,53 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		app.api.post( 'app/get_jobs', { ids: snapshot.jobs }, function(resp) {
 			self.jobs = resp.jobs || [];
 			self.renderSnapshotJobs();
+		});
+	}
+	
+	setupQuickMonitors() {
+		// render empty quickmon charts, then request full data
+		var self = this;
+		var snapshot = this.snapshot;
+		var server = app.servers[ snapshot.server ] || null;
+		
+		var html = '';
+		html += '<div class="chart_grid_horiz">';
+		
+		config.quick_monitors.forEach( function(def) {
+			// { "id": "cpu_load", "title": "CPU Load Average", "source": "cpu.avgLoad", "type": "float", "suffix": "" },
+			html += '<div><canvas id="c_vs_' + def.id + '" class="chart"></canvas></div>';
+		} );
+		
+		html += '</div>';
+		this.div.find('#d_vs_quickmon > div.box_content').html( html );
+		
+		var render_chart_overlay = function(key) {
+			$('.pxc_tt_overlay').html(
+				'<div class="chart_toolbar ct_' + key + '">' + 
+					'<div class="chart_icon ci_di" title="Download Image" onClick="$P().chartDownload(\'' + key + '\')"><i class="mdi mdi-cloud-download-outline"></i></div>' + 
+					'<div class="chart_icon ci_cl" title="Copy Image Link" onClick="$P().chartCopyLink(\'' + key + '\',this)"><i class="mdi mdi-clipboard-pulse-outline"></i></div>' + 
+				'</div>' 
+			);
+		};
+		
+		config.quick_monitors.forEach( function(def, idx) {
+			var chart = new Chart({
+				"canvas": '#c_vs_' + def.id,
+				"title": def.title,
+				"dataType": def.type,
+				"dataSuffix": def.suffix,
+				"minVertScale": def.minVertScale || 0,
+				"legend": false // single layer, no legend needed
+			});
+			chart.on('mouseover', function(event) { render_chart_overlay(def.id); });
+			self.charts[ def.id ] = chart;
+			
+			chart.addLayer({
+				id: snapshot.server,
+				title: server ? app.formatHostname(server.hostname) : snapshot.server,
+				data: self.getQuickMonChartData(snapshot.quickmon || [], def.id),
+				color: app.colors[ idx % app.colors.length ]
+			});
 		});
 	}
 	
@@ -582,6 +641,14 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		delete this.alerts;
 		delete this.jobs;
 		delete this.tables;
+		
+		// destroy charts if applicable (view page)
+		if (this.charts) {
+			for (var key in this.charts) {
+				this.charts[key].destroy();
+			}
+			delete this.charts;
+		}
 		
 		return true;
 	}
