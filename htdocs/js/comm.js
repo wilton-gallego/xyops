@@ -179,7 +179,7 @@ app.comm = {
 		}
 		
 		// update clock widget
-		$('#d_header_clock').html( '' + app.formatDate(app.epoch, { hour: 'numeric', minute: '2-digit', second: '2-digit' }) );
+		$('#d_header_clock').html( '<i class="mdi mdi-clock-time-four-outline"></i>' + app.formatDate(app.epoch, { hour: 'numeric', minute: '2-digit', second: '2-digit' }) );
 		
 		// delete jobsChanged flag from app
 		delete app.jobsChanged;
