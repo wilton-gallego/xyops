@@ -63,7 +63,7 @@ Page.Dashboard = class Dashboard extends Page.Base {
 		// quickmon charts
 		html += '<div class="box" id="d_dash_monitors">';
 			html += '<div class="box_title">';
-				html += 'Quick Monitors';
+				html += 'Quick Look &mdash; All Servers';
 			html += '</div>';
 			html += '<div class="box_content table">';
 				html += '<div class="loading_container"><div class="loading"></div></div>';
