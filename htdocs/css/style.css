@@ -153,7 +153,8 @@ div.inline_page_message {
 	margin-bottom: 30px;
 	line-height: 30px;
 	text-align: center;
-	font-style: italic;
+	/* font-style: italic; */
+	font-weight: bold;
 	font-size: 13px;
 	color: var(--label-color);
 }
@@ -360,7 +361,7 @@ body.dark div.dash_unit_box {
 	padding-bottom: 75px;
 }
 
-.loading {
+.loading_container > .loading {
 	position: relative;
 	display: inline-block;
 	width: 40px;
@@ -372,7 +373,7 @@ body.dark div.dash_unit_box {
 	top: 50%;
 	margin-top: -20px;
 }
-.loading:after {
+.loading_container > .loading:after {
 	content: " ";
 	display: block;
 	width: 32px;
@@ -827,6 +828,15 @@ body.dark .plugin_param_editor_cont textarea, body.dark .plugin_param_editor_con
 .chart_grid_horiz canvas {
 	width: 100%;
 	height: 250px;
+}
+
+@keyframes chart_progress { to { background-position: 100px 0; } }
+
+.chart_grid_horiz.loading > div {
+	animation: chart_progress 2s linear infinite;
+	background-repeat: repeat;
+	background-size: 100px 100px;
+	background-image: linear-gradient(-45deg, rgba(128, 128, 128, 0.15) 25%, transparent 25%, transparent 50%, rgba(128, 128, 128, 0.15) 50%, rgba(128, 128, 128, 0.15) 75%, transparent 75%, transparent);
 }
 
 .chart_toolbar {
