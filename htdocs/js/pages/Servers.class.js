@@ -1277,9 +1277,17 @@ Page.Servers = class Servers extends Page.ServerUtils {
 	
 	appendSampleToChart() {
 		// append sample to chart (every minute)
-		// { id, row }
 		var self = this;
 		var snapshot = this.snapshot;
+		var flagged_monitors = {};
+		
+		// check for alert overlays
+		if (snapshot.new_alerts) {
+			for (var alert_id in snapshot.new_alerts) {
+				var alert_def = find_object( app.alerts, { id: alert_id } );
+				if (alert_def && alert_def.monitor_id) flagged_monitors[alert_def.monitor_id] = true;
+			}
+		}
 		
 		this.monitors.forEach( function(def) {
 			var chart = self.charts[def.id];
@@ -1291,7 +1299,12 @@ Page.Servers = class Servers extends Page.ServerUtils {
 			// grab delta if applicable, or abs value for std monitors
 			var y = def.delta ? snapshot.data.deltas[def.id] : snapshot.data.monitors[def.id];
 			
-			layer.data.push({ x: x, y: y || 0 }); // TODO: alert flag overlay?  beware of WHICH alert def tho!  some only go on some graphs I think?
+			var item = { x: x, y: y || 0 };
+			
+			// check for flag (label)
+			if (flagged_monitors[def.id]) item.label = { "text": "Alert", "color": "red", "tooltip": true };
+			
+			layer.data.push(item);
 			if (layer.data.length > 60) layer.data.shift();
 			
 			chart.dirty = true;
