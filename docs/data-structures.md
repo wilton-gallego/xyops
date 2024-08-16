@@ -284,13 +284,25 @@ This will contain information about the job process disk usage.
 
 This will contain information about the job process network usage (open TCP connections).
 
+## Job.data
+
+This is a place where the job can store arbitrary data, which will be passed to the next job (if part of a workflow, or launched via an action).
+
 ## Job.files
 
-This will contain information about all uploaded files for the job.  It will be an array of object, with each object containing the following properties:
+This will contain information about all uploaded files for the job.  While the job is running, the user can populate this array to attach files for the job.  Each item in the array can be a simple string (file path or glob), a sub-array of file path and filename, a sub-array of file path, filename, and a `true` boolean to delete the file after uploading, or an object with the following properties:
 
 | Property Name | Description |
 |---------------|-------------|
-| `path` | The partial path to the file.  Combine this with the Orchestra master server hostname and port number (if applicable) to construct a full URL to the file. |
+| `path` | Path to the file on disk, or a glob matching multiple files. |
+| `filename` | Custom destination filename to use when uploading.  Do not combine with a glob path. |
+| `delete` | Set this to `true` to delete the file(s) after uploading. |
+
+Once the job is complete, the files will be uploaded and the array will be recreated as an array of objects, one per file, with each object containing the following properties:
+
+| Property Name | Description |
+|---------------|-------------|
+| `path` | The partial path to the file in storage.  Combine this with the Orchestra master server hostname and port number (if applicable) to construct a full URL to the file. |
 | `size` | The size of the file in bytes. |
 | `job` | The [Job.id](#job-id) associated with the file. |
 | `server` | The server ID of the server which uploaded the file. |
