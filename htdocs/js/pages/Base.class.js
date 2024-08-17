@@ -510,7 +510,7 @@ Page.Base = class Base extends Page {
 		});
 	}
 	
-	getNiceDateTime(epoch) {
+	getNiceDateTime(epoch, secs) {
 		// format date according to user's prefs, add icon
 		// return '<i class="mdi mdi-calendar-clock">&nbsp;</i>' + this.getNiceDateTimeText(epoch);
 		var dargs = get_date_args(epoch);
@@ -519,17 +519,17 @@ Page.Base = class Base extends Page {
 		
 		if (nargs.yyyy_mm_dd == dargs.yyyy_mm_dd) {
 			// today
-			result += 'Today at ' + this.getNiceTimeText(epoch);
+			result += 'Today at ' + this.getNiceTimeText(epoch, secs);
 		}
 		else {
 			// some other day
-			result += this.getNiceDateTimeText(epoch);
+			result += this.getNiceDateTimeText(epoch, secs);
 		}
 		
 		return result;
 	}
 	
-	getNiceDateTimeText(epoch) {
+	getNiceDateTimeText(epoch, secs) {
 		// format date according to user's prefs, plain text
 		return this.formatDate(epoch, { 
 			year: 'numeric',
@@ -537,7 +537,8 @@ Page.Base = class Base extends Page {
 			day: 'numeric',
 			// weekday: 'long',
 			hour: 'numeric',
-			minute: '2-digit'
+			minute: '2-digit',
+			second: secs ? '2-digit' : false
 		});
 	}
 	
@@ -575,11 +576,12 @@ Page.Base = class Base extends Page {
 		return result;
 	}
 	
-	getNiceTimeText(epoch) {
+	getNiceTimeText(epoch, secs) {
 		// format time according to user's prefs, plain text
 		return this.formatDate(epoch, { 
 			hour: 'numeric',
-			minute: '2-digit' 
+			minute: '2-digit',
+			second: secs ? '2-digit' : false
 		});
 	}
 	
