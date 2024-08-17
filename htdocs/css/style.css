@@ -915,12 +915,20 @@ body.dark .pxc_tt_content {
 	
 	font-family: var(--font-family-monospace);
 	font-size: 12px;
+	line-height: 15px;
 }
 
 #d_live_job_log > div.log_message {
 	margin: 50px; 
 	text-align: center; 
 	font-style: italic;
+}
+
+.box_content > pre {
+	margin: 0;
+	font-family: var(--font-family-monospace);
+	font-size: 12px;
+	line-height: 15px;
 }
 
 .proc_pagination i {
@@ -1826,4 +1834,56 @@ div.data_grid > ul.grid_row_header > div.st_col_header.active {
 		max-width: 500px;
 	}
 	
+}
+
+/* CodeMirror */
+
+#d_measure {
+	position: relative;
+	width: 100%;
+}
+
+#d_editor {
+	position: relative;
+	width: 100%;
+}
+
+.CodeMirror {
+	cursor: text;
+	letter-spacing: 0px;
+}
+.CodeMirror {
+	font-family: var(--font-family-monospace) !important;
+	line-height: 16px !important;
+	font-size: 12px !important;
+	color: var(--body-text-color);
+	/* font-family: "Inconsolata", "Courier New", monospace !important; */
+	/* -webkit-font-smoothing: subpixel-antialiased; */
+}
+
+.CodeMirror-selected, .CodeMirror-focused .CodeMirror-selected { 
+	background: rgb(180, 213, 254) !important; 
+}
+body.dark .CodeMirror-selected, body.dark .CodeMirror-focused .CodeMirror-selected { 
+	background: rgb(90, 90, 90) !important; 
+}
+
+.cm-s-default span.cm-tag { font-weight:normal; }
+.cm-s-default span.cm-comment { color: var(--label-color); }
+.cm-s-default span.cm-header { color: var(--theme-color); }
+.cm-s-default span.cm-property { color: var(--purple); }
+
+.cm-s-shadowfox span.cm-comment { color: var(--label-color); }
+.cm-s-shadowfox span.cm-header { color: var(--theme-color); }
+
+.CodeMirror-wrap {
+	box-shadow: 0px 0px 1px var(--label-color);
+}
+
+.CodeMirror .cm-spell-error {
+	background: url("../images/red-wavy-underline.gif") bottom repeat-x;
+}
+
+.cm-s-shadowfox.CodeMirror {
+	background: var(--form-background-color) !important;
 }
