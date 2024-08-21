@@ -271,11 +271,11 @@ app.extend({
 				app.formatDate(app.epoch, { hour: 'numeric', minute: '2-digit', second: '2-digit' }) + 
 				'</span>' 
 			);
-			if (this.$headerClock.hasClass('yellow')) this.$headerClock.removeClass('yellow');
+			if (this.$headerClock.hasClass('red')) this.$headerClock.removeClass('red');
 		}
 		else {
 			this.$headerClock.html( '<i class="mdi mdi-pause-circle"></i><span><b>Paused</b></span>' );
-			if (!this.$headerClock.hasClass('yellow')) this.$headerClock.addClass('yellow');
+			if (!this.$headerClock.hasClass('red')) this.$headerClock.addClass('red');
 		}
 	},
 	
