@@ -1472,7 +1472,9 @@ Page.Base = class Base extends Page {
 		this.renderResLimitEditor();
 	}
 	
+	//
 	// Job Action Table and Editor:
+	//
 	
 	renderJobActionEditor() {
 		// render job action editor
@@ -1508,14 +1510,19 @@ Page.Base = class Base extends Page {
 		};
 		
 		html += this.getCompactTable(targs, function(item, idx) {
-			var actions = [];
-			actions.push( '<span class="link" onMouseUp="$P().editJobAction('+idx+')"><b>Edit</b></span>' );
-			actions.push( '<span class="link" onMouseUp="$P().deleteJobAction('+idx+')"><b>Delete</b></span>' );
+			var links = [];
+			links.push( '<span class="link" onMouseUp="$P().editJobAction('+idx+')"><b>Edit</b></span>' );
+			links.push( '<span class="link danger" onMouseUp="$P().deleteJobAction('+idx+')"><b>Delete</b></span>' );
 			
 			var nice_trigger = trigger_titles[ item.trigger ];
 			var nice_type = '';
 			var nice_desc = '';
 			var nice_icon = '';
+			
+			if (!nice_trigger && item.trigger.match(/^tag:(\w+)$/)) {
+				var tag_id = RegExp.$1;
+				nice_trigger = "On Tag: " + self.getNiceTag(tag_id, false);
+			}
 			
 			switch (item.type) {
 				case 'email':
@@ -1531,7 +1538,7 @@ Page.Base = class Base extends Page {
 				break;
 				
 				case 'run_event':
-					nice_type = "Run Job";
+					nice_type = "Run Event";
 					var event = find_object( app.events, { id: item.event_id } );
 					nice_desc = event ? event.title : "(Event not found)";
 					nice_icon = 'calendar-clock';
@@ -1566,7 +1573,7 @@ Page.Base = class Base extends Page {
 				'<div class="td_big wrap_mobile"><i class="mdi mdi-eye-outline">&nbsp;</i><span class="link" onClick="$P().editJobAction('+idx+')">' + nice_trigger + '</span></div>',
 				'<div class="td_big wrap_mobile"><i class="mdi mdi-' + nice_icon + '">&nbsp;</i>' + nice_type + '</div>',
 				'<div style="word-break:break-word;">' + nice_desc + '</div>',
-				'<div class="wrap_mobile">' + actions.join(' | ') + '</div>'
+				'<div class="wrap_mobile">' + links.join(' | ') + '</div>'
 			];
 			
 			if (!item.enabled) tds.className = 'disabled';
@@ -1607,33 +1614,38 @@ Page.Base = class Base extends Page {
 		
 		html += this.getFormRow({
 			label: 'Action Trigger:',
-			content: this.getFormMenu({
+			content: this.getFormMenuSingle({
 				id: 'fe_eja_trigger',
+				title: 'Select Action Trigger',
 				options: [ 
-					['start', "On Job Start"],
-					['complete', "On Job Completion"],
-					['success', "On Success"],
-					['warning', "On Warning"],
-					['error', "On Error"],
-					['critical', "On Critical"],
-					['abort', "On Abort"]
-				],
-				value: action.trigger
+					{ id: 'start', title: "On Job Start", icon: 'play-circle' },
+					{ id: 'complete', title: "On Job Completion", icon: 'stop-circle' },
+					{ id: 'success', title: "On Success", icon: 'check-circle-outline', group: "On Job Result:" },
+					{ id: 'error', title: "On Error", icon: 'alert-decagram-outline' },
+					{ id: 'warning', title: "On Warning", icon: 'alert-circle-outline' },
+					{ id: 'critical', title: "On Critical", icon: 'fire-alert' },
+					{ id: 'abort', title: "On Abort", icon: 'cancel' }
+				].concat(
+					this.buildOptGroup( app.tags, "On Custom Tag:", 'tag-outline', 'tag:' )
+				),
+				value: action.trigger,
+				'data-nudgeheight': 1
 			}),
 			caption: 'Select the desired action trigger.'
 		});
 		
 		html += this.getFormRow({
 			label: 'Action Type:',
-			content: this.getFormMenu({
+			content: this.getFormMenuSingle({
 				id: 'fe_eja_type',
+				title: 'Select Action Type',
 				options: [ 
-					['email', "Send Email"],
-					['web_hook', "Web Hook"],
-					['run_event', "Run Job"],
-					['channel', "Notify Channel"],
-					['snapshot', "Take Snapshot"],
-					['disable', "Disable Event"],
+					{ id: 'email', title: "Send Email", icon: 'email-send-outline' },
+					{ id: 'web_hook', title: "Web Hook", icon: 'web' },
+					{ id: 'run_event', title: "Run Event", icon: 'calendar-clock' },
+					{ id: 'channel', title: "Notify Channel", icon: 'bullhorn-outline' },
+					{ id: 'snapshot', title: "Take Snapshot", icon: 'monitor-screenshot' },
+					{ id: 'disable', title: "Disable Event", icon: 'cancel' }
 				],
 				value: action.type
 			}),
@@ -1788,7 +1800,7 @@ Page.Base = class Base extends Page {
 			change_action_type( $(this).val() );
 		}); // type change
 		
-		SingleSelect.init( $('#fe_eja_event, #fe_eja_channel') );
+		SingleSelect.init( $('#fe_eja_trigger, #fe_eja_type, #fe_eja_event, #fe_eja_channel') );
 		this.updateAddRemoveMe('#fe_eja_email');
 		
 		Dialog.autoResize();
