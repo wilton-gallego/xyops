@@ -51,7 +51,7 @@ app.extend({
 		'^tag': { icon: 'tag-outline', label: 'Tag' },
 		'^category': { icon: 'folder-open-outline', label: 'Category' },
 		'^event': { icon: 'file-clock-outline', label: 'Event' },
-		'^workflow': { icon: 'clipboard-list-outline', label: 'Workflow' },
+		'^workflow': { icon: 'clipboard-flow-outline', label: 'Workflow' },
 		'^channel': { icon: 'bullhorn-outline', label: 'Channel' },
 		'^plugin': { icon: 'power-plug-outline', label: 'Plugin' },
 		'^job': { icon: 'timer-outline', label: 'Job' },

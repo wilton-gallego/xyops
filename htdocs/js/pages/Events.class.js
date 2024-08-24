@@ -13,6 +13,7 @@ Page.Events = class Events extends Page.Base {
 		if (!this.requireLogin(args)) return true;
 		
 		if (!args) args = {};
+		if (!args.sub && args.id) args.sub = 'view';
 		if (!args.sub) args.sub = this.default_sub;
 		this.args = args;
 		
@@ -28,7 +29,7 @@ Page.Events = class Events extends Page.Base {
 	gosub_list(args) {
 		// show event list
 		app.setWindowTitle( "Events" );
-		app.setHeaderTitle( '<i class="mdi mdi-calendar-multiple">&nbsp;</i>Event List' );
+		app.setHeaderTitle( '<i class="mdi mdi-calendar-multiple">&nbsp;</i>Events' );
 		
 		// this.loading();
 		// app.api.post( 'app/get_events', copy_object(args), this.receive_events.bind(this) );
@@ -36,11 +37,13 @@ Page.Events = class Events extends Page.Base {
 		// reset max events (dynamic pagination)
 		this.eventsPerPage = config.events_per_page;
 		
+		var events = app.events.filter( function(event) { return event.type != 'workflow'; } );
+		
 		// use events in app cache
 		this.receive_events({
 			code: 0,
-			rows: app.events,
-			list: { length: app.events.length }
+			rows: events,
+			list: { length: events.length }
 		});
 	}
 	
@@ -96,7 +99,7 @@ Page.Events = class Events extends Page.Base {
 				'data-shrinkwrap': 1
 			}) + '</div>';
 			
-			html += 'Events';
+			html += 'Event List';
 		html += '</div>';
 		html += '<div class="box_content table">';
 		

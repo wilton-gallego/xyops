@@ -267,10 +267,18 @@ Page.Base = class Base extends Page {
 		if (typeof(item) == 'string') item = find_object(app.events, { id: item });
 		if (!item) return '(None)';
 		
+		var default_icon = 'file-clock-outline';
+		var loc = '#Events';
+		
+		if (item.type == 'workflow') {
+			default_icon = 'clipboard-flow-outline';
+			loc = '#Workflows';
+		}
+		
 		var html = '<span class="nowrap">';
-		var icon = '<i class="mdi mdi-' + (item.icon || 'file-clock-outline') + '"></i>';
+		var icon = '<i class="mdi mdi-' + (item.icon || default_icon) + '"></i>';
 		if (link) {
-			html += '<a href="#Events?sub=view&id=' + item.id + '">';
+			html += '<a href="' + loc + '?id=' + item.id + '">';
 			html += icon + '<span>' + item.title + '</span></a>';
 		}
 		else {
@@ -281,19 +289,18 @@ Page.Base = class Base extends Page {
 		return html;
 	}
 	
-	getNiceWorkflow(item, link) {
-		// get formatted workflow with icon, plus optional link
-		if (typeof(item) == 'string') item = find_object(app.events, { id: item });
-		if (!item) return '(None)';
+	getNiceWorkflowJob(id, link) {
+		// get formatted workflow job ID with icon, plus optional link
+		if (!id) return '(None)';
 		
 		var html = '<span class="nowrap">';
-		var icon = '<i class="mdi mdi-' + (item.icon || 'clipboard-list-outline') + '"></i>';
+		var icon = '<i class="mdi mdi-clipboard-play-outline"></i>';
 		if (link) {
-			html += '<a href="#Events?sub=edit&id=' + item.id + '">'; // TODO: is this the correct link?  #Events?
-			html += icon + '<span>' + item.title + '</span></a>';
+			html += '<a href="#Workflows?job=' + id + '">';
+			html += icon + '<span>' + id + '</span></a>';
 		}
 		else {
-			html += icon + item.title;
+			html += icon + id;
 		}
 		
 		html += '</span>';
@@ -1045,7 +1052,7 @@ Page.Base = class Base extends Page {
 			return '<i class="mdi mdi-bell-outline">&nbsp;</i>Alert';
 		}
 		else if (job.source.match(/workflow/i)) {
-			return '<i class="mdi mdi-clipboard-list-outline">&nbsp;</i>Workflow'; // TODO: this?  getNiceWorkflow()?
+			return '<i class="mdi mdi-clipboard-flow-outline">&nbsp;</i>Workflow';
 		}
 		else return '(Unknown)';
 	}
@@ -1061,7 +1068,7 @@ Page.Base = class Base extends Page {
 				case 'user': return '<i class="mdi mdi-account">&nbsp;</i>User';
 				case 'key': return '<i class="mdi mdi-key">&nbsp;</i>API Key';
 				case 'action': return '<i class="mdi mdi-eye-outline">&nbsp;</i>Action';
-				case 'workflow': return '<i class="mdi mdi-clipboard-list-outline">&nbsp;</i>Workflow';
+				case 'workflow': return '<i class="mdi mdi-clipboard-flow-outline">&nbsp;</i>Workflow';
 			}
 		} ).join(', ');
 	}
