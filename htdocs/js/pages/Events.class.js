@@ -426,11 +426,12 @@ Page.Events = class Events extends Page.Base {
 		html += '<div class="box">';
 			html += '<div class="box_title">';
 				// html += '<i class="mdi mdi-' + icon + '">&nbsp;</i>' + event.title;
-				html += 'Event Summary';
+				if (!event.enabled) html += '<span style="color:var(--red);">Event Disabled</span>';
+				else html += 'Event Summary';
 				
 				// html += '<div class="button right danger" onMouseUp="$P().show_delete_event_dialog()"><i class="mdi mdi-trash-can-outline">&nbsp;</i>Delete...</div>';
 				html += '<div class="button secondary right" onMouseUp="$P().do_edit_from_view()"><i class="mdi mdi-file-edit-outline">&nbsp;</i>Edit Event...</div>';
-				html += '<div class="button right" onMouseUp="$P().do_run_from_view()"><i class="mdi mdi-run-fast">&nbsp;</i>Run Now</div>';
+				if (event.enabled) html += '<div class="button right" onMouseUp="$P().do_run_from_view()"><i class="mdi mdi-run-fast">&nbsp;</i>Run Now</div>';
 				html += '<div class="clear"></div>';
 			html += '</div>'; // title
 			
