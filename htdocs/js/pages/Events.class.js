@@ -527,9 +527,9 @@ Page.Events = class Events extends Page.Base {
 		html += '</div>'; // box
 		
 		// plugin parameters
-		html += '<div class="box" id="d_ve_params" style="display:none">';
+		html += '<div class="box toggle" id="d_ve_params" style="display:none">';
 			html += '<div class="box_title">';
-				html += '';
+				html += '<i></i><span></span>';
 			html += '</div>';
 			html += '<div class="box_content table">';
 				// html += '<div class="loading_container"><div class="loading"></div></div>';
@@ -539,7 +539,7 @@ Page.Events = class Events extends Page.Base {
 		// active jobs
 		html += '<div class="box" id="d_ve_active">';
 			html += '<div class="box_title">';
-				html += 'Active Jobs';
+				html += '<span>Active Jobs</span>';
 			html += '</div>';
 			html += '<div class="box_content table">';
 				html += '<div class="loading_container"><div class="loading"></div></div>';
@@ -549,7 +549,7 @@ Page.Events = class Events extends Page.Base {
 		// queued jobs
 		html += '<div class="box" id="d_ve_queued" style="display:none">';
 			html += '<div class="box_title">';
-				html += 'Queued Jobs';
+				html += '<span>Queued Jobs</span>';
 				html += '<div class="button right danger" onMouseUp="$P().do_flush_queue()"><i class="mdi mdi-trash-can-outline">&nbsp;</i>Flush Queue</div>';
 			html += '</div>';
 			html += '<div class="box_content table">';
@@ -570,7 +570,7 @@ Page.Events = class Events extends Page.Base {
 					'data-shrinkwrap': 1
 				}) + '</div>';
 				
-				html += 'Completed Jobs';
+				html += '<span>Completed Jobs</span>';
 			html += '</div>';
 			html += '<div class="box_content table">';
 				html += '<div class="loading_container"><div class="loading"></div></div>';
@@ -610,6 +610,7 @@ Page.Events = class Events extends Page.Base {
 		this.renderActiveJobs();
 		this.getQueuedJobs();
 		this.renderPluginParams('#d_ve_params');
+		this.setupToggleBoxes();
 	}
 	
 	do_edit_from_view() {

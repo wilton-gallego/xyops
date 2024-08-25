@@ -2295,7 +2295,7 @@ Page.Base = class Base extends Page {
 		html += '</div>'; // summary_grid
 		
 		this.div.find(sel).show();
-		this.div.find( sel + ' > .box_title').html( plugin.title + " Parameters" );
+		this.div.find( sel + ' > .box_title > span').html( plugin.title + " Parameters" );
 		this.div.find( sel + ' > .box_content').html( html );
 	}
 	
@@ -2354,4 +2354,91 @@ Page.Base = class Base extends Page {
 			app.showMessage('info', "The data was copied to your clipboard.");
 		}
 	}
+	
+	// 
+	// Toggle Boxes
+	// 
+	
+	setupToggleBoxes(elem) {
+		// make toggle boxes animate smoothly
+		var self = this;
+		if (!elem) elem = this.div;
+		else if (typeof(elem) == 'string') elem = $(elem);
+		
+		elem.find('div.box.toggle').each( function() {
+			var $box = $(this);
+			var $icon = $box.find('> div.box_title > i').first();
+			var $title = $box.find('> div.box_title > span').first();
+			var $content = $box.find('> div.box_content');
+			
+			var state = app.getPref('toggle_boxes.' + $box.prop('id')) || 'expanded';
+			if (state == 'expanded') $box.addClass('expanded');
+			
+			if ($box.hasClass('expanded')) {
+				// $content.scrollTop(0).css('height', $content[0].scrollHeight);
+			}
+			else {
+				$content.css('height', 0); // .scrollTop( $content[0].scrollHeight );
+			}
+			
+			$icon.addClass('mdi mdi-chevron-down');
+			
+			$icon.off('mouseup').on('mouseup', function() {
+				self.toggleBox(this);
+			});
+			$title.off('mouseup').on('mouseup', function() {
+				self.toggleBox(this);
+			});
+		});
+	}
+	
+	toggleBox(elem) {
+		// toggle details section open/closed
+		var $box = $(elem).closest('div.box.toggle');
+		if ($box.hasClass('expanded')) this.collapseToggleBox($box);
+		else this.expandToggleBox($box);
+	}
+	
+	collapseToggleBox($box) {
+		// collapse toggle box
+		var $content = $box.find('> div.box_content');
+		
+		if ($box.hasClass('expanded')) {
+			$box.removeClass('expanded');
+			
+			$content.scrollTop(0).css('height', $content[0].scrollHeight);
+			
+			$content.stop().animate({
+				scrollTop: $content[0].scrollHeight,
+				height: 0
+			}, {
+				duration: 500,
+				easing: 'easeOutQuart'
+			});
+			
+			if ($box.prop('id')) app.setPref('toggle_boxes.' + $box.prop('id'), 'collapsed');
+		}
+	}
+	
+	expandToggleBox($box) {
+		// expand toggle box
+		var $content = $box.find('> div.box_content');
+		
+		if (!$box.hasClass('expanded')) {
+			$box.addClass('expanded');
+			
+			$content.css('height', 0).scrollTop( $content[0].scrollHeight );
+			
+			$content.stop().animate({
+				scrollTop: 0,
+				height: $content[0].scrollHeight
+			}, {
+				duration: 500,
+				easing: 'easeOutQuart'
+			});
+			
+			if ($box.prop('id')) app.setPref('toggle_boxes.' + $box.prop('id'), 'expanded');
+		}
+	}
+	
 };

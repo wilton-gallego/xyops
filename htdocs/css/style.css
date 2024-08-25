@@ -1034,6 +1034,65 @@ div.data_grid > ul.grid_row_header > div.st_col_header.active {
 	color: var(--theme-color);
 }
 
+/* Toggle Boxes */
+
+div.box.toggle > div.box_title {
+	position: relative;
+}
+
+div.box.toggle > div.box_title > i {
+	position: absolute;
+	left: 18px;
+	
+	width: 1em;
+	height: 1em;
+	line-height: 1em;
+	text-align: center;
+	
+	transition: transform 0.25s ease-out;
+	transform-origin: center center;
+	transform: rotate(-90deg);
+	
+	cursor: pointer;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+div.box.toggle.expanded > div.box_title > i {
+	transform: rotate(0deg);
+}
+
+div.box.toggle > div.box_title > i:before {
+	transform: scale(1.3);
+}
+
+div.box.toggle > div.box_title > span {
+	padding-left: 1em;
+	
+	cursor: pointer;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
+div.box.toggle > div.box_content {
+	overflow: hidden;
+}
+
+div.box.toggle > div.box_content.table {
+	padding-bottom: 0px;
+}
+div.box.toggle.expanded > div.box_content.table {
+	padding-bottom: 25px;
+}
+
+div.box.toggle > div.box_title > div {
+	display: none;
+}
+div.box.toggle.expanded > div.box_title > div {
+	display: block;
+}
+
 /* Basic Responsive Overrides */
 
 @media only screen and (min-width: 1451px) and (max-width: 1600px) {

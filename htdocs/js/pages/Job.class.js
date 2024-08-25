@@ -155,13 +155,13 @@ Page.Job = class Job extends Page.Base {
 		var notify_icon = notify_me ? 'checkbox-marked-circle-outline' : 'email-outline';
 		
 		// summary
-		html += '<div class="box">';
+		html += '<div id="d_job_summary" class="box">';
 			html += '<div class="box_title">';
 				// html += 'Job Summary';
 				
 				if (job.state == 'complete') {
 					// job is complete
-					html += 'Job Summary';
+					html += '<span>Job Summary</span>';
 					
 					html += '<div class="button right" onMouseUp="$P().do_confirm_run_again()"><i class="mdi mdi-run-fast">&nbsp;</i>Run Again</div>';
 					html += '<div class="button right secondary" onClick="$P().do_view_job_data()"><i class="mdi mdi-code-json">&nbsp;</i>View JSON...</div>';
@@ -175,7 +175,7 @@ Page.Job = class Job extends Page.Base {
 					// html += '</div>';
 					// html += '<div id="d_live_pct" style="float:left; margin-left:15px;"></div>';
 					
-					html += 'Job In Progress';
+					html += '<span>Job In Progress</span>';
 					
 					html += '<div class="button right danger" onMouseUp="$P().do_abort_job()"><i class="mdi mdi-cancel">&nbsp;</i>Abort Job...</div>';
 					html += '<div class="button right" id="btn_job_notify" onMouseUp="$P().do_notify_me()"><i class="mdi mdi-' + notify_icon + '">&nbsp;</i>Notify Me</div>';
@@ -281,9 +281,9 @@ Page.Job = class Job extends Page.Base {
 		html += '</div>';
 		
 		// plugin parameters
-		html += '<div class="box" id="d_job_params" style="display:none">';
+		html += '<div class="box toggle" id="d_job_params" style="display:none">';
 			html += '<div class="box_title">';
-				html += '';
+				html += '<i></i><span></span>';
 			html += '</div>';
 			html += '<div class="box_content table">';
 				// html += '<div class="loading_container"><div class="loading"></div></div>';
@@ -291,9 +291,9 @@ Page.Job = class Job extends Page.Base {
 		html += '</div>'; // box
 		
 		// alerts (hidden unless needed)
-		html += '<div class="box" id="d_job_alerts" style="display:none">';
+		html += '<div class="box toggle" id="d_job_alerts" style="display:none">';
 			html += '<div class="box_title">';
-				html += 'Server Alerts';
+				html += '<i></i><span>Server Alerts</span>';
 			html += '</div>';
 			html += '<div class="box_content table">';
 				html += '<div class="loading_container"><div class="loading"></div></div>';
@@ -302,9 +302,9 @@ Page.Job = class Job extends Page.Base {
 		
 		// additional jobs (completed job only)
 		if ((job.state == 'complete') && job.jobs && job.jobs.length) {
-			html += '<div class="box" id="d_job_add_jobs">';
+			html += '<div class="box toggle" id="d_job_add_jobs>';
 				html += '<div class="box_title">';
-					html += 'Additional Jobs';
+					html += '<i></i><span>Additional Jobs</span>';
 				html += '</div>';
 				html += '<div class="box_content table">';
 					html += '<div class="loading_container"><div class="loading"></div></div>';
@@ -313,28 +313,28 @@ Page.Job = class Job extends Page.Base {
 		}
 		
 		// user content (table, html, perf)
-		html += '<div class="box" id="d_job_user_table" style="display:none">';
-			html += '<div class="box_title"></div>';
+		html += '<div class="box toggle" id="d_job_user_table" style="display:none">';
+			html += '<div class="box_title"><i></i><span></span></div>';
 			html += '<div class="box_content table"></div>';
 		html += '</div>'; // box
-		html += '<div class="box" id="d_job_user_html" style="display:none">';
-			html += '<div class="box_title"></div>';
+		html += '<div class="box toggle" id="d_job_user_html" style="display:none">';
+			html += '<div class="box_title"><i></i><span></span></div>';
 			html += '<div class="box_content table"></div>';
 		html += '</div>'; // box
-		html += '<div class="box" id="d_job_user_perf" style="display:none">';
-			html += '<div class="box_title">Performance Metrics</div>';
+		html += '<div class="box toggle" id="d_job_user_perf" style="display:none">';
+			html += '<div class="box_title"><i></i><span>Performance Metrics</span></div>';
 			html += '<div class="box_content table"></div>';
 		html += '</div>'; // box
-		html += '<div class="box" id="d_job_user_counters" style="display:none">';
-			html += '<div class="box_title">Performance Counters</div>';
+		html += '<div class="box toggle" id="d_job_user_counters" style="display:none">';
+			html += '<div class="box_title"><i></i><span>Performance Counters</span></div>';
 			html += '<div class="box_content table"></div>';
 		html += '</div>'; // box
 		
 		// uploaded files (completed job only)
 		if ((job.state == 'complete') && job.files && job.files.length) {
-			html += '<div class="box" id="d_job_files">';
+			html += '<div class="box toggle" id="d_job_files">';
 				html += '<div class="box_title">';
-					html += 'Job Files';
+					html += '<i></i><span>Job Files</span>';
 				html += '</div>';
 				html += '<div class="box_content table">';
 					html += this.getFileTable();
@@ -427,6 +427,7 @@ Page.Job = class Job extends Page.Base {
 		this.setupCharts();
 		this.updateUserContent();
 		this.getJobAlerts();
+		this.setupToggleBoxes();
 	}
 	
 	getJobAlerts() {
@@ -536,8 +537,7 @@ Page.Job = class Job extends Page.Base {
 			var $box = this.div.find('#d_job_user_table');
 			$box.show();
 			
-			if (job.table.title) $box.find('div.box_title').show().html( job.table.title );
-			else $box.find('div.box_title').hide();
+			$box.find('div.box_title > span').html( job.table.title || 'Job Data Table' );
 			
 			var html = '';
 			html += this.getBasicTable({
@@ -560,8 +560,7 @@ Page.Job = class Job extends Page.Base {
 			var $html = this.div.find('#d_job_user_html');
 			$html.show();
 			
-			if (job.html.title) $html.find('div.box_title').show().html( job.html.title );
-			else $html.find('div.box_title').hide();
+			$html.find('div.box_title > span').html( job.html.title || 'Job Custom Data' );
 			
 			var html = '';
 			html += job.html.content;
