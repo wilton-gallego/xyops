@@ -193,11 +193,20 @@ app.extend({
 		} );
 	},
 	
-	onThemeChange: function() {
+	onThemeChange: function(theme) {
 		// called when theme changes
 		if (app.page_manager && app.page_manager.current_page_id) {
 			var page = app.page_manager.find(app.page_manager.current_page_id);
-			if (page && page.onThemeChange) page.onThemeChange( app.getPref('theme') );
+			if (page && page.onThemeChange) page.onThemeChange( theme );
+		}
+		
+		// update highlight.js css
+		var $head = $('head');
+		$head.find('link[hljs]').remove();
+		
+		switch (theme) {
+			case 'light': $head.append('<link rel="stylesheet" href="css/atom-one-light.css" hljs>'); break;
+			case 'dark': $head.append('<link rel="stylesheet" href="css/atom-one-dark.css" hljs>'); break;
 		}
 	},
 	
@@ -774,6 +783,19 @@ app.extend({
 		this.lastMonthDayCache[cache_key] = last_day;
 		
 		return last_day;
+	},
+	
+	highlightAuto: function(text) {
+		var results = '';
+		
+		// highlighted code or markup (auto-detect format)
+		try { results = hljs.highlightAuto( text ); }
+		catch (err) {
+			// fallback to monospace with no hightlight
+			results = { value: encode_entities(text) };
+		}
+		
+		return results.value;
 	}
 	
 }); // app
