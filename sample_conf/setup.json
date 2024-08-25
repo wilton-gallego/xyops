@@ -450,6 +450,10 @@
 		"common": [
 			[ "symlinkFile", "node_modules/codemirror", "htdocs/codemirror" ],
 			
+			[ "symlinkCompress", "node_modules/@highlightjs/cdn-assets/highlight.min.js", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/@highlightjs/cdn-assets/styles/atom-one-light.css", "htdocs/css/" ],
+			[ "symlinkCompress", "node_modules/@highlightjs/cdn-assets/styles/atom-one-dark.css", "htdocs/css/" ],
+			
 			[ "symlinkCompress", "node_modules/jquery/dist/jquery.min.js", "htdocs/js/external/" ],
 			[ "symlinkCompress", "node_modules/jquery/dist/jquery.min.map", "htdocs/js/external/" ],
 			[ "symlinkCompress", "node_modules/cash-dom/dist/cash.min.js", "htdocs/js/external/" ],
