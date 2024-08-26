@@ -78,9 +78,9 @@
 			"modified": 1434125333,
 			"created": 1434125333,
 			"params": [
-				{ "type":"select", "id":"method", "title":"Method", "value":"GET, HEAD, POST" }, 
+				{ "type":"select", "id":"method", "title":"Method", "value":"GET, HEAD, POST, PUT, DELETE" }, 
 				{ "type":"text", "id":"url", "title":"URL", "value":"http://" }, 
-				{ "type":"textarea", "id":"headers", "title":"Request Headers", "value":"User-Agent: Orchestra/1.0" }, 
+				{ "type":"textarea", "id":"headers", "title":"Request Headers", "value":"User-Agent: Orchestra/HTTP-Plugin" }, 
 				{ "type":"textarea", "id":"data", "title":"POST Data", "value":"" }, 
 				{ "type":"text", "id":"timeout", "title":"Timeout (Seconds)", "value":"30" }, 
 				{ "type":"text", "id":"success_match", "title":"Success Match", "value":"" }, 
