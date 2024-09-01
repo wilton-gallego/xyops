@@ -112,7 +112,8 @@ do
 			echo "$ARG: $NAME already running (pid $PID)"
 			exit 1;
 		fi
-		node --trace-warnings $HOMEDIR/lib/main.js --debug --debug_level 9 --echo
+		shift
+		node --trace-warnings $HOMEDIR/lib/main.js --debug --debug_level 9 --echo "$@"
 		exit
 	;;
 	setup)
