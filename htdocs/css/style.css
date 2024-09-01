@@ -70,6 +70,11 @@ div.box_title {
 	margin-left: 15px;
 }
 
+.box_title .button.icon {
+	text-transform: none;
+	margin-left: 12px;
+}
+
 /* div.section_title {
 	color: var(--green);
 } */
@@ -459,7 +464,7 @@ body.dark div.dash_unit_box {
 	margin-bottom: 16px;
 	font-weight: 600;
 	line-height: 1.25;
-	color: var(--body-text-color);
+	color: var(--theme-color);
 }
 
 .markdown-body p,
@@ -550,15 +555,6 @@ body.dark div.dash_unit_box {
 	padding: 2px 4px 4px 4px;
 	/* font-size: 13px; */
 	font-size: 0.85em;
-}
-
-.markdown-body.code h1,
-.markdown-body.code h2,
-.markdown-body.code h3,
-.markdown-body.code h4,
-.markdown-body.code h5,
-.markdown-body.code h6 {
-	color: var(--theme-color);
 }
 
 /* Swatch / Table Row Colors */
@@ -751,11 +747,10 @@ div.td_big {
 	padding: 15px;
 }
 
-/* .plugin_param_editor_cont .info_label {
+.plugin_param_editor_cont .info_label {
 	font-size: 12px;
-	text-transform: none;
-	font-style: italic;
-} */
+	margin-bottom: 4px;
+}
 
 .plugin_param_editor_cont .info_value {
 	margin-top: 2px;
@@ -895,7 +890,7 @@ body.dark .plugin_param_editor_cont textarea, body.dark .plugin_param_editor_con
 .chart_toolbar > .chart_icon:hover {
 	/* top: -1px; */
 	/* border: 1px solid var(--theme-color-half); */
-	box-shadow: 0px 0px 2px var(--theme-color);
+	/* box-shadow: 0px 0px 2px var(--theme-color); */
 	color: var(--theme-color);
 	opacity: 1.0;
 }
@@ -1282,6 +1277,14 @@ div.box.toggle.expanded > div.box_title > div {
 	/* 'Date/Time', 'Type', 'Description', 'Username', 'IP Address', 'Actions' */
 	.data_grid.activity_grid { grid-template-columns: auto auto auto 0px auto auto !important; }
 	.data_grid.activity_grid > ul > div:nth-child(4) { visibility: hidden; }
+	
+	/* 'Enabled, 'Hook Title', 'Hook ID', 'URL', 'Author', 'Created', 'Actions' */
+	.data_grid.webhook_grid { grid-template-columns: auto auto auto 0px auto auto auto !important; }
+	.data_grid.webhook_grid > ul > div:nth-child(4) { visibility: hidden; }
+	
+	/* "Trigger", "Type", "Description", "Date/Time", "Elapsed", "Result", "Actions" */
+	.data_grid.action_grid { grid-template-columns: auto auto auto 0px auto auto auto !important; }
+	.data_grid.action_grid > ul > div:nth-child(4) { visibility: hidden; }
 }
 
 /* Tablets */
@@ -1514,6 +1517,16 @@ div.box.toggle.expanded > div.box_title > div {
 	.data_grid.cpu_grid { grid-template-columns: auto auto auto auto auto 0px 0px auto !important; }
 	.data_grid.cpu_grid > ul > div:nth-child(6) { visibility: hidden; }
 	.data_grid.cpu_grid > ul > div:nth-child(7) { visibility: hidden; }
+	
+	/* Enabled, 'Hook Title', 'Hook ID', 'URL', 'Author', 'Created', 'Actions' */
+	.data_grid.webhook_grid { grid-template-columns: auto auto auto 0px 0px auto auto !important; }
+	.data_grid.webhook_grid > ul > div:nth-child(4) { visibility: hidden; }
+	.data_grid.webhook_grid > ul > div:nth-child(5) { visibility: hidden; }
+	
+	/* "Trigger", "Type", "Description", "Date/Time", "Elapsed", "Result", "Actions" */
+	.data_grid.action_grid { grid-template-columns: auto auto auto 0px 0px auto auto !important; }
+	.data_grid.action_grid > ul > div:nth-child(4) { visibility: hidden; }
+	.data_grid.action_grid > ul > div:nth-child(5) { visibility: hidden; }
 }
 
 /* Phones */
@@ -1864,6 +1877,18 @@ div.box.toggle.expanded > div.box_title > div {
 	.data_grid.cpu_grid > ul > div:nth-child(5) { visibility: hidden; }
 	.data_grid.cpu_grid > ul > div:nth-child(6) { visibility: hidden; }
 	.data_grid.cpu_grid > ul > div:nth-child(7) { visibility: hidden; }
+	
+	/* Enabled, 'Hook Title', 'Hook ID', 'URL', 'Author', 'Created', 'Actions' */
+	.data_grid.webhook_grid { grid-template-columns: auto auto auto 0px 0px 0px auto !important; }
+	.data_grid.webhook_grid > ul > div:nth-child(4) { visibility: hidden; }
+	.data_grid.webhook_grid > ul > div:nth-child(5) { visibility: hidden; }
+	.data_grid.webhook_grid > ul > div:nth-child(6) { visibility: hidden; }
+	
+	/* "Trigger", "Type", "Description", "Date/Time", "Elapsed", "Result", "Actions" */
+	.data_grid.action_grid { grid-template-columns: auto auto 0px 0px 0px auto auto !important; }
+	.data_grid.action_grid > ul > div:nth-child(3) { visibility: hidden; }
+	.data_grid.action_grid > ul > div:nth-child(4) { visibility: hidden; }
+	.data_grid.action_grid > ul > div:nth-child(5) { visibility: hidden; }
 }
 
 /* Smaller Phones */
@@ -1983,8 +2008,15 @@ pre code.hljs {
 	background: transparent !important;
 	font-family: var(--font-family-monospace);
 	font-size: 13px;
-	line-height: 15px;
+	line-height: 16px;
 	tab-size: 4;
 	overflow-x: hidden;
 	white-space: pre-wrap;
+}
+
+span.hljs-number {
+	color: #0184bb;
+}
+body.dark span.hljs-number {
+	color: #56b6c2;
 }
