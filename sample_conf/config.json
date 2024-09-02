@@ -36,7 +36,14 @@
 	"job_cpu_sustain": 0,
 	"job_log_max_size": 0,
 	"job_env": {},
-	"job_error_snapshots": true,
+	
+	"job_universal_actions": [
+		{
+			"enabled": true,
+			"trigger": "error",
+			"type": "snapshot"
+		}
+	],
 	
 	"new_server_stale_threshold": 3600,
 	"hostname_display_strip": "\\.[\\w\\-]+\\.\\w+$",
@@ -47,9 +54,9 @@
 	},
 	
 	"hook_text_templates": {
-		"start": "Job started on [server/hostname]: [event/title] [links/job_details]",
-		"success": "Job completed successfully on [server/hostname]: [event/title] [links/job_details]",
-		"error": "Job failed on [server/hostname]: [event/title]: Error [job/code]: [job/description] [links/job_details]"
+		"job_start": "Orchestra Job started on [server/hostname]: [event/title]: [links/job_details]",
+		"job_success": "Orchestra Job completed successfully on [server/hostname]: [event/title]: [links/job_details]",
+		"job_error": "Orchestra Job failed on [server/hostname]: [event/title]: Error [job/code]: [job/description]: [links/job_details]"
 	},
 	
 	"multi": {
@@ -129,6 +136,10 @@
 			{ "id": "create_tags", "title": "Create Tags", "icon": "tag-outline" },
 			{ "id": "edit_tags", "title": "Edit Tags", "icon": "tag-outline" },
 			{ "id": "delete_tags", "title": "Delete Tags", "icon": "tag-outline" },
+			
+			{ "id": "create_web_hooks", "title": "Create Web Hooks", "icon": "webhook" },
+			{ "id": "edit_web_hooks", "title": "Edit Web Hooks", "icon": "webhook" },
+			{ "id": "delete_web_hooks", "title": "Delete Web Hooks", "icon": "webhook" },
 			
 			{ "id": "create_snapshots", "title": "Create Snapshots", "icon": "camera-outline" }
 		],
