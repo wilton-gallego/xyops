@@ -178,7 +178,7 @@ Page.Groups = class Groups extends Page.Base {
 		
 		this.div.html( html );
 		
-		SingleSelect.init( this.div.find('#fe_eg_icon') );
+		SingleSelect.init( this.div.find('#fe_eg_icon, #fe_eg_web_hook') );
 		$('#fe_eg_title').focus();
 		this.setupBoxButtonFloater();
 	}
@@ -252,7 +252,7 @@ Page.Groups = class Groups extends Page.Base {
 		
 		// lock ID for editing
 		$('#fe_eg_id').attr('disabled', true);
-		SingleSelect.init( this.div.find('#fe_eg_icon') );
+		SingleSelect.init( this.div.find('#fe_eg_icon, #fe_eg_web_hook') );
 		this.setupBoxButtonFloater();
 	}
 	
@@ -375,15 +375,14 @@ Page.Groups = class Groups extends Page.Base {
 		// alert web hook
 		html += this.getFormRow({
 			label: 'Alert Web Hook:',
-			content: this.getFormText({
+			content: this.getFormMenuSingle({
 				id: 'fe_eg_web_hook',
-				type: 'url',
-				spellcheck: 'false',
-				autocomplete: 'off',
-				placeholder: 'https://',
-				value: group.web_hook || ''
+				title: 'Select Web Hook',
+				options: [ ['', "(None)"] ].concat( app.web_hooks ),
+				value: group.web_hook,
+				default_icon: 'webhook'
 			}),
-			caption: 'Optionally set the default web hook URL for alerts in this group. Note that individual alerts can override this setting.'
+			caption: 'Optionally set the default Web Hook for alerts in this group. Note that individual alerts can override this setting.'
 		});
 		
 		// mute_alerts

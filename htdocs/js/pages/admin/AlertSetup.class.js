@@ -163,7 +163,7 @@ Page.AlertSetup = class AlertSetup extends Page.Base {
 		this.div.html( html );
 		
 		MultiSelect.init( this.div.find('select[multiple]') );
-		SingleSelect.init( this.div.find('#fe_ea_monitor, #fe_ea_channel, #fe_ea_run_event, #fe_ea_icon') );
+		SingleSelect.init( this.div.find('#fe_ea_monitor, #fe_ea_channel, #fe_ea_run_event, #fe_ea_icon, #fe_ea_web_hook') );
 		this.updateAddRemoveMe('#fe_ea_email');
 		$('#fe_ea_title').focus();
 		this.setupBoxButtonFloater();
@@ -241,7 +241,7 @@ Page.AlertSetup = class AlertSetup extends Page.Base {
 		// lock ID for editing
 		$('#fe_ea_id').attr('disabled', true);
 		MultiSelect.init( this.div.find('select[multiple]') );
-		SingleSelect.init( this.div.find('#fe_ea_monitor, #fe_ea_channel, #fe_ea_run_event, #fe_ea_icon') );
+		SingleSelect.init( this.div.find('#fe_ea_monitor, #fe_ea_channel, #fe_ea_run_event, #fe_ea_icon, #fe_ea_web_hook') );
 		this.updateAddRemoveMe('#fe_ea_email');
 		this.setupBoxButtonFloater();
 	}
@@ -443,15 +443,14 @@ Page.AlertSetup = class AlertSetup extends Page.Base {
 		// web hook
 		html += this.getFormRow({
 			label: 'Web Hook:',
-			content: this.getFormText({
+			content: this.getFormMenuSingle({
 				id: 'fe_ea_web_hook',
-				type: 'url',
-				spellcheck: 'false',
-				autocomplete: 'off',
-				placeholder: 'https://',
-				value: alert.web_hook
+				title: 'Select Web Hook',
+				options: [ ['', "(None)"] ].concat( app.web_hooks ),
+				value: alert.web_hook,
+				default_icon: 'webhook'
 			}),
-			caption: 'Optionally enter a custom Web Hook URL for this alert.'
+			caption: 'Optionally select a Web Hook to fire for this alert.'
 		});
 		
 		// launch event

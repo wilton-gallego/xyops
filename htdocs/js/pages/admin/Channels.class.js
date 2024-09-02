@@ -161,7 +161,7 @@ Page.Channels = class Channels extends Page.Base {
 		this.div.html( html );
 		
 		// MultiSelect.init( this.div.find('select[multiple]') );
-		SingleSelect.init( this.div.find('#fe_ech_run_event, #fe_ech_icon') );
+		SingleSelect.init( this.div.find('#fe_ech_run_event, #fe_ech_icon, #fe_ech_web_hook') );
 		this.updateAddRemoveMe('#fe_ech_email');
 		$('#fe_ech_title').focus();
 		this.setupBoxButtonFloater();
@@ -236,7 +236,7 @@ Page.Channels = class Channels extends Page.Base {
 		
 		// lock ID for editing
 		$('#fe_ech_id').attr('disabled', true);
-		SingleSelect.init( this.div.find('#fe_ech_run_event, #fe_ech_icon') );
+		SingleSelect.init( this.div.find('#fe_ech_run_event, #fe_ech_icon, #fe_ech_web_hook') );
 		this.updateAddRemoveMe('#fe_ech_email');
 		this.setupBoxButtonFloater();
 	}
@@ -358,15 +358,14 @@ Page.Channels = class Channels extends Page.Base {
 		// web hook
 		html += this.getFormRow({
 			label: 'Web Hook:',
-			content: this.getFormText({
+			content: this.getFormMenuSingle({
 				id: 'fe_ech_web_hook',
-				type: 'url',
-				spellcheck: 'false',
-				autocomplete: 'off',
-				placeholder: 'https://',
-				value: channel.web_hook
+				title: 'Select Web Hook',
+				options: [ ['', "(None)"] ].concat( app.web_hooks ),
+				value: channel.web_hook,
+				default_icon: 'webhook'
 			}),
-			caption: 'Optionally enter a custom Web Hook URL for this channel.'
+			caption: 'Optionally select a Web Hook to fire for this channel.'
 		});
 		
 		// run event
