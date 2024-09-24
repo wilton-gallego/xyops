@@ -149,10 +149,10 @@ Page.System = class System extends Page.Base {
 		html += '</div>';
 		
 		// node version
-		html += '<div class="dash_unit_box">';
-			html += '<div class="dash_unit_value">' + data.node.version + '</div>';
-			html += '<div class="dash_unit_label">Node.js Version</div>';
-		html += '</div>';
+		// html += '<div class="dash_unit_box">';
+		// 	html += '<div class="dash_unit_value">' + data.node.version + '</div>';
+		// 	html += '<div class="dash_unit_label">Node.js Version</div>';
+		// html += '</div>';
 		
 		// process mem
 		html += '<div class="dash_unit_box">';
@@ -199,51 +199,40 @@ Page.System = class System extends Page.Base {
 		
 		// jobs table row count
 		html += '<div class="dash_unit_box">';
-			html += '<div class="dash_unit_value">' + commify(data.db.records.jobs) + '</div>';
+			html += '<div class="dash_unit_value">' + commify(data.db.records.jobs || 0) + '</div>';
 			html += '<div class="dash_unit_label">Job DB Rows</div>';
 		html += '</div>';
 		
 		// servers table row count
 		html += '<div class="dash_unit_box">';
-			html += '<div class="dash_unit_value">' + commify(data.db.records.servers) + '</div>';
+			html += '<div class="dash_unit_value">' + commify(data.db.records.servers || 0) + '</div>';
 			html += '<div class="dash_unit_label">Server DB Rows</div>';
 		html += '</div>';
 		
 		// snapshots table row count
 		html += '<div class="dash_unit_box">';
-			html += '<div class="dash_unit_value">' + commify(data.db.records.snapshots) + '</div>';
+			html += '<div class="dash_unit_value">' + commify(data.db.records.snapshots || 0) + '</div>';
 			html += '<div class="dash_unit_label">Snapshot DB Rows</div>';
 		html += '</div>';
 		
 		// alerts table row count
 		html += '<div class="dash_unit_box">';
-			html += '<div class="dash_unit_value">' + commify(data.db.records.alerts) + '</div>';
+			html += '<div class="dash_unit_value">' + commify(data.db.records.alerts || 0) + '</div>';
 			html += '<div class="dash_unit_label">Alert DB Rows</div>';
+		html += '</div>';
+		
+		// activity table row count
+		html += '<div class="dash_unit_box">';
+			html += '<div class="dash_unit_value">' + commify(data.db.records.activity || 0) + '</div>';
+			html += '<div class="dash_unit_label">Activity DB Rows</div>';
 		html += '</div>';
 		
 		this.div.find('.dash_grid').html( html );
 	}
 	
-	getNiceInternalJobType(type) {
-		// get nice icon + string for internal job type
-		var html = '<span class="nowrap">';
-		
-		switch (type) {
-			case 'storage': html += '<i class="mdi mdi-harddisk"></i><span>Storage</span>'; break;
-			case 'timeline': html += '<i class="mdi mdi-chart-areaspline"></i><span>Timeline</span>'; break;
-			case 'logs': html += '<i class="mdi mdi-script-text-outline"></i><span>Logs</span>'; break;
-			case 'db': html += '<i class="mdi mdi-database"></i><span>Database</span>'; break;
-			case 'maint': html += '<i class="mdi mdi-wrench-clock"></i><span>Maintenance</span>'; break;
-			case 'user': html += '<i class="mdi mdi-account"></i><span>User</span>'; break;
-		}
-		
-		html += '</span>';
-		return html;
-	}
-	
 	renderInternalJobs() {
 		// render all active internal jobs (heavy)
-		// - Std Props: id, title, started, progress, username?
+		// - Std Props: id, title, type, started, progress, username?
 		var self = this;
 		var html = '';
 		var cols = ['Job ID', 'Title', 'Type', 'Username', 'Progress', 'Elapsed', 'Remaining' ];
@@ -345,7 +334,7 @@ Page.System = class System extends Page.Base {
 	prompt_import_data() {
 		// prompt user with instructions and warnings
 		var self = this;
-		var html = "Use this feature to import bulk data into Orchestra by providing a file from your local machine.  The file should have been generated from a previous export.  <br/><br/> <b>Note:</b> It is highly recommended that you stop all running jobs when importing data.  Also note that the scheduler will automatically be paused if it is active.";
+		var html = "Use this feature to import bulk data into Orchestra by providing a file from your local machine.  The file should have been generated from a previous export.  <br><br> <b>Note:</b> It is highly recommended that you stop all running jobs when importing data.  Also note that the scheduler will automatically be paused if it is active.";
 		
 		Dialog.confirm( 'Import Data', html, 'Choose File...', function(result) {
 			if (!result) return;
@@ -362,7 +351,7 @@ Page.System = class System extends Page.Base {
 	}
 	
 	do_import_data(file) {
-		// request token and upload
+		// perform the upload given selected file from prompt
 		var self = this;
 		Dialog.hide();
 		Dialog.showProgress( 1.0, "Uploading File..." );
@@ -377,56 +366,247 @@ Page.System = class System extends Page.Base {
 			timeout: 300 * 1000 // 5 minutes
 		};
 		
-		app.api.request( 'app/admin_import_data', opts, function(resp) {
+		app.api.request( app.base_api_url + '/app/admin_import_data', opts, function(resp) {
 			Dialog.hideProgress();
 			app.showMessage('success', "Your import job has started in the background.");
 		} );
 	}
 	
 	do_export_data() {
-		// TODO: this
+		// select which data to export
 		var self = this;
 		var html = '<div class="dialog_box_content maximize" style="max-height:75vh; overflow-x:hidden; overflow-y:auto;">';
 		
-		// ['groups', 'plugins', 'categories', 'events', 'channels', 'web_hooks', 'monitors', 'alerts', 'commands', 'tags']
-		
-		var lists = config.global_list_names.map( function(list_name) {
-			return { id: list_name, title: ucfirst(list_name).replace(/_(\w)/g, function(m_all, m_g1) { return ' ' + m_g1.toUpperCase(); }) };
-		} );
-		
 		html += this.getFormRow({
 			id: 'd_sys_ex_lists',
-			label: 'Core Data:',
+			label: 'Storage Lists:',
 			content: this.getFormMenuMulti({
 				id: 'fe_sys_ex_lists',
-				title: 'Select Data',
+				title: 'Select Lists',
 				placeholder: '(None)',
-				options: lists,
+				options: config.list_list,
+				values: config.list_list.map( function(item) { return item.id; } ),
+				'data-hold': 1,
+				'data-shrinkwrap': 1,
+				'data-select-all': 1
+				// 'data-compact': 1
+			}),
+			caption: "Choose which storage lists to include in your export.  These are typically small and will export relatively fast."
+		});
+		
+		html += this.getFormRow({
+			id: 'd_sys_ex_dbs',
+			label: 'Database Tables:',
+			content: this.getFormMenuMulti({
+				id: 'fe_sys_ex_dbs',
+				title: 'Select Tables',
+				placeholder: '(None)',
+				options: config.database_list,
 				values: [],
 				'data-hold': 1,
 				'data-shrinkwrap': 1,
+				'data-select-all': 1
 				// 'data-compact': 1
 			}),
-			caption: ""
+			caption: "Choose which database tables to include in your export.  These are generally much larger and will take longer to export."
 		});
 		
+		html += this.getFormRow({
+			id: 'd_sys_ex_extras',
+			label: 'Extras:',
+			content: this.getFormMenuMulti({
+				id: 'fe_sys_ex_extras',
+				title: 'Select Extras',
+				placeholder: '(None)',
+				options: [
+					{ id: 'job_files', title: "Job Files", icon: 'file-image-outline' },
+					{ id: 'job_logs', title: "Job Logs", icon: 'file-document-outline' },
+					{ id: 'monitor_data', title: "Monitor History", icon: 'chart-timeline' },
+					{ id: 'user_avatars', title: 'User Avatars', icon: 'account-circle' }
+				],
+				values: [],
+				'data-hold': 1,
+				'data-shrinkwrap': 1,
+				'data-select-all': 1
+				// 'data-compact': 1
+			}),
+			caption: "Choose optional extras to include in your export.  These are also generally quite large.  Note that job logs / files are only included if they are 1 MB or smaller."
+		});
 		
+		html += '</div>';
+		Dialog.confirm( "Export Data", html, "Export Now", function(result) {
+			if (!result) return;
+			app.clearError();
+			
+			// prepare request
+			var items = [];
+			var lists = $('#fe_sys_ex_lists').val();
+			var dbs = $('#fe_sys_ex_dbs').val();
+			var extras = $('#fe_sys_ex_extras').val();
+			
+			if (lists.includes('users')) {
+				items.push({ type: 'users', avatars: extras.includes('user_avatars') });
+			}
+			if (extras.includes('job_files') || extras.includes('job_logs')) {
+				items.push({ type: 'jobFiles', logs: extras.includes('job_logs'), files: extras.includes('job_files') });
+			}
+			if (extras.includes('monitor_data')) {
+				items.push({ type: 'monitorData' });
+			}
+			
+			lists.forEach( function(list) {
+				items.push({ type: 'list', key: 'global/' + list });
+			} );
+			
+			dbs.forEach( function(db) {
+				items.push({ type: 'index', index: db });
+			} );
+			
+			if (!items.length) return app.doError("Please select at least one item to export.");
+			Dialog.hide();
+			
+			// fetch transfer token
+			app.api.post( 'app/get_transfer_token', { items }, function(resp) {
+				window.location = app.base_api_url + '/app/admin_export_data?token=' + resp.token;
+			}); // api.post
+		});
+		
+		MultiSelect.init( $('#fe_sys_ex_lists, #fe_sys_ex_dbs, #fe_sys_ex_extras') );
+		Dialog.autoResize();
 	}
 	
 	do_delete_data() {
-		// TODO: this
+		// delete selected data
+		var self = this;
+		var html = '<div class="dialog_box_content maximize" style="max-height:75vh; overflow-x:hidden; overflow-y:auto;">';
+		
+		html += this.getFormRow({
+			id: 'd_sys_ex_lists',
+			label: 'Storage Lists:',
+			content: this.getFormMenuMulti({
+				id: 'fe_sys_ex_lists',
+				title: 'Select Lists',
+				placeholder: '(None)',
+				options: config.list_list,
+				values: [],
+				'data-hold': 1,
+				'data-shrinkwrap': 1,
+				'data-select-all': 1
+				// 'data-compact': 1
+			}),
+			caption: "Choose which storage lists to delete.  These are typically small and will go relatively fast."
+		});
+		
+		html += this.getFormRow({
+			id: 'd_sys_ex_dbs',
+			label: 'Database Tables:',
+			content: this.getFormMenuMulti({
+				id: 'fe_sys_ex_dbs',
+				title: 'Select Tables',
+				placeholder: '(None)',
+				options: config.database_list,
+				values: [],
+				'data-hold': 1,
+				'data-shrinkwrap': 1,
+				'data-select-all': 1
+				// 'data-compact': 1
+			}),
+			caption: "Choose which database tables to delete.  These are generally much larger and will take longer to go."
+		});
+		
+		html += '</div>';
+		Dialog.confirmDanger( "Delete Data", html, "Delete Now", function(result) {
+			if (!result) return;
+			app.clearError();
+			
+			// prepare request
+			var items = [];
+			var lists = $('#fe_sys_ex_lists').val();
+			var dbs = $('#fe_sys_ex_dbs').val();
+			
+			if (lists.includes('users')) {
+				items.push({ type: 'users' });
+			}
+			
+			lists.forEach( function(list) {
+				items.push({ type: 'list', key: 'global/' + list });
+			} );
+			
+			dbs.forEach( function(db) {
+				items.push({ type: 'index', index: db });
+			} );
+			
+			if (!items.length) return app.doError("Please select at least one item to delete.");
+			
+			// prompt the user one last time to super-confirm the delete
+			var final_opts = {
+				elem: '#btn_dialog_confirm',
+				title: "Type &ldquo;delete&rdquo; to confirm",
+				danger: true,
+				icon: 'trash-can-outline',
+				confirm: 'Confirm',
+				trim: true,
+				lower: true,
+				validate: /^delete$/,
+				
+				callback: function(value) {
+					if (value !== 'delete') return;
+					Dialog.hide();
+					
+					// start the job
+					app.api.post( 'app/admin_delete_data', { items }, function(resp) {
+						app.showMessage('success', "Your delete job has started in the background.");
+					}); // api.post
+				}
+			};
+			
+			TextSelect.popupQuickMenu(final_opts);
+		});
+		
+		MultiSelect.init( $('#fe_sys_ex_lists, #fe_sys_ex_dbs') );
+		Dialog.autoResize();
 	}
 	
 	do_run_maint() {
-		// TODO: this
+		// run daily maintenance manually
+		var self = this;
+		var html = "This runs the nightly database maintenance process manually.  The maintenance job deletes old data that has expired, and optionally backs up the database if configured.";
+		
+		Dialog.confirm( 'Run Maintenance', html, 'Run Now', function(result) {
+			if (!result) return;
+			
+			app.api.post( 'app/admin_run_maintenance', { items }, function(resp) {
+				app.showMessage('success', "Your maintenance job has started in the background.");
+			}); // api.post
+		} ); // confirm
 	}
 	
 	do_optimize_db() {
-		// TODO: this
+		// optimize database manually (sqlite)
+		var self = this;
+		var html = "This optimizes the local database (SQLite engine only), by running a 'VACUUM' command.  You should only need this if you delete a large amount of data and need to reclaim unused space.<br><br>Please note that the database will be locked while the vacuum is running, so it is highly recommended that you stop all jobs and pause the scheduler before optimizing.";
+		
+		Dialog.confirm( 'Optimize Database', html, 'Optimize Now', function(result) {
+			if (!result) return;
+			
+			app.api.post( 'app/admin_run_optimization', { items }, function(resp) {
+				app.showMessage('success', "Your optimization job has started in the background.");
+			}); // api.post
+		} ); // confirm
 	}
 	
 	do_reset_stats() {
-		// TODO: this
+		// reset daily stats
+		var self = this;
+		var html = "This resets the daily statistics that are displayed on the Dashboard page.  Normally these are reset daily at midnight (local server time), but you can reset them manually if required.";
+		
+		Dialog.confirm( 'Reset Daily Stats', html, 'Reset Now', function(result) {
+			if (!result) return;
+			
+			app.api.post( 'app/admin_reset_daily_stats', { items }, function(resp) {
+				app.showMessage('success', "The daily statistics have been reset.");
+			}); // api.post
+		} ); // confirm
 	}
 	
 	do_test_job() {
