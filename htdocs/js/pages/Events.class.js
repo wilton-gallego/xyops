@@ -2151,7 +2151,7 @@ Page.Events = class Events extends Page.Base {
 			content: this.getFormMenuMulti({
 				id: 'fe_et_years',
 				title: 'Select Years',
-				placeholder: '(All)',
+				placeholder: '(Every Year)',
 				options: this.getYearOptions(),
 				values: timing.years || [],
 				'data-hold': 1,
@@ -2167,7 +2167,7 @@ Page.Events = class Events extends Page.Base {
 			content: this.getFormMenuMulti({
 				id: 'fe_et_months',
 				title: 'Select Months',
-				placeholder: '(All)',
+				placeholder: '(Every Month)',
 				options: this.getMonthOptions(),
 				values: timing.months || [],
 				'data-hold': 1,
@@ -2183,7 +2183,7 @@ Page.Events = class Events extends Page.Base {
 			content: this.getFormMenuMulti({
 				id: 'fe_et_weekdays',
 				title: 'Select Weekdays',
-				placeholder: '(All)',
+				placeholder: '(Every Weekday)',
 				options: this.getWeekdayOptions(),
 				values: timing.weekdays || [],
 				'data-hold': 1,
@@ -2199,7 +2199,7 @@ Page.Events = class Events extends Page.Base {
 			content: this.getFormMenuMulti({
 				id: 'fe_et_days',
 				title: 'Select Days',
-				placeholder: '(All)',
+				placeholder: '(Every Day)',
 				options: this.getDayOptions(),
 				values: timing.days || [],
 				'data-hold': 1,
@@ -2215,7 +2215,7 @@ Page.Events = class Events extends Page.Base {
 			content: this.getFormMenuMulti({
 				id: 'fe_et_hours',
 				title: 'Select Hours',
-				placeholder: '(All)',
+				placeholder: '(Every Hour)',
 				options: this.getHourOptions(),
 				values: timing.hours || [],
 				'data-hold': 1,
@@ -2231,7 +2231,7 @@ Page.Events = class Events extends Page.Base {
 			content: this.getFormMenuMulti({
 				id: 'fe_et_minutes',
 				title: 'Select Minutes',
-				placeholder: '(All)',
+				placeholder: '(Every Minute)',
 				options: this.getMinuteOptions(),
 				values: timing.minutes || [],
 				'data-hold': 1,
