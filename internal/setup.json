@@ -22,7 +22,6 @@
 		[ "listCreate", "global/users", { "page_size": 1000 } ],
 		[ "listPush", "global/users", { "username": "admin" } ],
 		[ "listCreate", "global/api_keys", { "page_size": 100 } ],
-		[ "listCreate", "logs/activity", { "page_size": 100 } ],
 		
 		[ "listCreate", "global/groups", { "page_size": 100 } ],
 		[ "listPush", "global/groups", {
@@ -487,6 +486,7 @@
 			[ "symlinkCompress", "node_modules/@mdi/font/css/materialdesignicons.css.map", "htdocs/css/" ],
 			[ "copyFiles", "node_modules/@mdi/font/fonts/*", "htdocs/fonts/" ],
 			
+			[ "symlinkCompress", "node_modules/diff/dist/diff.js", "htdocs/js/external/" ],
 			[ "symlinkCompress", "node_modules/marked/marked.min.js", "htdocs/js/external/" ],
 			
 			[ "symlinkCompress", "node_modules/ansi_up/ansi_up.js", "htdocs/js/external/" ],
