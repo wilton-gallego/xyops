@@ -432,6 +432,46 @@ body.dark div.maint_unit {
 	animation-timing-function: ease-in-out;
 }
 
+/* Diff */
+
+.diff_content {
+	padding: 2px 4px 15px 20px;
+	tab-size: 4;
+	/* background-color: #f8f8f8; */
+}
+.diff_content > div {
+	white-space: pre-wrap;
+	/* overflow-x: auto; */
+	
+	line-height: 16px;
+	font-size: 13px;
+	font-family: var(--font-family-monospace);
+}
+
+.diff_removed {
+	/* color: red; */
+	/* color: rgb(220, 53, 69); */
+	color: var(--red);
+	font-weight: bold;
+	/* text-decoration: line-through; */
+}
+.diff_added {
+	/* color: green; */
+	/* color: rgb(40, 167, 69); */
+	color: var(--green);
+	font-weight: bold;
+}
+.diff_same {
+	color: var(--label-color);
+}
+
+.diff_message {
+	padding-top: 20px;
+	padding-bottom: 20px;
+	text-align: center;
+	font-weight: bold;
+}
+
 /* Markdown Blocks */
 
 .plain-body-prewrap {
