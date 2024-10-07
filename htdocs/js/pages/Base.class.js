@@ -2421,7 +2421,7 @@ Page.Base = class Base extends Page {
 		};
 	}
 	
-	viewMarkdownAuto(title, text) {
+	viewMarkdownAuto(title, text, btn) {
 		// popup dialog to show pretty-printed markdown
 		var self = this;
 		this._temp_code = text;
@@ -2447,7 +2447,8 @@ Page.Base = class Base extends Page {
 		html += '</div>'; // code_viewer
 		
 		var buttons_html = "";
-		buttons_html += '<div class="button" onMouseUp="$P().copyCodeToClipboard()">Copy to Clipboard</div>';
+		if (btn) buttons_html += btn;
+		else buttons_html += '<div class="button" onMouseUp="$P().copyCodeToClipboard()">Copy to Clipboard</div>';
 		buttons_html += '<div class="button primary" onMouseUp="Dialog.confirm_click(true)">Close</div>';
 		
 		Dialog.showSimpleDialog(title, html, buttons_html);
@@ -2482,6 +2483,50 @@ Page.Base = class Base extends Page {
 			if (this.innerText.match(/^\s*\{[\S\s]+\}\s*$/)) this.classList.add('language-json');
 			hljs.highlightElement(this);
 		});
+	}
+	
+	getDiffHTML(old_obj, new_obj, verbose) {
+		// get HTML for diff
+		var old_text = stablePrettyStringify( old_obj || {} );
+		var new_text = stablePrettyStringify( new_obj || {} );
+		var changes = Diff.diffLines( old_text, new_text );
+		var html = '';
+		
+		if (find_objects( changes, { added: true } ).length || find_objects( changes, { removed: true } ).length) {
+			// we have changes
+			changes.forEach( function(change) {
+				var lines = [];
+				var class_name = '';
+				
+				if (change.removed) {
+					lines = change.value.trimRight().split(/\n/);
+					class_name = 'diff_removed';
+				}
+				else if (change.added) {
+					lines = change.value.trimRight().split(/\n/);
+					class_name = 'diff_added';
+				}
+				else {
+					lines = change.value.replace(/\n$/, '').split(/\n/);
+					if ((lines.length > 2) && !verbose) {
+						var top = lines.shift();
+						var bottom = lines.pop();
+						lines = [ top, "...", bottom ];
+					}
+					class_name = 'diff_same';
+				}
+				
+				lines.forEach( function(line) {
+					html += '<div class="' + class_name + '">' + encode_entities(line) + '</div>';
+				} );
+			}); // foreach change
+		}
+		else {
+			// no changes
+			return false;
+		}
+		
+		return html;
 	}
 	
 	// 
