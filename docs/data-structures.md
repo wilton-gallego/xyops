@@ -363,6 +363,15 @@ User writable property for providing a markdown-formatted report.  Should be spe
 User writable property for providing a text-formatted report.  Should be specified as an object with `title`, `content` and `caption` properties.  The `title` and `caption` may be omitted.  This gets converted to HTML using a `<pre>` element.
 
 
+## Job.single
+
+This is set to `true` by the scheduler when a job was launched from a "single-shot" timing configuration.  Only used for UI hinting.
+
+## Job.splugin
+
+This is set to a Plugin ID by the scheduler when a job was launched from a Plugin based timing configuration.  Only used for UI hinting.
+
+
 
 # Workflow
 
@@ -534,6 +543,7 @@ Each timing rule has a `type` property which describes its behavior.  The differ
 | `range` | Set a starting and/or ending date for a repeating event.  Requires additional `start` and/or `end` properties, set to [Epoch timestamps](https://en.wikipedia.org/wiki/Unix_time). |
 | `blackout` | Set a blackout date/time range when the event *cannot* run.  Requires additional `start` and `end` properties, set to [Epoch timestamps](https://en.wikipedia.org/wiki/Unix_time). |
 | `delay` | Set an optional starting delay for all scheduled jobs.  Requires an additional `duration` property, set to the number of seconds to delay each job by. |
+| `plugin` | Custom scheduler Plugin (user-defined).  Requires an additional `plugin_id` property, as well as a `params` object, for Plugin-defined configuration. |
 
 #### Schedule Rules
 
