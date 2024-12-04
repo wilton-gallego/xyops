@@ -421,6 +421,37 @@ Page.Base = class Base extends Page {
 		return html;
 	}
 	
+	getNiceRole(role, link) {
+		// get formatted role with icon, plus optional link
+		if (!role) return '(None)';
+		if (typeof(role) == 'string') {
+			var role_def = find_object( app.roles, { id: role } );
+			if (role_def) role = role_def;
+			else {
+				// deleted role, no link
+				role = { id: role, title: role };
+				link = false;
+			}
+		}
+		
+		var html = '<span class="nowrap">';
+		var icon = '<i class="mdi mdi-' + (role.icon || 'account-group-outline') + '"></i>';
+		
+		if (link) {
+			if (link === true) {
+				link = '#Roles?sub=edit&id=' + role.id;
+			}
+			html += '<a href="' + link + '">';
+			html += icon + '<span>' + role.title + '</span></a>';
+		}
+		else {
+			html += icon + role.title;
+		}
+		html += '</span>';
+		
+		return html;
+	}
+	
 	getNiceFile(filename, link, icon) {
 		// get nice file with type-appropriate icon
 		if (!icon) icon = 'file-outline';
@@ -1338,8 +1369,8 @@ Page.Base = class Base extends Page {
 		var item = this.limits[idx];
 		item.enabled = !!$(elem).is(':checked');
 		
-		if (item.enabled) $(elem).closest('tr').removeClass('disabled');
-		else $(elem).closest('tr').addClass('disabled');
+		if (item.enabled) $(elem).closest('ul').removeClass('disabled');
+		else $(elem).closest('ul').addClass('disabled');
 	}
 	
 	editResLimit(idx) {
@@ -1697,8 +1728,8 @@ Page.Base = class Base extends Page {
 		var item = this.actions[idx];
 		item.enabled = !!$(elem).is(':checked');
 		
-		if (item.enabled) $(elem).closest('tr').removeClass('disabled');
-		else $(elem).closest('tr').addClass('disabled');
+		if (item.enabled) $(elem).closest('ul').removeClass('disabled');
+		else $(elem).closest('ul').addClass('disabled');
 	}
 	
 	editJobAction(idx) {
