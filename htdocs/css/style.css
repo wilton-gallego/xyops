@@ -102,6 +102,22 @@ body.dark .button.secondary {
 	border: 1px solid var(--green-highlight);
 }
 
+.button.default {
+	background: var(--green);
+	color: white;
+}
+.button.default:hover {
+	background: var(--green-brighter) !important;
+	border: 1px solid var(--border-color) !important;
+	color: white !important;
+}
+
+body.dark .button.default {
+	background: var(--green);
+	color: rgba(255, 255, 255, 0.85);
+	text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.5);
+}
+
 .button.delete {
 	background: var(--red);
 	color: white;
@@ -1533,6 +1549,10 @@ body.dark span.hljs-number {
 	/* 'Revision', 'Description', 'User', 'Date/Time', 'Actions' */
 	.data_grid.event_revision_grid { grid-template-columns: auto auto 0px auto auto !important; }
 	.data_grid.event_revision_grid > ul > div:nth-child(3) { visibility: hidden; }
+	
+	/* 'Enabled', 'Role Title', 'Role ID', 'Users', 'Author', 'Created', 'Actions' */
+	.data_grid.role_grid { grid-template-columns: min-content auto auto 0px auto auto auto !important; }
+	.data_grid.role_grid > ul > div:nth-child(4) { visibility: hidden; }
 }
 
 /* Tablets */
@@ -1830,6 +1850,11 @@ body.dark span.hljs-number {
 	.data_grid.event_revision_grid { grid-template-columns: auto auto 0px 0px auto !important; }
 	.data_grid.event_revision_grid > ul > div:nth-child(3) { visibility: hidden; }
 	.data_grid.event_revision_grid > ul > div:nth-child(4) { visibility: hidden; }
+	
+	/* 'Enabled', 'Role Title', 'Role ID', 'Users', 'Author', 'Created', 'Actions' */
+	.data_grid.role_grid { grid-template-columns: min-content auto auto 0px 0px auto auto !important; }
+	.data_grid.role_grid > ul > div:nth-child(4) { visibility: hidden; }
+	.data_grid.role_grid > ul > div:nth-child(5) { visibility: hidden; }
 }
 
 /* Phones */
@@ -2220,6 +2245,12 @@ body.dark span.hljs-number {
 	.data_grid.event_revision_grid > ul > div:nth-child(3) { visibility: hidden; }
 	.data_grid.event_revision_grid > ul > div:nth-child(4) { visibility: hidden; }
 	.data_grid.event_revision_grid > ul > div:nth-child(5) { visibility: hidden; }
+	
+	/* 'Enabled', 'Role Title', 'Role ID', 'Users', 'Author', 'Created', 'Actions' */
+	.data_grid.role_grid { grid-template-columns: min-content auto auto 0px 0px 0px auto !important; }
+	.data_grid.role_grid > ul > div:nth-child(4) { visibility: hidden; }
+	.data_grid.role_grid > ul > div:nth-child(5) { visibility: hidden; }
+	.data_grid.role_grid > ul > div:nth-child(6) { visibility: hidden; }
 }
 
 /* Smaller Phones */
