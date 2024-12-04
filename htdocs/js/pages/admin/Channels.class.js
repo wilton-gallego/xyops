@@ -359,9 +359,9 @@ Page.Channels = class Channels extends Page.PageUtils {
 		} );
 	}
 	
-	playCurrentSound(elem) {
+	playCurrentSound() {
 		// play current sound if one is selected
-		var sound = elem.value;
+		var sound = this.div.find('#fe_ech_sound').val();
 		if (sound) app.playSound(sound);
 	}
 	
@@ -426,7 +426,7 @@ Page.Channels = class Channels extends Page.PageUtils {
 			label: 'Notify Users:',
 			content: this.getFormMenuMulti({
 				id: 'fe_ech_users',
-				title: 'Select Users',
+				title: 'Select users to notify',
 				placeholder: 'None',
 				options: app.users.map( function(user) {
 					return { id: user.username, title: user.full_name, icon: user.icon || '' };
@@ -489,8 +489,9 @@ Page.Channels = class Channels extends Page.PageUtils {
 				options: [ ['', "(None)"] ].concat( this.getNiceSounds() ),
 				value: channel.sound || '',
 				default_icon: 'volume-high',
-				onChange: '$P().playCurrentSound(this)'
+				onChange: '$P().playCurrentSound()'
 			}),
+			suffix: '<div class="form_suffix_icon mdi mdi-play-circle-outline" title="Preview Sound..." onClick="$P().playCurrentSound()" onMouseDown="event.preventDefault();"></div>',
 			caption: 'Optionally select a sound effect to play for all channel users.'
 		});
 		
