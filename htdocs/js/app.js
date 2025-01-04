@@ -46,6 +46,9 @@ app.extend({
 		delete resp.code;
 		window.config = resp.config;
 		
+		// setup audio subsystem
+		this.setupAudio();
+		
 		// load prefs and populate for first time users
 		this.initPrefs();
 		
@@ -908,6 +911,8 @@ app.extend({
 		var channel = find_object( app.channels, { id: args.channel } ) || { icon: 'bullhorn-outline', title: '(Unknown Channel)' };
 		var html = '<b>' + channel.title + '</b><br>' + args.message;
 		
+		Debug.trace("Displaying channel message", args);
+		
 		this.toast({
 			type: 'channel', 
 			icon: channel.icon || 'bullhorn-outline', 
@@ -919,6 +924,25 @@ app.extend({
 		if (args.sound) this.playSound(args.sound);
 	},
 	
+	setupAudio() {
+		// workaround for browser security and playing audio (sigh)
+		var silence = new Audio('silence.mp3');
+		var allowed = false;
+		
+		var unlockAudioContext = function() {
+			if (allowed) return;
+			
+			silence.play().then(() => {
+				allowed = true;
+				Debug.trace("Audio context unlocked");
+			}).catch(console.error);
+		};
+		
+		['click', 'keydown', 'keyup', 'touchstart'].forEach(eventType => {
+			document.addEventListener(eventType, unlockAudioContext, { once: true });
+		});
+	},
+	
 	playSound(name) {
 		// play sound, load if needed
 		if (this.getPref('mute') || app.user.mute) return;
@@ -926,11 +950,13 @@ app.extend({
 		
 		if (track) {
 			// track already loaded, replay
+			Debug.trace("Replaying loaded sound: " + name);
 			if (!track.paused) track.currentTime = 0;
 			else track.play();
 		}
 		else {
 			// new track, load and play
+			Debug.trace("Loading and playing sound: " + name);
 			track = new Audio();
 			
 			track.autoplay = true;
@@ -938,6 +964,7 @@ app.extend({
 			track.preload = 'auto';
 			track.volume = 1.0;
 			track.muted = false;
+			track.onerror = function(err) { console.error("Failed to load sound: " + name, err); };
 			track.src = 'sounds/' + name;
 			
 			this.tracks[name] = track;
