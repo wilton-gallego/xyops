@@ -407,7 +407,11 @@ Page.ActivityLog = class ActivityLog extends Page.Base {
 				break;
 				
 				case 'servers':
-					actions.push(`<a href="#Servers?id=${item.server_id}"><b>Go to Server...</b></a>`);
+					if (item.action.match(/^(server_update|server_watch)$/)) {
+						click = `$P().showActionReport(${idx},'unused')`;
+						actions.push(`<span class="link" onClick="${click}"><b>Details...</b></span>`);
+					}
+					else actions.push(`<a href="#Servers?id=${item.server_id}"><b>Go to Server...</b></a>`);
 				break;
 				
 			} // search_key
@@ -481,7 +485,8 @@ Page.ActivityLog = class ActivityLog extends Page.Base {
 		if (!item.ips) item.ips = [];
 		
 		// massage a title out of description template (ugh)
-		var title = template.replace(/\:\s+.+$/, '').replace(/\s+\(.+$/, '');
+		var title = item._type.label + ' Activity Details';
+		// var title = template.replace(/\:\s+.+$/, '').replace(/\s+\(.+$/, '');
 		var md = '';
 		
 		// summary
