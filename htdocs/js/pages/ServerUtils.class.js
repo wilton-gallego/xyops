@@ -507,7 +507,7 @@ Page.ServerUtils = class ServerUtils extends Page.Base {
 			var nice_speed = 'n/a';
 			if (iface.speed && (iface.speed >= 1000000)) nice_speed = Math.floor(iface.speed / 1000000) + ' Tb';
 			else if (iface.speed && (iface.speed >= 1000)) nice_speed = Math.floor(iface.speed / 1000) + ' Gb';
-			else if (iface.speed) nice_speed = iface_speed + ' Mb';
+			else if (iface.speed) nice_speed = iface.speed + ' Mb';
 			
 			return [
 				'<i class="mdi mdi-lan">&nbsp;</i>' + iface.iface,
@@ -721,9 +721,14 @@ Page.ServerUtils = class ServerUtils extends Page.Base {
 		// get HTML for sortable and filterable table
 		var self = this;
 		var html = '';
+		if (!this.tables) this.tables = {};
+		
+		// retrieve previous filter if applicable
+		if (this.tables[ opts.id ] && this.tables[ opts.id ].filter) {
+			opts.filter = this.tables[ opts.id ].filter;
+		}
 		
 		// save in page for resort / filtering
-		if (!this.tables) this.tables = {};
 		opts.rows = rows;
 		opts.callback = callback;
 		this.tables[ opts.id ] = opts;
