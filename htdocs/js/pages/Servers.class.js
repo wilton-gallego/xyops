@@ -928,11 +928,6 @@ Page.Servers = class Servers extends Page.ServerUtils {
 			html += '</div>'; // box_content
 		html += '</div>'; // box
 		
-		// monitor dash grid
-		html += '<div class="dash_grid" id="d_vs_dash_grid">';
-			// html += this.getMonitorGrid(snapshot);
-		html += '</div>';
-		
 		// mem details
 		html += '<div class="box" id="d_vs_mem">';
 			html += '<div class="box_title">';
@@ -952,6 +947,11 @@ Page.Servers = class Servers extends Page.ServerUtils {
 				// html += this.getCPUDetails(snapshot);
 			html += '</div>'; // box_content
 		html += '</div>'; // box
+		
+		// monitor dash grid
+		html += '<div class="dash_grid" id="d_vs_dash_grid">';
+			// html += this.getMonitorGrid(snapshot);
+		html += '</div>';
 		
 		// monitors
 		html += '<div class="box" id="d_vs_monitors">';
@@ -1391,6 +1391,12 @@ Page.Servers = class Servers extends Page.ServerUtils {
 				chart.addLayerSample(layer_idx, { x: data.row.date, y: data.row[def.id] || 0 }, 60 );
 			}
 		}); // foreach monitor
+		
+		// also update mem and cpu details
+		if (data.data) {
+			this.div.find('#d_vs_mem > .box_content').html( this.getMemDetails(data) );
+			this.div.find('#d_vs_cpus > .box_content').html( this.getCPUDetails(data) );
+		}
 	}
 	
 	applyQuickMonitorFilter(elem) {
@@ -1543,8 +1549,10 @@ Page.Servers = class Servers extends Page.ServerUtils {
 		this.div.find('#d_vs_stat_uptime').html( this.getNiceUptime(snapshot.data.uptime_sec) );
 		
 		this.renderMonitorGrid();
-		this.renderMemDetails();
-		this.renderCPUDetails();
+		
+		// These now happen every sec as part of quickmon
+		// this.renderMemDetails();
+		// this.renderCPUDetails();
 		
 		this.div.find('#d_vs_procs > div.box_content').html( this.getProcessTable(snapshot) );
 		this.div.find('#d_vs_conns > div.box_content').html( this.getConnectionTable(snapshot) );

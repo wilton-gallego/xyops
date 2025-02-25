@@ -211,7 +211,7 @@ Page.ServerUtils = class ServerUtils extends Page.Base {
 		var self = this;
 		var data = server.data;
 		var html = '';
-		var mem = data.memory;
+		var mem = data.memory || data.mem;
 		
 		/* "memory": {
 			"total": 8318783488,
@@ -260,11 +260,13 @@ Page.ServerUtils = class ServerUtils extends Page.Base {
 		
 		html += '<div style="height:30px;"></div>';
 		
-		var cpus = (data.cpu && data.cpu.cpus) ? data.cpu.cpus : {};
-		var sorted_keys = Object.keys(cpus).sort( function(a, b) {
-			return parseInt( a.replace(/^cpu/, '') ) - parseInt( b.replace(/^cpu/, '') );
-		} );
-		var rows = sorted_keys.map( function(key) { return cpus[key]; } );
+		var rows = (data.cpu && data.cpu.cpus) ? data.cpu.cpus : [];
+		
+		// var cpus = (data.cpu && data.cpu.cpus) ? data.cpu.cpus : {};
+		// var sorted_keys = Object.keys(cpus).sort( function(a, b) {
+		// 	return parseInt( a.replace(/^cpu/, '') ) - parseInt( b.replace(/^cpu/, '') );
+		// } );
+		// var rows = sorted_keys.map( function(key) { return cpus[key]; } );
 		
 		var cols = ['CPU #', 'User %', 'System %', 'Nice %', 'I/O Wait %', 'Hard IRQ %', 'Soft IRQ %', 'Total %'];
 		
@@ -283,7 +285,7 @@ Page.ServerUtils = class ServerUtils extends Page.Base {
 				short_float(item.iowait) + '%',
 				short_float(item.irq) + '%',
 				short_float(item.softirq) + '%',
-				self.getNiceProgressBar( (100 - item.idle) / 100, 'static', true )
+				self.getNiceProgressBar( (100 - item.idle) / 100, 'static wider', true )
 			];
 		}); // grid
 		
