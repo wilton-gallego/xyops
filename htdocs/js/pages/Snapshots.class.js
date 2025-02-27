@@ -638,6 +638,7 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		delete this.alerts;
 		delete this.jobs;
 		delete this.tables;
+		delete this.donutDashUnits;
 		
 		// destroy charts if applicable (view page)
 		if (this.charts) {
