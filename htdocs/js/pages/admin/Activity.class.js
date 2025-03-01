@@ -456,7 +456,7 @@ Page.ActivityLog = class ActivityLog extends Page.Base {
 				'' + self.getRelativeDateTime( item.epoch ) + '',
 				'<div class="td_big" style="white-space:nowrap; font-weight:normal;"><i class="mdi mdi-' + item_type.icon + '">&nbsp;</i>' + item_type.label + '</div>',
 				'' + desc + '',
-				'' + self.getNiceUser(item.username, true) + '',
+				'' + self.getNiceUser(item.admin || item.username, true) + '',
 				(item.ip || 'n/a'),
 				'' + actions.join(' | ') + ''
 			];
@@ -498,7 +498,7 @@ Page.ActivityLog = class ActivityLog extends Page.Base {
 		
 		// user info
 		md += "\n### Client Info\n\n";
-		md += '- **User:** ' + this.getNiceUser(item.username, true) + "\n";
+		md += '- **User:** ' + this.getNiceUser(item.admin || item.username, true) + "\n";
 		md += '- **IP Addresses:** ' + (item.ips.join(', ') || 'n/a') + "\n";
 		md += '- **User Agent:** ' + (item.useragent || 'Unknown') + "\n";
 		
