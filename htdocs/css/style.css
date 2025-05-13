@@ -1048,11 +1048,26 @@ body.dark #dialog .plugin_param_editor_cont {
 	cursor: pointer;
 }
 
+.chart_toolbar .chart_icon.ci_zo {
+	display: none;
+}
+.chart_toolbar .chart_icon.ci_zo.selected {
+	display: block;
+}
+
 .pxc_tt_overlay {
 	z-index: 105 !important;
+	
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
 }
 .pxc_tooltip {
 	z-index: 104 !important;
+	
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
 }
 body.dark .pxc_tt_content {
 	background-color: rgb(24, 28, 32) !important;
