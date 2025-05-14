@@ -441,6 +441,14 @@ Page.ServerUtils = class ServerUtils extends Page.PageUtils {
 		}
 		
 		var alerts = this.alerts;
+		if (this.visibleServerIDs) {
+			alerts = this.alerts.filter( function(item) {
+				if (!item.server) return false;
+				if (!self.visibleServerIDs[ item.server ]) return false;
+				return true;
+			} );
+		}
+		
 		var cols = ["Alert ID", "Title", "Message", "Server", "Status", "Started", "Duration"];
 		var html = '';
 		
@@ -473,9 +481,19 @@ Page.ServerUtils = class ServerUtils extends Page.PageUtils {
 		
 		// make sure page is still active (API may be slow)
 		if (!this.active) return;
+		if (!this.jobs) return;
+		
+		var jobs = this.jobs;
+		if (this.visibleServerIDs) {
+			jobs = this.jobs.filter( function(item) {
+				if (!item.server) return false;
+				if (!self.visibleServerIDs[ item.server ]) return false;
+				return true;
+			} );
+		}
 		
 		var grid_args = {
-			rows: this.jobs,
+			rows: jobs,
 			cols: ['Job ID', 'Server', 'Source', 'Started', 'Elapsed', 'Avg CPU/Mem', 'Result'],
 			data_type: 'job',
 			class: 'data_grid job_history_grid'
@@ -1129,6 +1147,21 @@ Page.ServerUtils = class ServerUtils extends Page.PageUtils {
 		return options;
 	}
 	
+	applyQuickMonitorFilter(elem) {
+		// hide or show specific quick monitors based on substring match on title
+		var filter = this.quickMonitorFilter = $(elem).val();
+		var re = new RegExp( escape_regexp(filter), 'i' );
+		
+		for (var key in this.charts) {
+			var chart = this.charts[key];
+			if (chart._quick) {
+				var $cont = $(chart.canvas).parent();
+				if (chart.title.match(re)) $cont.show();
+				else $cont.hide();
+			}
+		}
+	}
+	
 	applyMonitorFilter(elem) {
 		// hide or show specific monitors based on substring match on title
 		var filter = this.monitorFilter = $(elem).val();
@@ -1281,6 +1314,592 @@ Page.ServerUtils = class ServerUtils extends Page.PageUtils {
 		var code = $('#fe_as_install_code').val();
 		copyToClipboard(code);
 		app.showMessage('info', "The install command was copied to your clipboard.");
+	}
+	
+	getNiceArches(servers) {
+		// get nice list of unique arches from all servers
+		var self = this;
+		return [...new Set( servers.map( function(server) { return self.getNiceArch(server.info.arch); } ) )].join(', ') || 'n/a';
+	}
+	
+	getNiceOSes(servers) {
+		// get nice list of unique oses from all servers
+		var self = this;
+		return [...new Set( servers.map( function(server) { return self.getNiceShortOS(server.info.os); } ) )].join(', ') || 'n/a';
+	}
+	
+	getNiceCPUTypes(servers) {
+		// get nice list of unique cpu types from all servers
+		var self = this;
+		return [...new Set( servers.map( function(server) { return self.getNiceCPUType(server.info.cpu); } ) )].join(', ') || 'n/a';
+	}
+	
+	getNiceVirts(servers) {
+		// get nice list of unique virts from all servers
+		var self = this;
+		return [...new Set( servers.map( function(server) { return self.getNiceVirtualization(server.info.virt); } ) )].join(', ') || 'n/a';
+	}
+	
+	getGroupMemDetails() {
+		// get memory details
+		var html = '';
+		
+		html += '<div class="dash_donut_grid">';
+			html += this.getDonutDashUnit({ id: 'mem_used', value: 0, max: 1, type: 'bytes', suffix: '', label: 'Used', color: app.colors[2] });
+			html += this.getDonutDashUnit({ id: 'mem_active', value: 0, max: 1, type: 'bytes', suffix: '', label: 'Active', color: app.colors[3] });
+			html += this.getDonutDashUnit({ id: 'mem_available', value: 0, max: 1, type: 'bytes', suffix: '', label: 'Available', color: app.colors[0] });
+			html += this.getDonutDashUnit({ id: 'mem_free', value: 0, max: 1, type: 'bytes', suffix: '', label: 'Free', color: app.colors[1] });
+			html += this.getDonutDashUnit({ id: 'mem_buffers', value: 0, max: 1, type: 'bytes', suffix: '', label: 'Buffered', color: app.colors[4] });
+			html += this.getDonutDashUnit({ id: 'mem_cached', value: 0, max: 1, type: 'bytes', suffix: '', label: 'Cached', color: app.colors[5] });
+		html += '</div>';
+		
+		return html;
+	}
+	
+	getGroupCPUDetails() {
+		// get table of individual cpu details
+		var html = '';
+		
+		html += '<div class="dash_donut_grid">';
+			html += this.getDonutDashUnit({ id: 'cpu_user', value: 0, max: 100, type: 'float', suffix: '%', label: 'User %', color: app.colors[6] });
+			html += this.getDonutDashUnit({ id: 'cpu_system', value: 0, max: 100, type: 'float', suffix: '%', label: 'System %', color: app.colors[7] });
+			html += this.getDonutDashUnit({ id: 'cpu_nice', value: 0, max: 100, type: 'float', suffix: '%', label: 'Nice %', color: app.colors[8] });
+			html += this.getDonutDashUnit({ id: 'cpu_iowait', value: 0, max: 100, type: 'float', suffix: '%', label: 'I/O Wait %', color: app.colors[9] });
+			html += this.getDonutDashUnit({ id: 'cpu_irq', value: 0, max: 100, type: 'float', suffix: '%', label: 'Hard IRQ %', color: app.colors[11] });
+			html += this.getDonutDashUnit({ id: 'cpu_softirq', value: 0, max: 100, type: 'float', suffix: '%', label: 'Soft IRQ %', color: app.colors[12] });
+		html += '</div>';
+		
+		return html;
+	}
+	
+	updateGroupMemDetails() {
+		// update mem donuts smoothly
+		var self = this;
+		var $cont = this.div.find('#d_vg_mem');
+		
+		var mem = {};
+		var mmas = {};
+		var merge_type = app.getPref('cpu_mem_merge_mem') || 'total';
+		
+		['used', 'active', 'available', 'free', 'buffers', 'cached', 'total'].forEach( function(key) {
+			mmas[key] = { total: 0, count: 0, min: false, max: false };
+		} );
+		
+		this.servers.forEach( function(server) {
+			if (!server.quick || !server.quick.data || !server.quick.data.mem) return;
+			if (!self.visibleServerIDs[ server.id ]) return;
+			var data = server.quick.data;
+			
+			for (var key in mmas) {
+				var mma = mmas[key];
+				var value = data.mem[key] || 0;
+				
+				mma.total += value;
+				mma.count++;
+				if ((mma.min === false) || (value < mma.min)) mma.min = value;
+				if ((mma.max === false) || (value > mma.max)) mma.max = value;
+			}
+		} ); // foreach server
+		
+		for (var key in mmas) {
+			var mma = mmas[key];
+			switch (merge_type) {
+				case 'total': mem[key] = mma.total; break;
+				case 'average': mem[key] = Math.floor( mma.total / (mma.count || 1) ); break;
+				case 'minimum': mem[key] = mma.min || 0; break;
+				case 'maximum': mem[key] = mma.max || 0; break;
+			}
+		}
+		
+		for (var id in this.donutDashUnits) {
+			if (id.match(/^mem_(\w+)$/)) {
+				var key = RegExp.$1;
+				var opts = this.donutDashUnits[id];
+				
+				// set opts.max based on computed (merged) total
+				opts.max = mem.total;
+				
+				var new_value = mem[key] || 0;
+				var old_value = opts.value || 0;
+				
+				var new_pct = short_float( (new_value / (opts.max || 1)) * 100, 3 );
+				var old_pct = short_float( (old_value / (opts.max || 1)) * 100, 3 );
+				
+				var value_disp = this.getDashValue(new_value, opts.type, opts.suffix);
+				var $elem = $cont.find('#ddc_' + id + ' > div.dash_donut_image');
+				$elem.find('> div.dash_donut_value').html( value_disp );
+				
+				// add animation controller for donut change
+				if (new_pct != old_pct) this.detailAnimation.donuts.push({
+					elem: $elem,
+					from: old_pct,
+					to: new_pct,
+					color: opts.color,
+					bg: opts.bg
+				});
+				
+				opts.value = new_value;
+			}
+		}
+	}
+	
+	updateGroupCPUDetails() {
+		// update cpu donuts and progress bars smoothly
+		var self = this;
+		var $cont = this.div.find('#d_vg_cpus');
+		
+		var cpu = {};
+		var mmas = {};
+		var merge_type = app.getPref('cpu_mem_merge_cpu') || 'total';
+		
+		['user', 'system', 'nice', 'iowait', 'irq', 'softirq', 'total'].forEach( function(key) {
+			mmas[key] = { total: 0, count: 0, min: false, max: false };
+		} );
+		
+		this.servers.forEach( function(server) {
+			if (!server.quick || !server.quick.data || !server.quick.data.cpu) return;
+			if (!self.visibleServerIDs[ server.id ]) return;
+			var data = server.quick.data;
+			
+			data.cpu.totals.total = 100;
+			
+			for (var key in mmas) {
+				var mma = mmas[key];
+				var value = data.cpu.totals[key] || 0;
+				
+				mma.total += value;
+				mma.count++;
+				if ((mma.min === false) || (value < mma.min)) mma.min = value;
+				if ((mma.max === false) || (value > mma.max)) mma.max = value;
+			}
+		} ); // foreach server
+		
+		for (var key in mmas) {
+			var mma = mmas[key];
+			switch (merge_type) {
+				case 'total': cpu[key] = mma.total; break;
+				case 'average': cpu[key] = short_float( mma.total / (mma.count || 1) ); break;
+				case 'minimum': cpu[key] = mma.min || 0; break;
+				case 'maximum': cpu[key] = mma.max || 0; break;
+			}
+		}
+		
+		for (var id in this.donutDashUnits) {
+			if (id.match(/^cpu_(\w+)$/)) {
+				var key = RegExp.$1;
+				var opts = this.donutDashUnits[id];
+				
+				// set opts.max based on computed (merged) total
+				opts.max = cpu.total;
+				
+				var new_value = cpu[key] || 0;
+				var old_value = opts.value || 0;
+				
+				var new_pct = short_float( (new_value / (opts.max || 1)) * 100, 3 );
+				var old_pct = short_float( (old_value / (opts.max || 1)) * 100, 3 );
+				
+				var value_disp = this.getDashValue(new_value, opts.type, opts.suffix);
+				var $elem = $cont.find('#ddc_' + id + ' > div.dash_donut_image');
+				$elem.find('> div.dash_donut_value').html( value_disp );
+				
+				// add animation controller for donut change
+				if (new_pct != old_pct) this.detailAnimation.donuts.push({
+					elem: $elem,
+					from: old_pct,
+					to: new_pct,
+					color: opts.color,
+					bg: opts.bg
+				});
+				
+				opts.value = new_value;
+			}
+		}
+	}
+	
+	getCPUMemMergeSelector(key) {
+		// get box title widget for selecting merge type
+		return '<div class="box_title_widget" style="overflow:visible; min-width:100px; max-width:200px; font-size:13px;">' + this.getFormMenuSingle({
+			class: 'sel_cpu_mem_merge',
+			title: 'Select merge type',
+			options: config.ui.cpu_mem_merge_menu,
+			value: app.getPref('cpu_mem_merge_' + key) || 'total',
+			onChange: `$P().applyCPUMemMerge('${key}',this)`,
+			'data-shrinkwrap': 1,
+			'data-compact': 1
+		}) + '</div>';
+	}
+	
+	applyCPUMemMerge(key, elem) {
+		// set new cpu/mem merge type
+		var type = $(elem).val();
+		app.setPref('cpu_mem_merge_' + key, type);
+		
+		// set all donut values to zero, because the "max" donut value will have changed
+		for (var id in this.donutDashUnits) {
+			if (id.startsWith(key)) {
+				var opts = this.donutDashUnits[id];
+				opts.value = 0;
+			}
+		}
+		
+		// now update the cpu & mem detail donuts
+		// this may interrupt and restart an animation in progress
+		this.updateDonutDashUnits();
+	}
+	
+	updateGroupServerTable() {
+		// render sortable server table, or update it
+		var self = this;
+		var servers = this.servers;
+		var args = this.args;
+		var now = this.epoch || app.epoch;
+		var html = '';
+		
+		// build opt groups for server props like OS, CPU, etc.
+		var opt_groups = { os_platform: {}, os_distro: {}, os_release: {}, os_arch: {}, cpu_virt: {}, cpu_type: {}, cpu_cores: {} };
+		
+		servers.forEach( function(server) {
+			var info = server.info || {};
+			if (!info.os) info.os = {};
+			if (!info.cpu) info.cpu = {};
+			if (!info.virt) info.virt = {};
+			
+			if (info.os.platform) opt_groups.os_platform[ info.os.platform ] = 1;
+			if (info.os.distro) opt_groups.os_distro[ info.os.distro ] = 1;
+			if (info.os.release) opt_groups.os_release[ info.os.release ] = 1;
+			if (info.os.arch) opt_groups.os_arch[ info.os.arch ] = 1;
+			if (info.virt.vendor) opt_groups.cpu_virt[ info.virt.vendor ] = 1;
+			if (info.cpu.combo) opt_groups.cpu_type[ info.cpu.combo ] = 1;
+			if (info.cpu.cores) opt_groups.cpu_cores[ info.cpu.cores ] = 1;
+		} );
+		
+		// sort alpha and convert to id/title for menu opts
+		for (var key in opt_groups) {
+			opt_groups[key] = Object.keys(opt_groups[key]).sort().map( function(value) { return { id: crammify(value), title: value }; } );
+		}
+		
+		// must sort cpu_cores numerically
+		opt_groups.cpu_cores.sort( function(a, b) {
+			return parseInt(a.id) - parseInt(b.id);
+		} );
+		
+		var filter_opts = [
+			{ id: '', title: 'All Servers', icon: 'server' },
+			{ id: 'z_online', title: 'Online Only', icon: 'checkbox-marked-outline' },
+		].concat(
+			this.buildOptGroup( opt_groups.os_platform, "OS Platform:", '', 'osp_' ),
+			this.buildOptGroup( opt_groups.os_distro, "OS Distro:", '', 'osd_' ),
+			this.buildOptGroup( opt_groups.os_release, "OS Release:", '', 'osr_' ),
+			this.buildOptGroup( opt_groups.os_arch, "OS Arch:", '', 'osa_' ),
+			this.buildOptGroup( opt_groups.cpu_type, "CPU Type:", '', 'cput_' ),
+			this.buildOptGroup( opt_groups.cpu_cores, "CPU Cores:", '', 'cpuc_' ),
+			this.buildOptGroup( opt_groups.cpu_virt, "Virtualization:", '', 'virt_' )
+		);
+		
+		// NOTE: Don't change these columns without also changing the responsive css column collapse rules in style.css
+		var cols = ['Server', 'IP Address', 'Groups', '# CPUs', 'RAM', 'OS', 'Uptime', '# Jobs', '# Alerts'];
+		
+		html += '<div class="box">';
+		html += '<div class="box_title">';
+			// html += '<div class="header_search_widget"><i class="mdi mdi-magnify">&nbsp;</i><input type="text" size="15" placeholder="Search"/></div>';
+			
+			html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(\'#fe_vg_search\').focus()">&nbsp;</i><input type="text" id="fe_vg_search" placeholder="Filter" value="' + encode_attrib_entities(args.search ?? '') + '" onInput="$P().applyServerTableFiltersDebounce()"/></div>';
+			
+			html += '<div class="box_title_widget" style="overflow:visible; min-width:120px; max-width:200px; font-size:13px;">' + this.getFormMenuSingle({
+				id: 'fe_vg_filter',
+				title: 'Filter server list',
+				options: filter_opts,
+				value: args.filter || '',
+				onChange: '$P().applyServerTableFilters()',
+				'data-shrinkwrap': 1
+			}) + '</div>';
+			
+			html += 'Group Servers';
+		html += '</div>';
+		html += '<div class="box_content table">';
+		
+		var grid_opts = {
+			rows: this.servers,
+			cols: cols,
+			data_type: 'server',
+			below: '<ul class="grid_row_empty" id="ul_vg_none_found" style="display:none"><div style="grid-column-start: span ' + cols.length + ';">No servers found matching your filters.</div></ul>'
+		};
+		
+		html += this.getBasicGrid( grid_opts, function(item, idx) {
+			var classes = [];
+			if (!item.info) item.info = {};
+			if (!item.info.os) item.info.os = { distro: 'Unknown', release: '' };
+			if (!item.info.cpu) item.info.cpu = {};
+			if (!item.info.memory) item.info.memory = {};
+			
+			var color_swatch = '<i class="mdi mdi-circle" style="color:' + item.color + '">&nbsp;</i>';
+			
+			var nice_jobs = 'Idle';
+			var num_jobs = find_objects( self.jobs || app.activeJobs, { server: item.id } ).length;
+			if (num_jobs > 0) nice_jobs = '<i class="mdi mdi-autorenew mdi-spin">&nbsp;</i><b>' + num_jobs + '</b>';
+			
+			var nice_alerts = 'None';
+			var num_alerts = find_objects( self.alerts || app.activeAlerts, { server: item.id } ).length;
+			if (num_alerts > 0) nice_alerts = '<i class="mdi mdi-bell-outline">&nbsp;</i><b>' + num_alerts + '</b>';
+			
+			var nice_uptime = (!item.offline && item.info.booted) ? self.getNiceUptime( now - item.info.booted ) : 'n/a';
+			
+			var tds = [
+				'<span style="font-weight:bold">' + color_swatch + self.getNiceServer(item, true) + '</span>',
+				self.getNiceIP(item.ip),
+				self.getNiceGroupList(item.groups, true),
+				'<i class="mdi mdi-chip">&nbsp;</i>' + (item.info.cpu.cores || 0),
+				'<i class="mdi mdi-memory">&nbsp;</i>' + get_text_from_bytes(item.info.memory.total || 0),
+				self.getNiceShortOS(item.info.os),
+				'<div id="d_vg_server_uptime_' + item.id + '">' + nice_uptime + '</div>',
+				'<div id="d_vg_server_jobs_' + item.id + '">' + nice_jobs + '</div>',
+				nice_alerts // no need for div here: alert change redraws entire table
+			];
+			
+			if (item.offline) classes.push('disabled');
+			if (num_alerts > 0) classes.push( 'clr_red' );
+			if (classes.length) tds.className = classes.join(' ');
+			return tds;
+		} ); // getBasicGrid
+		
+		html += '</div>'; // box_content
+		
+		html += '</div>'; // box
+		
+		this.div.find('#d_vg_servers').html( html );
+		this.applyServerTableFilters();
+		SingleSelect.init( this.div.find('#fe_vg_filter') );
+	}
+	
+	applyServerTableFilters() {
+		// filters and/or search query changed -- re-filter table
+		var self = this;
+		var args = this.args;
+		var num_visible = 0;
+		var vis_server_ids = {};
+		
+		args.search = $('#fe_vg_search').val();
+		args.filter = $('#fe_vg_filter').val();
+		if (!args.search.length) delete args.search;
+		if (!args.filter.length) delete args.filter;
+		var is_filtered = (('search' in args) || ('filter' in args));
+		
+		this.div.find('#d_vg_servers .box_content.table ul.grid_row').each( function(idx) {
+			var $this = $(this);
+			var row = self.servers[idx];
+			
+			if (self.isServerRowVisible(row)) { $this.show(); num_visible++; vis_server_ids[row.id] = 1; }
+			else $this.hide();
+		} );
+		
+		// if ALL items are hidden due to search/filter, show some kind of message
+		if (!num_visible && is_filtered && this.servers.length) this.div.find('#ul_vg_none_found').show();
+		else this.div.find('#ul_vg_none_found').hide();
+		
+		// show filtered label on all sections below table, if applicable
+		if (is_filtered) this.div.find('span.s_grp_filtered').html('(Filtered)').show();
+		else this.div.find('span.s_grp_filtered').hide();
+		
+		// do history.replaceState jazz here (NO, not doing this, it breaks the page data stream)
+		// don't mess up initial visit href
+		// var query = deep_copy_object(args);
+		// var url = '#Groups' + (num_keys(query) ? compose_query_string(query) : '');
+		// history.replaceState( null, '', url );
+		// Nav.loc = url.replace(/^\#/, '');
+		
+		// save these for later
+		this.visibleServerIDs = vis_server_ids;
+		
+		// reevaluate chart layer visibility
+		for (var key in this.charts) {
+			var chart = this.charts[key];
+			chart.layers.forEach( function(layer) {
+				layer.hidden = !vis_server_ids[ layer.id ];
+			} );
+			chart.dirty = true;
+		}
+		
+		// resraw everything here that may be affected, e.g. alerts, jobs
+		this.renderGroupFilteredSections();
+	}
+	
+	isServerRowVisible(item) {
+		// check if row should be filtered using args
+		var args = this.args;
+		var is_filtered = (('search' in args) || ('filter' in args));
+		if (!is_filtered) return true; // show
+		
+		if (('search' in args) && args.search.length) {
+			var words = [item.title || '', item.hostname, item.ip, item.info.os.distro, item.info.os.release].join(' ').toLowerCase();
+			if (words.indexOf(args.search.toLowerCase()) == -1) return false; // hide
+		}
+		
+		if (('filter' in args) && args.filter.match && args.filter.match(/^([a-z0-9]+)_(.+)$/)) {
+			var mode = RegExp.$1;
+			var value = RegExp.$2;
+			
+			if (!item.info) item.info = {};
+			if (!item.info.os) item.info.os = {};
+			if (!item.info.cpu) item.info.cpu = {};
+			if (!item.info.virt) item.info.virt = {};
+			
+			switch (mode) {
+				case 'z':
+					if ((value == 'online') && item.offline) return false; // hide
+				break;
+				
+				case 'osp':
+					if (crammify(item.info.os.platform) != value) return false; // hide
+				break;
+				
+				case 'osd':
+					if (crammify(item.info.os.distro) != value) return false; // hide
+				break;
+				
+				case 'osr':
+					if (crammify(item.info.os.release) != value) return false; // hide
+				break;
+				
+				case 'osa':
+					if (crammify(item.info.os.arch) != value) return false; // hide
+				break;
+				
+				case 'virt':
+					if (crammify(item.info.virt.vendor) != value) return false; // hide
+				break;
+				
+				case 'cput':
+					if (crammify(item.info.cpu.combo) != value) return false; // hide
+				break;
+				
+				case 'cpuc':
+					if (crammify(item.info.cpu.cores) != value) return false; // hide
+				break;
+			} // switch mode
+		}
+		
+		return true; // show
+	}
+	
+	renderGroupProcessTable() {
+		// render html for sortable proc table
+		var self = this;
+		
+		var proc_opts = {
+			id: 't_grp_procs',
+			item_name: 'process',
+			attribs: {
+				class: 'data_grid grp_proc_grid'
+			},
+			sort_by: 'cpu',
+			sort_dir: -1,
+			filter: '',
+			column_ids: ['command', 'server_label', 'user', 'pid', 'parentPid', 'cpu', 'memRss', 'age', 'state'],
+			column_labels: ['Command', 'Server', 'User', 'PID', 'Parent', 'CPU', 'Memory', 'Age', 'State']
+		};
+		
+		var proc_list = [];
+		this.servers.forEach( function(server) {
+			if (server.offline) return; // skip offline servers
+			if (!self.visibleServerIDs[ server.id ]) return; // skip hidden servers
+			
+			var snapshot = server.snapshot || {};
+			if (!snapshot.data) return;
+			if (!snapshot.data.processes) return;
+			if (!snapshot.data.processes.list) return;
+			
+			snapshot.data.processes.list.forEach( function(proc) {
+				proc.server_label = server.title || server.hostname || server.id;
+				proc.server = server.id;
+				proc_list.push( proc );
+			} );
+		} );
+		
+		var html = this.getSortableTable( proc_list, proc_opts, function(proc) {
+			return [
+				'<b>' + self.getNiceProcess(proc, true) + '</b>',
+				self.getNiceServer(proc.server, true),
+				proc.user,
+				`<span class="link" onClick="$P().showGroupProcessInfo(${proc.pid},'${proc.server}')">${proc.pid}</span>`,
+				proc.parentPid ? (`<span class="link" onClick="$P().showGroupProcessInfo(${proc.parentPid},'${proc.server}')">${proc.parentPid}</span>`) : 'n/a',
+				pct( proc.cpu, 100 ),
+				get_text_from_bytes( proc.memRss ),
+				get_text_from_seconds( proc.age || 0, true, true ),
+				ucfirst(proc.state || 'unknown')
+			];
+		});
+		
+		this.div.find('#d_vg_procs > .box_content').html( html );
+	}
+	
+	showGroupProcessInfo(pid, sid) {
+		// show process info, group edition
+		var server = find_object(this.servers, { id: sid });
+		if (!server) return; // sanity
+		
+		var snapshot = server.snapshot || {};
+		if (!snapshot.data) return;
+		if (!snapshot.data.processes) return;
+		if (!snapshot.data.processes.list) return;
+		
+		this.showProcessInfo(pid, snapshot);
+	}
+	
+	renderGroupConnectionTable() {
+		// render html for sortable connection table
+		var self = this;
+		
+		var conn_opts = {
+			id: 't_snap_conns',
+			item_name: 'connection',
+			attribs: {
+				class: 'data_grid grp_conn_grid'
+			},
+			sort_by: 'state',
+			sort_dir: 1,
+			filter: '',
+			column_ids: ['state', 'server_label', 'type', 'local_addr', 'remote_addr', 'command', 'bytes_in', 'bytes_out'],
+			column_labels: ['State', 'Server', 'Protocol', 'Local Address', 'Remote Address', 'Process', 'Bytes In', 'Bytes Out']
+		};
+		
+		var conn_list = [];
+		this.servers.forEach( function(server) {
+			if (server.offline) return; // skip offline servers
+			if (!self.visibleServerIDs[ server.id ]) return; // skip hidden servers
+			
+			var snapshot = server.snapshot || {};
+			if (!snapshot.data) return;
+			if (!snapshot.data.conns) return;
+			
+			snapshot.data.conns.forEach( function(conn) {
+				conn.server_label = server.title || server.hostname || server.id;
+				conn.server = server.id;
+				
+				conn.proc = null;
+				if (conn.pid && snapshot.data.processes && snapshot.data.processes.list) {
+					conn.proc = find_object(snapshot.data.processes.list, { pid: conn.pid });
+					if (conn.proc) conn.proc.server = server.id; // for getNiceProcess
+				}
+				
+				conn_list.push( conn );
+			} );
+		});
+		
+		var html = this.getSortableTable( conn_list, conn_opts, function(conn) {
+			var nice_state = conn.state.toString().split(/_/).map( function(word) { return ucfirst(word); } ).join(' ');
+			return [
+				'<i class="mdi mdi-network-outline">&nbsp;</i>' + nice_state,
+				self.getNiceServer(conn.server, true),
+				conn.type.toUpperCase(),
+				conn.local_addr,
+				conn.remote_addr,
+				conn.proc ? self.getNiceProcess(conn.proc, true) : (conn.pid || '(None)'),
+				get_text_from_bytes( conn.bytes_in || 0 ),
+				get_text_from_bytes( conn.bytes_out || 0 )
+			];
+		});
+		
+		this.div.find('#d_vg_conns > .box_content').html( html );
 	}
 	
 };
