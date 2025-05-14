@@ -44,7 +44,7 @@
 		{ "id": "edit_web_hooks", "title": "Edit Web Hooks", "icon": "webhook" },
 		{ "id": "delete_web_hooks", "title": "Delete Web Hooks", "icon": "webhook" },
 		
-		{ "id": "create_snapshots", "title": "Create Snapshots", "icon": "camera-outline" }
+		{ "id": "create_snapshots", "title": "Create Snapshots", "icon": "monitor-eye" }
 	],
 	
 	"list_list": [
@@ -66,7 +66,7 @@
 		{ "id": "alerts", "title": "Alerts", "icon": "bell-outline" },
 		{ "id": "jobs", "title": "Jobs", "icon": "timer-outline" },
 		{ "id": "servers", "title": "Servers", "icon": "router-network" },
-		{ "id": "snapshots", "title": "Snapshots", "icon": "camera-outline" },
+		{ "id": "snapshots", "title": "Snapshots", "icon": "monitor-screenshot" },
 		{ "id": "activity", "title": "Activity", "icon": "script-text-outline" }
 	],
 	
