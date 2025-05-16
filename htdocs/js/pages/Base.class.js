@@ -1383,7 +1383,7 @@ Page.Base = class Base extends Page {
 					checked: item.enabled,
 					onChange: '$P().toggleResLimitEnabled(this,' + idx + ')'
 				}) + '</div>',
-				'<div class="td_big ellip"><i class="mdi mdi-gauge">&nbsp;</i><span class="link" onClick="$P().editResLimit('+idx+')">' + nice_title + '</span></div>',
+				'<div class="td_big nowrap"><span class="link" onClick="$P().editResLimit('+idx+')"><i class="mdi mdi-gauge"></i>' + nice_title + '</span></div>',
 				'<div class="ellip">' + nice_desc + '</div>',
 				actions.join(' | ')
 			];
@@ -1741,7 +1741,7 @@ Page.Base = class Base extends Page {
 					checked: item.enabled,
 					onChange: '$P().toggleJobActionEnabled(this,' + idx + ')'
 				}) + '</div>',
-				'<div class="td_big ellip"><i class="mdi mdi-eye-outline">&nbsp;</i><span class="link" onClick="$P().editJobAction('+idx+')">' + disp.trigger + '</span></div>',
+				'<div class="td_big nowrap"><span class="link" onClick="$P().editJobAction('+idx+')"><i class="mdi mdi-eye-outline"></i>' + disp.trigger + '</span></div>',
 				'<div class="td_big ellip"><i class="mdi mdi-' + disp.icon + '">&nbsp;</i>' + disp.type + '</div>',
 				'<div class="ellip">' + disp.desc + '</div>',
 				'<div class="">' + links.join(' | ') + '</div>'

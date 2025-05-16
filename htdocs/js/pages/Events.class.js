@@ -2373,49 +2373,49 @@ Page.Events = class Events extends Page.PageUtils {
 		
 		switch (item.type) {
 			case 'schedule':
-				nice_icon = '<i class="mdi mdi-calendar-clock">&nbsp;</i>';
+				nice_icon = '<i class="mdi mdi-calendar-clock"></i>';
 				nice_type = 'Schedule';
 				nice_desc = '<i class="mdi mdi-update">&nbsp;</i>' + summarize_event_timing(item);
 			break;
 			
 			case 'continuous':
-				nice_icon = '<i class="mdi mdi-calendar-clock">&nbsp;</i>';
+				nice_icon = '<i class="mdi mdi-calendar-clock"></i>';
 				nice_type = 'Schedule';
 				nice_desc = '<i class="mdi mdi-all-inclusive">&nbsp;</i>Run Continuously';
 			break;
 			
 			case 'single':
-				nice_icon = '<i class="mdi mdi-calendar-clock">&nbsp;</i>';
+				nice_icon = '<i class="mdi mdi-calendar-clock"></i>';
 				nice_type = 'Schedule';
 				nice_desc = '<i class="mdi mdi-alarm-check">&nbsp;</i><b>Single Shot:</b> ' + summarize_event_timing(item);
 			break;
 			
 			case 'catchup':
-				nice_icon = '<i class="mdi mdi-cog-outline">&nbsp;</i>';
+				nice_icon = '<i class="mdi mdi-cog-outline"></i>';
 				nice_type = 'Option';
 				nice_desc = '<i class="mdi mdi-run-fast">&nbsp;</i>Catch-Up';
 			break;
 			
 			case 'range':
-				nice_icon = '<i class="mdi mdi-cog-outline">&nbsp;</i>';
+				nice_icon = '<i class="mdi mdi-cog-outline"></i>';
 				nice_type = 'Option';
 				nice_desc = '<i class="mdi mdi-calendar-range-outline">&nbsp;</i><b>Range:</b> ' + this.summarizeTimingRange(item);
 			break;
 			
 			case 'blackout':
-				nice_icon = '<i class="mdi mdi-cog-outline">&nbsp;</i>';
+				nice_icon = '<i class="mdi mdi-cog-outline"></i>';
 				nice_type = 'Option';
 				nice_desc = '<i class="mdi mdi-circle">&nbsp;</i><b>Blackout:</b> ' + this.summarizeTimingRange(item);
 			break;
 			
 			case 'delay':
-				nice_icon = '<i class="mdi mdi-cog-outline">&nbsp;</i>';
+				nice_icon = '<i class="mdi mdi-cog-outline"></i>';
 				nice_type = 'Option';
 				nice_desc = '<i class="mdi mdi-chat-sleep-outline">&nbsp;</i><b>Delay:</b> ' + get_text_from_seconds(item.duration || 0, false, true);
 			break;
 			
 			case 'plugin':
-				nice_icon = '<i class="mdi mdi-power-plug">&nbsp;</i>';
+				nice_icon = '<i class="mdi mdi-power-plug"></i>';
 				nice_type = 'Plugin';
 				nice_desc = this.getNicePlugin(item.plugin_id);
 			break;
@@ -2457,7 +2457,7 @@ Page.Events = class Events extends Page.PageUtils {
 					checked: item.enabled,
 					onChange: '$P().toggleTimingEnabled(this,' + idx + ')'
 				}) + '</div>',
-				'<div class="td_big ellip">' + nice_icon + '<span class="link" onClick="$P().editTiming('+idx+')">' + nice_type + '</span></div>',
+				'<div class="td_big nowrap">' + '<span class="link" onClick="$P().editTiming('+idx+')">' + nice_icon + nice_type + '</span></div>',
 				'<div class="ellip">' + nice_desc + '</div>',
 				'<span class="nowrap">' + actions.join(' | ') + '</span>'
 			];
