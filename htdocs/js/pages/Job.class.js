@@ -389,11 +389,11 @@ Page.Job = class Job extends Page.PageUtils {
 		// charts
 		html += '<div class="box" id="d_job_graphs" >';
 			html += '<div class="box_title">';
-				html += this.getChartSizeSelector();
+				html += this.getChartSizeSelector('chart_size_quick');
 				html += 'Job Monitors';
 			html += '</div>';
 			html += '<div class="box_content table">';
-				html += '<div class="chart_grid_horiz ' + (app.getPref('chart_size') || 'medium') + '">';
+				html += '<div class="chart_grid_horiz ' + (app.getPref('chart_size_quick') || 'medium') + '">';
 				
 					html += '<div><canvas id="c_live_cpu" class="chart"></canvas></div>';
 					html += '<div><canvas id="c_live_mem" class="chart"></canvas></div>';
