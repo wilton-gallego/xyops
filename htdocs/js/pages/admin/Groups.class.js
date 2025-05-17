@@ -635,9 +635,11 @@ Page.Groups = class Groups extends Page.ServerUtils {
 			html += '<div class="box_title">';
 				html += 'Group Summary';
 				
+				html += '<div class="button icon right danger" title="Delete Group..." onClick="$P().show_delete_group_dialog()"><i class="mdi mdi-trash-can-outline"></i></div>';
 				html += '<div class="button icon right secondary" title="Job History..." onClick="$P().goJobHistory()"><i class="mdi mdi-cloud-search-outline"></i></div>';
 				html += '<div class="button icon right secondary" title="Alert History..." onClick="$P().goAlertHistory()"><i class="mdi mdi-restore-alert"></i></div>';
 				html += '<div class="button icon right secondary" title="Group History..." onClick="$P().goGroupHistory()"><i class="mdi mdi-script-text-outline"></i></div>';
+				html += '<div class="button icon right" title="Add Server..." onClick="$P().addServerToGroup()"><i class="mdi mdi-plus-circle-outline"></i></div>';
 				
 				html += '<div class="clear"></div>';
 			html += '</div>'; // title
@@ -842,6 +844,11 @@ Page.Groups = class Groups extends Page.ServerUtils {
 		if (!app.reducedMotion() && (this.servers.length <= animate_max_servers)) this.animate();
 		
 		return true;
+	}
+	
+	addServerToGroup() {
+		// add server to this group
+		this.showAddServerDialog([ this.group.id ]);
 	}
 	
 	updateDonutDashUnits() {
