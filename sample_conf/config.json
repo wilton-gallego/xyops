@@ -119,7 +119,7 @@
 		"num_format": "",
 		"hour_cycle": "h12",
 		"timezone": "",
-		"color_blind": false,
+		"color_acc": false,
 		"effects": true,
 		"page_info": true,
 		"contrast": "auto",
