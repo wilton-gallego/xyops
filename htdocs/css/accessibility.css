@@ -1,0 +1,136 @@
+/* Orchestra Style Overrides for Accessibility */
+
+/* High Contrast */
+
+body.highcon {
+	--border-color: rgb(163, 168, 180);
+	--shadow-color: rgb(141, 143, 146);
+	--background-color: rgb(248, 250, 252);
+	--header-background-color: rgb(255, 255, 255);
+	--header-text-color: rgb(74, 81, 90);
+	--box-background-color: rgb(255, 255, 255);
+	--form-background-color: rgb(248, 250, 252);
+	--table-header-background-color: rgba(0, 50, 100, 0.03);
+	
+	--sidebar-background-color: rgb(255, 255, 255);
+	--sidebar-text-color: rgb(68, 68, 78);
+	
+	--body-text-color: rgb(19, 22, 27);
+	--link-color: rgb(46, 52, 61);
+	--label-color: rgb(74, 74, 84);
+	--icon-color: rgb(128, 132, 140);
+}
+body.highcon .plugin_param_editor_cont {
+	--shadow-color: rgb(255, 255, 255);
+}
+body.highcon .multiselect .item {
+	--border-color: rgb(227, 229, 233);
+}
+body.highcon .button {
+	--shadow-color: rgb(233, 236, 240);
+}
+
+/* Low Contrast */
+
+body.lowcon {
+	--theme-color: rgb(54, 126, 208);
+	--theme-color-highlight: rgb(82, 152, 218);
+	--theme-color-half: rgba(54, 126, 208, 0.5);
+	--theme-color-naught-seven: rgba(54, 126, 208, 0.07);
+	
+	--border-color: rgb(198, 200, 205);
+	--shadow-color: rgb(199, 202, 206);
+	--background-color: rgb(222, 230, 238);
+	--header-background-color: rgb(222, 230, 238);
+	--header-text-color: rgb(117, 127, 141);
+	--box-background-color: rgb(218, 226, 234);
+	--form-background-color: rgb(211, 217, 225);
+	--table-header-background-color: rgba(0, 50, 100, 0.03);
+	
+	--sidebar-background-color: rgb(222, 230, 238);
+	--sidebar-text-color: rgb(130, 130, 147);
+	
+	--body-text-color: rgb(76, 89, 108);
+	--link-color: rgb(95, 107, 124);
+	--label-color: rgb(134, 134, 151);
+	--icon-color: rgb(194, 200, 210);
+}
+body.lowcon .button.primary, body.lowcon .button.default {
+	color: rgba(255, 255, 255, 0.8);
+}
+body.lowcon .color_label {
+	opacity: 0.8;
+}
+body.lowcon .CodeMirror {
+	background: rgb(218, 226, 234);
+}
+
+/* Dark High Contrast */
+
+body.dark.highcon {
+	--theme-color-half: rgb(55, 145, 245);
+	
+	--border-color: rgb(93, 99, 106);
+	--shadow-color: rgba(0, 0, 0, 0.0);
+	--background-color: rgb(0, 0, 0);
+	--header-background-color: rgb(0, 0, 0);
+	--header-text-color: rgb(143, 154, 171);
+	--box-background-color: rgb(17, 18, 20);
+	--form-background-color: rgb(25, 30, 35);
+	--table-header-background-color: rgba(200, 225, 255, 0.05);
+	
+	--sidebar-background-color: rgb(17, 18, 20);
+	--sidebar-text-color: rgb(143, 154, 172);
+	
+	--body-text-color: rgb(184, 194, 214);
+	--link-color: rgb(161, 171, 187);
+	--label-color: rgb(164, 174, 190);
+	--icon-color: rgb(141, 141, 159);
+	--icon-color-half: rgba(141, 141, 159, 0.5);
+}
+body.dark.highcon .plugin_param_editor_cont {
+	--border-color: rgb(15, 18, 21);
+	--shadow-color: rgb(15, 18, 21);
+	border: 1px solid rgb(79, 84, 90);
+}
+
+body.dark.highcon .plugin_param_editor_cont textarea, body.dark.highcon .plugin_param_editor_cont input, body.dark.highcon .plugin_param_editor_cont select {
+	border: 1px solid rgb(79, 84, 90);
+}
+body.dark.highcon .plugin_param_editor_cont textarea:focus, body.dark.highcon .plugin_param_editor_cont input:focus, body.dark.highcon .plugin_param_editor_cont select:focus {
+	border: 1px solid var(--theme-color);
+}
+
+body.dark.highcon .multiselect .item {
+	--border-color: rgb(35, 40, 45);
+}
+body.dark.highcon .CodeMirror {
+	background: rgb(6, 10, 14) !important;
+}
+
+body.dark.highcon .button {
+	--shadow-color: rgba(0, 0, 0, 0.0);
+}
+
+/* Dark Low Contrast */
+
+body.dark.lowcon {
+	/* Dark theme */
+	--border-color: rgb(64, 69, 75);
+	--shadow-color: rgba(0, 0, 0, 0.0);
+	--background-color: rgb(38, 44, 50);
+	--header-background-color: rgb(54, 58, 64);
+	--header-text-color: rgb(106, 115, 128);
+	--box-background-color: rgb(44, 48, 53);
+	--form-background-color: rgb(54, 60, 65);
+	--table-header-background-color: rgba(200, 225, 255, 0.03);
+	
+	--sidebar-background-color: rgb(44, 47, 51);
+	--sidebar-text-color: rgb(103, 112, 125);
+	
+	--body-text-color: rgb(142, 151, 169);
+	--link-color: rgb(115, 123, 135);
+	--label-color: rgb(115, 123, 135);
+	--icon-color: rgb(86, 86, 98);
+	--icon-color-half: rgba(90, 90, 102, 0.5);
+}
