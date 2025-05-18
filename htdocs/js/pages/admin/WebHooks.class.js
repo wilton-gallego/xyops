@@ -212,7 +212,7 @@ Page.WebHooks = class WebHooks extends Page.PageUtils {
 		this.div.html( html );
 		
 		// MultiSelect.init( this.div.find('select[multiple]') );
-		SingleSelect.init( this.div.find('#fe_ewh_icon') );
+		SingleSelect.init( this.div.find('#fe_ewh_icon, #fe_ewh_method') );
 		RelativeTime.init( $('#fe_ewh_timeout') );
 		// this.updateAddRemoveMe('#fe_ewh_email');
 		$('#fe_ewh_title').focus();
@@ -300,7 +300,7 @@ Page.WebHooks = class WebHooks extends Page.PageUtils {
 		
 		// lock ID for editing
 		$('#fe_ewh_id').attr('disabled', true);
-		SingleSelect.init( this.div.find('#fe_ewh_icon') );
+		SingleSelect.init( this.div.find('#fe_ewh_icon, #fe_ewh_method') );
 		RelativeTime.init( $('#fe_ewh_timeout') );
 		// this.updateAddRemoveMe('#fe_ewh_email');
 		this.setupBoxButtonFloater();
@@ -470,7 +470,7 @@ Page.WebHooks = class WebHooks extends Page.PageUtils {
 		// method
 		html += this.getFormRow({
 			label: 'Method:',
-			content: this.getFormMenu({
+			content: this.getFormMenuSingle({
 				id: 'fe_ewh_method',
 				title: 'Select Method',
 				options: [ 'GET', 'HEAD', 'POST', 'PUT', 'DELETE' ],
