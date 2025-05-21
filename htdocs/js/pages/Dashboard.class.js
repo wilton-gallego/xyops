@@ -448,7 +448,7 @@ Page.Dashboard = class Dashboard extends Page.PageUtils {
 			// convert event summary hash to rows
 			var rows = [];
 			for (var event_id in resp.events) {
-				var info = reps.events[event_id];
+				var info = resp.events[event_id];
 				var event = find_object( app.events, { id: event_id } );
 				if (event) {
 					info.event = event;
