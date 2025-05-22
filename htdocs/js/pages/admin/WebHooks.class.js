@@ -299,8 +299,6 @@ Page.WebHooks = class WebHooks extends Page.PageUtils {
 		
 		this.div.html( html );
 		
-		// lock ID for editing
-		$('#fe_ewh_id').attr('disabled', true);
 		SingleSelect.init( this.div.find('#fe_ewh_icon, #fe_ewh_method') );
 		RelativeTime.init( $('#fe_ewh_timeout') );
 		// this.updateAddRemoveMe('#fe_ewh_email');
@@ -404,30 +402,31 @@ Page.WebHooks = class WebHooks extends Page.PageUtils {
 		var html = '';
 		var web_hook = this.web_hook;
 		
+		if (web_hook.id) {
+			// web hook id
+			html += this.getFormRow({
+				label: 'Web Hook ID:',
+				content: this.getFormText({
+					id: 'fe_ewh_id',
+					class: 'monospace',
+					spellcheck: 'false',
+					disabled: 'disabled',
+					value: web_hook.id
+				}),
+				suffix: '<div class="form_suffix_icon mdi mdi-clipboard-text-outline" title="Copy ID to Clipboard" onClick="$P().copyFormID(this)"></div>',
+				caption: 'This is a unique ID for the web hook, used by the Orchestra API.  It cannot be changed.'
+			});
+		}
+		
 		// title
 		html += this.getFormRow({
 			label: 'Web Hook Title:',
 			content: this.getFormText({
 				id: 'fe_ewh_title',
 				spellcheck: 'false',
-				value: web_hook.title,
-				onChange: '$P().suggestIDFromTitle()'
+				value: web_hook.title
 			}),
 			caption: 'Enter the title of the web hook, for display purposes.'
-		});
-		
-		// web hook id
-		html += this.getFormRow({
-			label: 'Web Hook ID:',
-			content: this.getFormText({
-				id: 'fe_ewh_id',
-				class: 'monospace',
-				spellcheck: 'false',
-				onChange: '$P().checkWebHookExists(this)',
-				value: web_hook.id
-			}),
-			suffix: '<div class="checker"></div>',
-			caption: 'Enter a unique ID for the web hook (alphanumerics only).  Once created this cannot be changed.'
 		});
 		
 		// enabled
@@ -704,7 +703,6 @@ Page.WebHooks = class WebHooks extends Page.PageUtils {
 		// get api key elements from form, used for new or edit
 		var web_hook = this.web_hook;
 		
-		web_hook.id = $('#fe_ewh_id').val().replace(/\W+/g, '').toLowerCase();
 		web_hook.title = $('#fe_ewh_title').val().trim();
 		web_hook.enabled = $('#fe_ewh_enabled').is(':checked') ? true : false;
 		web_hook.icon = $('#fe_ewh_icon').val();
@@ -719,9 +717,6 @@ Page.WebHooks = class WebHooks extends Page.PageUtils {
 		web_hook.max_per_day = parseInt( $('#fe_ewh_max_per_day').val() );
 		web_hook.notes = $('#fe_ewh_notes').val();
 		
-		if (!web_hook.id.length) {
-			return app.badField('#fe_ewh_id', "Please enter a unique alphanumeric ID for the web hook.");
-		}
 		if (!web_hook.title.length) {
 			return app.badField('#fe_ewh_title', "Please enter a title for the web hook.");
 		}
@@ -730,38 +725,6 @@ Page.WebHooks = class WebHooks extends Page.PageUtils {
 		}
 		
 		return web_hook;
-	}
-	
-	checkWebHookExists(field) {
-		// check if web hook exists, update UI checkbox
-		// called after field changes
-		var $field = $(field);
-		var id = trim( $field.val().toLowerCase() );
-		var $elem = $field.closest('.form_row').find('.fr_suffix .checker');
-		
-		if (id.match(/^\w+$/)) {
-			// check with cache
-			if (find_object(app.web_hooks, { id: id })) {
-				// web_hook taken
-				$elem.css('color','red').html('<span class="mdi mdi-alert-circle"></span>').attr('title', "Web Hook ID is taken.");
-				$field.addClass('warning');
-			}
-			else {
-				// web_hook is valid and available!
-				$elem.css('color','green').html('<span class="mdi mdi-check-circle"></span>').attr('title', "Web Hook ID is available!");
-				$field.removeClass('warning');
-			}
-		}
-		else if (id.length) {
-			// bad id
-			$elem.css('color','red').html('<span class="mdi mdi-alert-decagram"></span>').attr('title', "Web Hook ID is malformed.");
-			$field.addClass('warning');
-		}
-		else {
-			// empty
-			$elem.html('').removeAttr('title');
-			$field.removeClass('warning');
-		}
 	}
 	
 	onResize() {

@@ -293,8 +293,6 @@ Page.Monitors = class Monitors extends Page.PageUtils {
 		
 		this.div.html( html );
 		
-		// lock ID for editing
-		$('#fe_em_id').attr('disabled', true);
 		SingleSelect.init( this.div.find('#fe_em_icon, #fe_em_data_type') );
 		MultiSelect.init( this.div.find('select[multiple]') );
 		this.setupBoxButtonFloater();
@@ -367,30 +365,31 @@ Page.Monitors = class Monitors extends Page.PageUtils {
 		var html = '';
 		var monitor = this.monitor;
 		
+		if (monitor.id) {
+			// monitor id
+			html += this.getFormRow({
+				label: 'Monitor ID:',
+				content: this.getFormText({
+					id: 'fe_em_id',
+					class: 'monospace',
+					spellcheck: 'false',
+					disabled: 'disabled',
+					value: monitor.id
+				}),
+				suffix: '<div class="form_suffix_icon mdi mdi-clipboard-text-outline" title="Copy ID to Clipboard" onClick="$P().copyFormID(this)"></div>',
+				caption: 'This is a unique ID for the monitor, used by the Orchestra API.  It cannot be changed.'
+			});
+		}
+		
 		// title
 		html += this.getFormRow({
 			label: 'Monitor Title:',
 			content: this.getFormText({
 				id: 'fe_em_title',
 				spellcheck: 'false',
-				value: monitor.title,
-				onChange: '$P().suggestIDFromTitle()'
+				value: monitor.title
 			}),
 			caption: 'Enter the title of the monitor, for display purposes.'
-		});
-		
-		// monitor id
-		html += this.getFormRow({
-			label: 'Monitor ID:',
-			content: this.getFormText({
-				id: 'fe_em_id',
-				class: 'monospace',
-				spellcheck: 'false',
-				onChange: '$P().checkMonitorExists(this)',
-				value: monitor.id
-			}),
-			suffix: '<div class="checker"></div>',
-			caption: 'Enter a unique ID for the monitor (alphanumerics only).  Once created this cannot be changed.'
 		});
 		
 		// status
@@ -550,7 +549,6 @@ Page.Monitors = class Monitors extends Page.PageUtils {
 		// get api key elements from form, used for new or edit
 		var monitor = this.monitor;
 		
-		monitor.id = $('#fe_em_id').val().replace(/\W+/g, '').toLowerCase();
 		monitor.title = $('#fe_em_title').val().trim();
 		monitor.display = $('#fe_em_display').is(':checked') ? true : false;
 		monitor.icon = $('#fe_em_icon').val();
@@ -576,9 +574,6 @@ Page.Monitors = class Monitors extends Page.PageUtils {
 			if (feats.includes('delta_div')) monitor.divide_by_delta = true;
 		}
 		
-		if (!monitor.id.length) {
-			return app.badField('#fe_em_id', "Please enter a unique alphanumeric ID for the monitor.");
-		}
 		if (!monitor.title.length) {
 			return app.badField('#fe_em_title', "Please enter a title for the monitor.");
 		}
@@ -587,38 +582,6 @@ Page.Monitors = class Monitors extends Page.PageUtils {
 		}
 		
 		return monitor;
-	}
-	
-	checkMonitorExists(field) {
-		// check if monitor exists, update UI checkbox
-		// called after field changes
-		var $field = $(field);
-		var id = trim( $field.val().toLowerCase() );
-		var $elem = $field.closest('.form_row').find('.fr_suffix .checker');
-		
-		if (id.match(/^\w+$/)) {
-			// check with cache
-			if (find_object(app.monitors, { id: id })) {
-				// monitor taken
-				$elem.css('color','red').html('<span class="mdi mdi-alert-circle"></span>').attr('title', "Monitor ID is taken.");
-				$field.addClass('warning');
-			}
-			else {
-				// monitor is valid and available!
-				$elem.css('color','green').html('<span class="mdi mdi-check-circle"></span>').attr('title', "Monitor ID is available!");
-				$field.removeClass('warning');
-			}
-		}
-		else if (id.length) {
-			// bad id
-			$elem.css('color','red').html('<span class="mdi mdi-alert-decagram"></span>').attr('title', "Monitor ID is malformed.");
-			$field.addClass('warning');
-		}
-		else {
-			// empty
-			$elem.html('').removeAttr('title');
-			$field.removeClass('warning');
-		}
 	}
 	
 	onDataUpdate(key, data) {

@@ -214,6 +214,15 @@ Page.Base = class Base extends Page {
 		app.showMessage('info', "The ID was copied to your clipboard.");
 	}
 	
+	copyFormID(elem) {
+		// copy ID to clipboard from inside form, as suffix icon
+		var $elem = $(elem);
+		var $row = $elem.closest('.form_row');
+		copyToClipboard( $row.find('.fr_content input').val() );
+		$elem.removeClass().addClass([ 'form_suffix_icon', 'mdi', 'mdi-clipboard-check-outline' ]).css('color', 'var(--green)');
+		app.showMessage('info', "The ID was copied to your clipboard.");
+	}
+	
 	getNiceProcessText(item) {
 		// get short process name from full path + args
 		var short_cmd = '' + item.command;
@@ -1302,17 +1311,6 @@ Page.Base = class Base extends Page {
 	doQuickSearch(value) {
 		// perform quick search, pages can override this
 		Nav.go( '#Search?query=' + encodeURIComponent(value) );
-	}
-	
-	suggestIDFromTitle() {
-		// generate alphanum ID from title
-		var title = $('#fe_' + this.dom_prefix +'_title').val().trim();
-		var id = $('#fe_' + this.dom_prefix + '_id').val().trim();
-		if (!id.length && title.length) {
-			id = title.toLowerCase().replace(/\W+/g, '_').replace(/^_+/, '').replace(/_+$/, '');
-			if (id.length) $('#fe_' + this.dom_prefix +'_id').val(id);
-			$('#fe_' + this.dom_prefix +'_id').trigger('change');
-		}
 	}
 	
 	// Resource Limit Editor and Table:

@@ -333,29 +333,30 @@ Page.Roles = class Roles extends Page.PageUtils {
 		var html = '';
 		var role = this.role;
 		
+		if (role.id) {
+			// id
+			html += this.getFormRow({
+				label: 'Role ID:',
+				content: this.getFormText({
+					id: 'fe_ur_id',
+					class: 'monospace',
+					spellcheck: 'false',
+					disabled: 'disabled',
+					value: role.id
+				}),
+				suffix: '<div class="form_suffix_icon mdi mdi-clipboard-text-outline" title="Copy ID to Clipboard" onClick="$P().copyFormID(this)"></div>',
+				caption: 'This is a unique ID for the role, used by the Orchestra API.  It cannot be changed.'
+			});
+		}
+		
 		// title
 		html += this.getFormRow({
 			label: 'Role Title:',
 			content: this.getFormText({
 				id: 'fe_ur_title',
-				value: role.title,
-				onChange: '$P().suggestIDFromTitle()'
+				value: role.title
 			}),
 			caption: 'Enter the title of the application that will be using the User Role.'
-		});
-		
-		// id
-		html += this.getFormRow({
-			label: 'Role ID:',
-			content: this.getFormText({
-				id: 'fe_ur_id',
-				class: 'monospace',
-				spellcheck: 'false',
-				onChange: '$P().checkRoleExists(this)',
-				value: role.id
-			}),
-			suffix: '<div class="checker"></div>',
-			caption: 'Enter a unique ID for the role (alphanumerics only).  Once created this cannot be changed.'
 		});
 		
 		// enabled
@@ -473,7 +474,6 @@ Page.Roles = class Roles extends Page.PageUtils {
 		// get role elements from form, used for new or edit
 		var role = this.role;
 		
-		role.id = $('#fe_ur_id').val().replace(/\W+/g, '').toLowerCase();
 		role.title = $('#fe_ur_title').val().trim();
 		role.enabled = $('#fe_ur_enabled').is(':checked') ? true : false;
 		role.icon = $('#fe_ur_icon').val();
@@ -482,46 +482,11 @@ Page.Roles = class Roles extends Page.PageUtils {
 		role.groups = $('#fe_ur_groups').val();
 		role.notes = $('#fe_ur_notes').val();
 		
-		if (!role.id.length) {
-			return app.badField('#fe_ur_id', "Please enter a unique alphanumeric ID for the role.");
-		}
 		if (!role.title.length) {
 			return app.badField('#fe_ur_title', "Please enter a title for the role.");
 		}
 		
 		return role;
-	}
-	
-	checkRoleExists(field) {
-		// check if role exists, update UI checkbox
-		// called after field changes
-		var $field = $(field);
-		var id = trim( $field.val().toLowerCase() );
-		var $elem = $field.closest('.form_row').find('.fr_suffix .checker');
-		
-		if (id.match(/^\w+$/)) {
-			// check with cache
-			if (find_object(app.roles, { id: id })) {
-				// role taken
-				$elem.css('color','red').html('<span class="mdi mdi-alert-circle"></span>').attr('title', "Role ID is taken.");
-				$field.addClass('warning');
-			}
-			else {
-				// role is valid and available!
-				$elem.css('color','green').html('<span class="mdi mdi-check-circle"></span>').attr('title', "Role ID is available!");
-				$field.removeClass('warning');
-			}
-		}
-		else if (id.length) {
-			// bad id
-			$elem.css('color','red').html('<span class="mdi mdi-alert-decagram"></span>').attr('title', "Role ID is malformed.");
-			$field.addClass('warning');
-		}
-		else {
-			// empty
-			$elem.html('').removeAttr('title');
-			$field.removeClass('warning');
-		}
 	}
 	
 	onDeactivate() {

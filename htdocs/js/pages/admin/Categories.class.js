@@ -308,8 +308,6 @@ Page.Categories = class Categories extends Page.PageUtils {
 		
 		this.div.html( html );
 		
-		// lock ID for editing
-		$('#fe_ec_id').attr('disabled', true);
 		SingleSelect.init( this.div.find('#fe_ec_color, #fe_ec_icon') );
 		this.setupBoxButtonFloater();
 	}
@@ -386,30 +384,31 @@ Page.Categories = class Categories extends Page.PageUtils {
 		var html = '';
 		var category = this.category;
 		
+		if (category.id) {
+			// category id
+			html += this.getFormRow({
+				label: 'Category ID:',
+				content: this.getFormText({
+					id: 'fe_ec_id',
+					class: 'monospace',
+					spellcheck: 'false',
+					disabled: 'disabled',
+					value: category.id
+				}),
+				suffix: '<div class="form_suffix_icon mdi mdi-clipboard-text-outline" title="Copy ID to Clipboard" onClick="$P().copyFormID(this)"></div>',
+				caption: 'This is a unique ID for the category, used by the Orchestra API.  It cannot be changed.'
+			});
+		}
+		
 		// title
 		html += this.getFormRow({
 			label: 'Category Title:',
 			content: this.getFormText({
 				id: 'fe_ec_title',
 				spellcheck: 'false',
-				value: category.title,
-				onChange: '$P().suggestIDFromTitle()'
+				value: category.title
 			}),
 			caption: 'Enter the title of the category, for display purposes.'
-		});
-		
-		// category id
-		html += this.getFormRow({
-			label: 'Category ID:',
-			content: this.getFormText({
-				id: 'fe_ec_id',
-				class: 'monospace',
-				spellcheck: 'false',
-				onChange: '$P().checkCategoryExists(this)',
-				value: category.id
-			}),
-			suffix: '<div class="checker"></div>',
-			caption: 'Enter a unique ID for the category (alphanumerics only).  Once created this cannot be changed.'
 		});
 		
 		// enabled
@@ -525,7 +524,6 @@ Page.Categories = class Categories extends Page.PageUtils {
 		// get api key elements from form, used for new or edit
 		var category = this.category;
 		
-		category.id = $('#fe_ec_id').val().replace(/\W+/g, '').toLowerCase();
 		category.title = $('#fe_ec_title').val().trim();
 		category.enabled = !!$('#fe_ec_enabled').is(':checked');
 		category.icon = $('#fe_ec_icon').val();
@@ -534,46 +532,11 @@ Page.Categories = class Categories extends Page.PageUtils {
 		// category.hostname_match = $('#fe_ec_match').val();
 		category.notes = $('#fe_ec_notes').val();
 		
-		if (!category.id.length) {
-			return app.badField('#fe_ec_id', "Please enter a unique alphanumeric ID for the category.");
-		}
 		if (!category.title.length) {
 			return app.badField('#fe_ec_title', "Please enter a title for the category.");
 		}
 		
 		return category;
-	}
-	
-	checkCategoryExists(field) {
-		// check if category exists, update UI checkbox
-		// called after field changes
-		var $field = $(field);
-		var id = trim( $field.val().toLowerCase() );
-		var $elem = $field.closest('.form_row').find('.fr_suffix .checker');
-		
-		if (id.match(/^\w+$/)) {
-			// check with cache
-			if (find_object(app.categories, { id: id })) {
-				// category taken
-				$elem.css('color','red').html('<span class="mdi mdi-alert-circle"></span>').attr('title', "Category ID is taken.");
-				$field.addClass('warning');
-			}
-			else {
-				// category is valid and available!
-				$elem.css('color','green').html('<span class="mdi mdi-check-circle"></span>').attr('title', "Category ID is available!");
-				$field.removeClass('warning');
-			}
-		}
-		else if (id.length) {
-			// bad id
-			$elem.css('color','red').html('<span class="mdi mdi-alert-decagram"></span>').attr('title', "Category ID is malformed.");
-			$field.addClass('warning');
-		}
-		else {
-			// empty
-			$elem.html('').removeAttr('title');
-			$field.removeClass('warning');
-		}
 	}
 	
 	onDataUpdate(key, data) {

@@ -286,8 +286,6 @@ Page.Channels = class Channels extends Page.PageUtils {
 		
 		this.div.html( html );
 		
-		// lock ID for editing
-		$('#fe_ech_id').attr('disabled', true);
 		MultiSelect.init( this.div.find('select[multiple]') );
 		SingleSelect.init( this.div.find('#fe_ech_run_event, #fe_ech_icon, #fe_ech_web_hook, #fe_ech_sound') );
 		this.updateAddRemoveMe('#fe_ech_email');
@@ -374,30 +372,31 @@ Page.Channels = class Channels extends Page.PageUtils {
 		var html = '';
 		var channel = this.channel;
 		
+		if (channel.id) {
+			// channel id
+			html += this.getFormRow({
+				label: 'Channel ID:',
+				content: this.getFormText({
+					id: 'fe_ech_id',
+					class: 'monospace',
+					spellcheck: 'false',
+					disabled: 'disabled',
+					value: channel.id
+				}),
+				suffix: '<div class="form_suffix_icon mdi mdi-clipboard-text-outline" title="Copy ID to Clipboard" onClick="$P().copyFormID(this)"></div>',
+				caption: 'This is a unique ID for the channel, used by the Orchestra API.  It cannot be changed.'
+			});
+		}
+		
 		// title
 		html += this.getFormRow({
 			label: 'Channel Title:',
 			content: this.getFormText({
 				id: 'fe_ech_title',
 				spellcheck: 'false',
-				value: channel.title,
-				onChange: '$P().suggestIDFromTitle()'
+				value: channel.title
 			}),
 			caption: 'Enter the title of the channel, for display purposes.'
-		});
-		
-		// channel id
-		html += this.getFormRow({
-			label: 'Channel ID:',
-			content: this.getFormText({
-				id: 'fe_ech_id',
-				class: 'monospace',
-				spellcheck: 'false',
-				onChange: '$P().checkChannelExists(this)',
-				value: channel.id
-			}),
-			suffix: '<div class="checker"></div>',
-			caption: 'Enter a unique ID for the channel (alphanumerics only).  Once created this cannot be changed.'
 		});
 		
 		// enabled
@@ -545,7 +544,6 @@ Page.Channels = class Channels extends Page.PageUtils {
 		// get api key elements from form, used for new or edit
 		var channel = this.channel;
 		
-		channel.id = $('#fe_ech_id').val().replace(/\W+/g, '').toLowerCase();
 		channel.title = $('#fe_ech_title').val().trim();
 		channel.enabled = $('#fe_ech_enabled').is(':checked') ? true : false;
 		channel.icon = $('#fe_ech_icon').val();
@@ -558,46 +556,11 @@ Page.Channels = class Channels extends Page.PageUtils {
 		channel.max_per_day = parseInt( $('#fe_ech_max_per_day').val() );
 		channel.notes = $('#fe_ech_notes').val();
 		
-		if (!channel.id.length) {
-			return app.badField('#fe_ech_id', "Please enter a unique alphanumeric ID for the channel.");
-		}
 		if (!channel.title.length) {
 			return app.badField('#fe_ech_title', "Please enter a title for the channel.");
 		}
 		
 		return channel;
-	}
-	
-	checkChannelExists(field) {
-		// check if channel exists, update UI checkbox
-		// called after field changes
-		var $field = $(field);
-		var id = trim( $field.val().toLowerCase() );
-		var $elem = $field.closest('.form_row').find('.fr_suffix .checker');
-		
-		if (id.match(/^\w+$/)) {
-			// check with cache
-			if (find_object(app.channels, { id: id })) {
-				// channel taken
-				$elem.css('color','red').html('<span class="mdi mdi-alert-circle"></span>').attr('title', "Channel ID is taken.");
-				$field.addClass('warning');
-			}
-			else {
-				// channel is valid and available!
-				$elem.css('color','green').html('<span class="mdi mdi-check-circle"></span>').attr('title', "Channel ID is available!");
-				$field.removeClass('warning');
-			}
-		}
-		else if (id.length) {
-			// bad id
-			$elem.css('color','red').html('<span class="mdi mdi-alert-decagram"></span>').attr('title', "Channel ID is malformed.");
-			$field.addClass('warning');
-		}
-		else {
-			// empty
-			$elem.html('').removeAttr('title');
-			$field.removeClass('warning');
-		}
 	}
 	
 	onDataUpdate(key, data) {

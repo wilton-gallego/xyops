@@ -241,8 +241,6 @@ Page.Tags = class Tags extends Page.PageUtils {
 		
 		this.div.html( html );
 		
-		// lock ID for editing
-		$('#fe_et_id').attr('disabled', true);
 		SingleSelect.init( this.div.find('#fe_et_icon') );
 		this.setupBoxButtonFloater();
 	}
@@ -314,30 +312,31 @@ Page.Tags = class Tags extends Page.PageUtils {
 		var html = '';
 		var tag = this.tag;
 		
+		if (tag.id) {
+			// tag id
+			html += this.getFormRow({
+				label: 'Tag ID:',
+				content: this.getFormText({
+					id: 'fe_et_id',
+					class: 'monospace',
+					spellcheck: 'false',
+					disabled: 'disabled',
+					value: tag.id
+				}),
+				suffix: '<div class="form_suffix_icon mdi mdi-clipboard-text-outline" title="Copy ID to Clipboard" onClick="$P().copyFormID(this)"></div>',
+				caption: 'This is a unique ID for the tag, used by the Orchestra API.  It cannot be changed.'
+			});
+		}
+		
 		// title
 		html += this.getFormRow({
 			label: 'Tag Title:',
 			content: this.getFormText({
 				id: 'fe_et_title',
 				spellcheck: 'false',
-				value: tag.title,
-				onChange: '$P().suggestIDFromTitle()'
+				value: tag.title
 			}),
 			caption: 'Enter the title (label) for the tag, for display purposes.'
-		});
-		
-		// tag id
-		html += this.getFormRow({
-			label: 'Tag ID:',
-			content: this.getFormText({
-				id: 'fe_et_id',
-				class: 'monospace',
-				spellcheck: 'false',
-				onChange: '$P().checkTagExists(this)',
-				value: tag.id
-			}),
-			suffix: '<div class="checker"></div>',
-			caption: 'Enter a unique ID for the tag (alphanumerics only).  Once created this cannot be changed.'
 		});
 		
 		html += this.getFormRow({
@@ -371,14 +370,10 @@ Page.Tags = class Tags extends Page.PageUtils {
 		// get api key elements from form, used for new or edit
 		var tag = this.tag;
 		
-		tag.id = $('#fe_et_id').val().trim().replace(/\W+/g, '_').toLowerCase();
 		tag.title = $('#fe_et_title').val().trim();
 		tag.icon = $('#fe_et_icon').val().replace(/^mdi\-/, '');
 		tag.notes = $('#fe_et_notes').val();
 		
-		if (!tag.id.length) {
-			return app.badField('#fe_et_id', "Please enter a unique alphanumeric ID for the tag.");
-		}
 		if (!tag.title.length) {
 			return app.badField('#fe_et_title', "Please enter a title for the tag.");
 		}
@@ -394,40 +389,6 @@ Page.Tags = class Tags extends Page.PageUtils {
 		$elem.html('<span class="mdi mdi-' + icon + '"></span>');
 		
 		if (icon != $field.val()) $field.val(icon);
-	}
-	
-	checkTagExists(field) {
-		// check if tag exists, update UI checkbox
-		// called after field changes
-		var $field = $(field);
-		var id = $field.val().trim().replace(/\W+/g, '_').toLowerCase();
-		var $elem = $field.closest('.form_row').find('.fr_suffix .checker');
-		
-		if (id != $field.val()) $field.val(id);
-		
-		if (id.match(/^\w+$/)) {
-			// check with cache
-			if (find_object(app.tags, { id: id })) {
-				// tag taken
-				$elem.css('color','red').html('<span class="mdi mdi-alert-circle"></span>').attr('title', "Tag ID is taken.");
-				$field.addClass('warning');
-			}
-			else {
-				// tag is valid and available!
-				$elem.css('color','green').html('<span class="mdi mdi-check-circle"></span>').attr('title', "Tag ID is available!");
-				$field.removeClass('warning');
-			}
-		}
-		else if (id.length) {
-			// bad id
-			$elem.css('color','red').html('<span class="mdi mdi-alert-decagram"></span>').attr('title', "Tag ID is malformed.");
-			$field.addClass('warning');
-		}
-		else {
-			// empty
-			$elem.html('').removeAttr('title');
-			$field.removeClass('warning');
-		}
 	}
 	
 	onDataUpdate(key, data) {

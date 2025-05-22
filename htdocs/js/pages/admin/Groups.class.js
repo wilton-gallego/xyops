@@ -319,8 +319,6 @@ Page.Groups = class Groups extends Page.ServerUtils {
 		
 		this.div.html( html );
 		
-		// lock ID for editing
-		$('#fe_eg_id').attr('disabled', true);
 		SingleSelect.init( this.div.find('#fe_eg_icon, #fe_eg_web_hook') );
 		this.setupBoxButtonFloater();
 	}
@@ -405,30 +403,31 @@ Page.Groups = class Groups extends Page.ServerUtils {
 		var html = '';
 		var group = this.group;
 		
+		if (group.id) {
+			// group id
+			html += this.getFormRow({
+				label: 'Group ID:',
+				content: this.getFormText({
+					id: 'fe_eg_id',
+					class: 'monospace',
+					spellcheck: 'false',
+					disabled: 'disabled',
+					value: group.id
+				}),
+				suffix: '<div class="form_suffix_icon mdi mdi-clipboard-text-outline" title="Copy ID to Clipboard" onClick="$P().copyFormID(this)"></div>',
+				caption: 'This is a unique ID for the group, used by the Orchestra API.  It cannot be changed.'
+			});
+		}
+		
 		// title
 		html += this.getFormRow({
 			label: 'Group Title:',
 			content: this.getFormText({
 				id: 'fe_eg_title',
 				spellcheck: 'false',
-				value: group.title,
-				onChange: '$P().suggestIDFromTitle()'
+				value: group.title
 			}),
 			caption: 'Enter the title of the group, for display purposes.'
-		});
-		
-		// group id
-		html += this.getFormRow({
-			label: 'Group ID:',
-			content: this.getFormText({
-				id: 'fe_eg_id',
-				class: 'monospace',
-				spellcheck: 'false',
-				onChange: '$P().checkGroupExists(this)',
-				value: group.id
-			}),
-			suffix: '<div class="checker"></div>',
-			caption: 'Enter a unique ID for the group (alphanumerics only).  Once created this cannot be changed.'
 		});
 		
 		// icon
@@ -515,7 +514,6 @@ Page.Groups = class Groups extends Page.ServerUtils {
 		// get api key elements from form, used for new or edit
 		var group = this.group;
 		
-		group.id = $('#fe_eg_id').val().replace(/\W+/g, '').toLowerCase();
 		group.title = $('#fe_eg_title').val().trim();
 		group.icon = $('#fe_eg_icon').val();
 		group.hostname_match = $('#fe_eg_match').val();
@@ -524,9 +522,6 @@ Page.Groups = class Groups extends Page.ServerUtils {
 		group.mute_alerts = !!$('#fe_eg_mute').is(':checked');
 		group.notes = $('#fe_eg_notes').val();
 		
-		if (!group.id.length) {
-			return app.badField('#fe_eg_id', "Please enter a unique alphanumeric ID for the group.");
-		}
 		if (!group.title.length) {
 			return app.badField('#fe_eg_title', "Please enter a title for the group.");
 		}
@@ -542,38 +537,6 @@ Page.Groups = class Groups extends Page.ServerUtils {
 		}
 		
 		return group;
-	}
-	
-	checkGroupExists(field) {
-		// check if group exists, update UI checkbox
-		// called after field changes
-		var $field = $(field);
-		var id = trim( $field.val().toLowerCase() );
-		var $elem = $field.closest('.form_row').find('.fr_suffix .checker');
-		
-		if (id.match(/^\w+$/)) {
-			// check with cache
-			if (find_object(app.groups, { id: id })) {
-				// group taken
-				$elem.css('color','red').html('<span class="mdi mdi-alert-circle"></span>').attr('title', "Group ID is taken.");
-				$field.addClass('warning');
-			}
-			else {
-				// group is valid and available!
-				$elem.css('color','green').html('<span class="mdi mdi-check-circle"></span>').attr('title', "Group ID is available!");
-				$field.removeClass('warning');
-			}
-		}
-		else if (id.length) {
-			// bad id
-			$elem.css('color','red').html('<span class="mdi mdi-alert-decagram"></span>').attr('title', "Group ID is malformed.");
-			$field.addClass('warning');
-		}
-		else {
-			// empty
-			$elem.html('').removeAttr('title');
-			$field.removeClass('warning');
-		}
 	}
 	
 	// 

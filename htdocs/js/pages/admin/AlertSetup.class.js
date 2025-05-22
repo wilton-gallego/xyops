@@ -287,8 +287,6 @@ Page.AlertSetup = class AlertSetup extends Page.PageUtils {
 		
 		this.div.html( html );
 		
-		// lock ID for editing
-		$('#fe_ea_id').attr('disabled', true);
 		MultiSelect.init( this.div.find('select[multiple]') );
 		SingleSelect.init( this.div.find('#fe_ea_monitor, #fe_ea_channel, #fe_ea_run_event, #fe_ea_icon, #fe_ea_web_hook') );
 		this.updateAddRemoveMe('#fe_ea_email');
@@ -362,30 +360,31 @@ Page.AlertSetup = class AlertSetup extends Page.PageUtils {
 		var html = '';
 		var alert = this.alert;
 		
+		if (alert.id) {
+			// alert id
+			html += this.getFormRow({
+				label: 'Alert ID:',
+				content: this.getFormText({
+					id: 'fe_ea_id',
+					class: 'monospace',
+					spellcheck: 'false',
+					disabled: 'disabled',
+					value: alert.id
+				}),
+				suffix: '<div class="form_suffix_icon mdi mdi-clipboard-text-outline" title="Copy ID to Clipboard" onClick="$P().copyFormID(this)"></div>',
+				caption: 'This is a unique ID for the alert, used by the Orchestra API.  It cannot be changed.'
+			});
+		}
+		
 		// title
 		html += this.getFormRow({
 			label: 'Alert Title:',
 			content: this.getFormText({
 				id: 'fe_ea_title',
 				spellcheck: 'false',
-				value: alert.title,
-				onChange: '$P().suggestIDFromTitle()'
+				value: alert.title
 			}),
 			caption: 'Enter the title of the alert, for display purposes.'
-		});
-		
-		// alert id
-		html += this.getFormRow({
-			label: 'Alert ID:',
-			content: this.getFormText({
-				id: 'fe_ea_id',
-				class: 'monospace',
-				spellcheck: 'false',
-				onChange: '$P().checkAlertExists(this)',
-				value: alert.id
-			}),
-			suffix: '<div class="checker"></div>',
-			caption: 'Enter a unique ID for the alert (alphanumerics only).  Once created this cannot be changed.'
 		});
 		
 		// enabled
@@ -574,7 +573,6 @@ Page.AlertSetup = class AlertSetup extends Page.PageUtils {
 		// get api key elements from form, used for new or edit
 		var alert = this.alert;
 		
-		alert.id = $('#fe_ea_id').val().replace(/\W+/g, '').toLowerCase();
 		alert.title = $('#fe_ea_title').val().trim();
 		alert.enabled = $('#fe_ea_enabled').is(':checked') ? true : false;
 		alert.icon = $('#fe_ea_icon').val();
@@ -591,9 +589,6 @@ Page.AlertSetup = class AlertSetup extends Page.PageUtils {
 		alert.abort_jobs = $('#fe_ea_abort_jobs').is(':checked') ? true : false;
 		alert.notes = $('#fe_ea_notes').val();
 		
-		if (!alert.id.length) {
-			return app.badField('#fe_ea_id', "Please enter a unique alphanumeric ID for the alert.");
-		}
 		if (!alert.title.length) {
 			return app.badField('#fe_ea_title', "Please enter a title for the alert.");
 		}
@@ -602,38 +597,6 @@ Page.AlertSetup = class AlertSetup extends Page.PageUtils {
 		}
 		
 		return alert;
-	}
-	
-	checkAlertExists(field) {
-		// check if alert exists, update UI checkbox
-		// called after field changes
-		var $field = $(field);
-		var id = trim( $field.val().toLowerCase() );
-		var $elem = $field.closest('.form_row').find('.fr_suffix .checker');
-		
-		if (id.match(/^\w+$/)) {
-			// check with cache
-			if (find_object(app.alerts, { id: id })) {
-				// alert taken
-				$elem.css('color','red').html('<span class="mdi mdi-alert-circle"></span>').attr('title', "Alert ID is taken.");
-				$field.addClass('warning');
-			}
-			else {
-				// alert is valid and available!
-				$elem.css('color','green').html('<span class="mdi mdi-check-circle"></span>').attr('title', "Alert ID is available!");
-				$field.removeClass('warning');
-			}
-		}
-		else if (id.length) {
-			// bad id
-			$elem.css('color','red').html('<span class="mdi mdi-alert-decagram"></span>').attr('title', "Alert ID is malformed.");
-			$field.addClass('warning');
-		}
-		else {
-			// empty
-			$elem.html('').removeAttr('title');
-			$field.removeClass('warning');
-		}
 	}
 	
 	onDataUpdate(key, data) {

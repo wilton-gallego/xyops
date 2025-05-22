@@ -1885,8 +1885,6 @@ Page.Events = class Events extends Page.PageUtils {
 		
 		this.div.html( html );
 		
-		// lock ID for editing
-		$('#fe_ee_id').attr('disabled', true);
 		MultiSelect.init( this.div.find('select[multiple]') );
 		SingleSelect.init( this.div.find('#fe_ee_icon, #fe_ee_cat, #fe_ee_algo, #fe_ee_plugin') );
 		this.renderPluginParamEditor();
@@ -2067,31 +2065,31 @@ Page.Events = class Events extends Page.PageUtils {
 		var html = '';
 		var event = this.event;
 		
+		if (event.id) {
+			// event id
+			html += this.getFormRow({
+				label: 'Event ID:',
+				content: this.getFormText({
+					id: 'fe_ee_id',
+					class: 'monospace',
+					spellcheck: 'false',
+					disabled: 'disabled',
+					value: event.id
+				}),
+				suffix: '<div class="form_suffix_icon mdi mdi-clipboard-text-outline" title="Copy ID to Clipboard" onClick="$P().copyFormID(this)"></div>',
+				caption: 'This is a unique ID for the event, used by the Orchestra API.  It cannot be changed.'
+			});
+		}
+		
 		// title
 		html += this.getFormRow({
 			label: 'Event Title:',
 			content: this.getFormText({
 				id: 'fe_ee_title',
 				spellcheck: 'false',
-				onChange: '$P().suggestIDFromTitle()',
 				value: event.title
 			}),
 			caption: 'Enter the title of the event, for display purposes.'
-		});
-		
-		// event id
-		html += this.getFormRow({
-			label: 'Event ID:',
-			content: this.getFormText({
-				id: 'fe_ee_id',
-				class: 'monospace',
-				spellcheck: 'false',
-				onChange: '$P().checkEventExists(this)',
-				value: event.id
-			}),
-			suffix: '<div class="checker"></div>',
-			caption: event.id ? 'This is the unique ID for the event, used by the Orchestra API.  It cannot be changed.' : 
-				'Enter a unique ID for the event (alphanumerics only).  Once created this cannot be changed.'
 		});
 		
 		// enabled
@@ -2288,19 +2286,16 @@ Page.Events = class Events extends Page.PageUtils {
 			var title = $('#fe_ecd_title').val().trim();
 			if (!title.length) return app.badField('#fe_ecd_title', "Please enter a name for the new category.");
 			
-			var id = title.toLowerCase().replace(/\W+/g, '_').replace(/^_+/, '').replace(/_+$/, '');
-			if (!id.length) id = get_unique_id();
-			while (find_object(app.categories, { id })) id += get_unique_id();
+			var category = { title, enabled: true };
 			
-			var category = { id, title, enabled: true };
-			app.categories.push(category);
-			
-			app.api.post( 'app/create_category', category, function() {
+			app.api.post( 'app/create_category', category, function(resp) {
+				app.cacheBust = hires_time_now();
 				app.showMessage('success', "The new category was created successfully.");
 				
 				if (!self.active) return; // sanity
 				
 				// append to the menu
+				var id = resp.category.id;
 				$('#fe_ee_cat').append( '<option value="' + id + '" data-icon="folder-open-outline">' + title + '</option>' ).val(id).trigger('change');
 			} ); // api.post
 			
@@ -2338,19 +2333,16 @@ Page.Events = class Events extends Page.PageUtils {
 			var title = $('#fe_etd_title').val().trim();
 			if (!title.length) return app.badField('#fe_ecd_title', "Please enter a name for the new tag.");
 			
-			var id = title.toLowerCase().replace(/\W+/g, '_').replace(/^_+/, '').replace(/_+$/, '');
-			if (!id.length) id = get_unique_id();
-			while (find_object(app.tags, { id })) id += get_unique_id();
-			
-			var tag = { id, title, enabled: true };
-			app.tags.push(tag);
+			var tag = { title, enabled: true };
 			
 			app.api.post( 'app/create_tag', tag, function() {
+				app.cacheBust = hires_time_now();
 				app.showMessage('success', "The new tag was created successfully.");
 				
 				if (!self.active) return; // sanity
 				
 				// append to the menu
+				var id = resp.tag.id;
 				$('#fe_ee_tags').append( '<option value="' + id + '" data-icon="tag-outline" selected="selected">' + title + '</option>' ).trigger('change');
 			} ); // api.post
 			
@@ -3285,7 +3277,6 @@ Page.Events = class Events extends Page.PageUtils {
 		// get api key elements from form, used for new or edit
 		var event = this.event;
 		
-		event.id = $('#fe_ee_id').val().replace(/\W+/g, '').toLowerCase();
 		event.title = $('#fe_ee_title').val().trim();
 		event.enabled = $('#fe_ee_enabled').is(':checked') ? true : false;
 		event.icon = $('#fe_ee_icon').val();
@@ -3298,9 +3289,6 @@ Page.Events = class Events extends Page.PageUtils {
 		event.notes = $('#fe_ee_notes').val();
 		
 		if (!force) {
-			if (!event.id.length) {
-				return app.badField('#fe_ee_id', "Please enter a unique alphanumeric ID for the event.");
-			}
 			if (!event.title.length) {
 				return app.badField('#fe_ee_title', "Please enter a title for the event.");
 			}
@@ -3310,38 +3298,6 @@ Page.Events = class Events extends Page.PageUtils {
 		}
 		
 		return event;
-	}
-	
-	checkEventExists(field) {
-		// check if event exists, update UI checkbox
-		// called after field changes
-		var $field = $(field);
-		var id = trim( $field.val().toLowerCase() );
-		var $elem = $field.closest('.form_row').find('.fr_suffix .checker');
-		
-		if (id.match(/^\w+$/)) {
-			// check with cache
-			if (find_object(app.events, { id: id })) {
-				// event taken
-				$elem.css('color','red').html('<span class="mdi mdi-alert-circle"></span>').attr('title', "Event ID is taken.");
-				$field.addClass('warning');
-			}
-			else {
-				// event is valid and available!
-				$elem.css('color','green').html('<span class="mdi mdi-check-circle"></span>').attr('title', "Event ID is available!");
-				$field.removeClass('warning');
-			}
-		}
-		else if (id.length) {
-			// bad id
-			$elem.css('color','red').html('<span class="mdi mdi-alert-decagram"></span>').attr('title', "Event ID is malformed.");
-			$field.addClass('warning');
-		}
-		else {
-			// empty
-			$elem.html('').removeAttr('title');
-			$field.removeClass('warning');
-		}
 	}
 	
 	onScrollDelay() {

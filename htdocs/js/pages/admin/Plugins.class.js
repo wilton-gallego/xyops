@@ -321,8 +321,6 @@ Page.Plugins = class Plugins extends Page.PageUtils {
 		
 		this.div.html( html );
 		
-		// lock ID for editing
-		$('#fe_ep_id').attr('disabled', true);
 		SingleSelect.init( this.div.find('#fe_ep_icon, #fe_ep_type, #fe_ep_format') );
 		MultiSelect.init( this.div.find('select[multiple]') );
 		// this.updateAddRemoveMe('#fe_ep_email');
@@ -413,30 +411,31 @@ Page.Plugins = class Plugins extends Page.PageUtils {
 		var html = '';
 		var plugin = this.plugin;
 		
+		if (plugin.id) {
+			// plugin id
+			html += this.getFormRow({
+				label: 'Plugin ID:',
+				content: this.getFormText({
+					id: 'fe_ep_id',
+					class: 'monospace',
+					spellcheck: 'false',
+					disabled: 'disabled',
+					value: plugin.id
+				}),
+				suffix: '<div class="form_suffix_icon mdi mdi-clipboard-text-outline" title="Copy ID to Clipboard" onClick="$P().copyFormID(this)"></div>',
+				caption: 'This is a unique ID for the plugin, used by the Orchestra API.  It cannot be changed.'
+			});
+		}
+		
 		// title
 		html += this.getFormRow({
 			label: 'Plugin Title:',
 			content: this.getFormText({
 				id: 'fe_ep_title',
 				spellcheck: 'false',
-				value: plugin.title,
-				onChange: '$P().suggestIDFromTitle()'
+				value: plugin.title
 			}),
 			caption: 'Enter the title of the plugin, for display purposes.'
-		});
-		
-		// plugin id
-		html += this.getFormRow({
-			label: 'Plugin ID:',
-			content: this.getFormText({
-				id: 'fe_ep_id',
-				class: 'monospace',
-				spellcheck: 'false',
-				onChange: '$P().checkPluginExists(this)',
-				value: plugin.id
-			}),
-			suffix: '<div class="checker"></div>',
-			caption: 'Enter a unique ID for the plugin (alphanumerics only).  Once created this cannot be changed.'
 		});
 		
 		// enabled
@@ -924,7 +923,6 @@ Page.Plugins = class Plugins extends Page.PageUtils {
 		// get api key elements from form, used for new or edit
 		var plugin = this.plugin;
 		
-		plugin.id = $('#fe_ep_id').val().replace(/\W+/g, '').toLowerCase();
 		plugin.title = $('#fe_ep_title').val().trim();
 		plugin.enabled = $('#fe_ep_enabled').is(':checked') ? true : false;
 		plugin.type = $('#fe_ep_type').val();
@@ -936,9 +934,6 @@ Page.Plugins = class Plugins extends Page.PageUtils {
 		plugin.gid = $('#fe_ep_gid').val();
 		plugin.notes = $('#fe_ep_notes').val();
 		
-		if (!plugin.id.length) {
-			return app.badField('#fe_ep_id', "Please enter a unique alphanumeric ID for the plugin.");
-		}
 		if (!plugin.title.length) {
 			return app.badField('#fe_ep_title', "Please enter a title for the plugin.");
 		}
@@ -960,38 +955,6 @@ Page.Plugins = class Plugins extends Page.PageUtils {
 		} // switch plugin_type
 		
 		return plugin;
-	}
-	
-	checkPluginExists(field) {
-		// check if plugin exists, update UI checkbox
-		// called after field changes
-		var $field = $(field);
-		var id = trim( $field.val().toLowerCase() );
-		var $elem = $field.closest('.form_row').find('.fr_suffix .checker');
-		
-		if (id.match(/^\w+$/)) {
-			// check with cache
-			if (find_object(app.plugins, { id: id })) {
-				// plugin taken
-				$elem.css('color','red').html('<span class="mdi mdi-alert-circle"></span>').attr('title', "Plugin ID is taken.");
-				$field.addClass('warning');
-			}
-			else {
-				// plugin is valid and available!
-				$elem.css('color','green').html('<span class="mdi mdi-check-circle"></span>').attr('title', "Plugin ID is available!");
-				$field.removeClass('warning');
-			}
-		}
-		else if (id.length) {
-			// bad id
-			$elem.css('color','red').html('<span class="mdi mdi-alert-decagram"></span>').attr('title', "Plugin ID is malformed.");
-			$field.addClass('warning');
-		}
-		else {
-			// empty
-			$elem.html('').removeAttr('title');
-			$field.removeClass('warning');
-		}
 	}
 	
 	setDefaultEditorMode() {
