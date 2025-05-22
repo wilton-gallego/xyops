@@ -371,15 +371,11 @@ Page.Job = class Job extends Page.PageUtils {
 		// job log
 		html += '<div class="box">';
 			html += '<div class="box_title">';
-				if (job.final) {
-					html += 'Job Output (' + get_text_from_bytes(job.log_file_size || 0) + ')';
-					if (job.log_file_size) {
-						html += '<div class="button right" onMouseUp="$P().do_view_job_log()"><i class="mdi mdi-open-in-new">&nbsp;</i>View Raw...</div>';
-						html += '<div class="button right" onMouseUp="$P().do_download_job_log()"><i class="mdi mdi-cloud-download-outline">&nbsp;</i>Download...</div>';
-					}
-					html += '<div class="clear"></div>';
-				}
+				if (job.final) html += 'Job Output (' + get_text_from_bytes(job.log_file_size || 0) + ')';
 				else html += 'Live Job Output';
+				html += '<div class="button right" onClick="$P().do_view_job_log()"><i class="mdi mdi-open-in-new">&nbsp;</i>View Raw...</div>';
+				html += '<div class="button right" onClick="$P().do_download_job_log()"><i class="mdi mdi-cloud-download-outline">&nbsp;</i>Download...</div>';
+				html += '<div class="clear"></div>';
 			html += '</div>';
 			html += '<div class="box_content table">';
 				html += '<div id="d_live_job_log"></div>';
