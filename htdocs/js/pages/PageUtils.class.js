@@ -478,4 +478,126 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		app.setPref(pref_key, size);
 	}
 	
+	// Upcoming Jobs
+	
+	getUpcomingJobs(events) {
+		// predict and render upcoming jobs
+		var self = this;
+		if (!events) events = app.events;
+		
+		var opts = {
+			events: events,
+			duration: 86400 * 32,
+			burn: 16,
+			max: 1000,
+			progress: null,
+			callback: function(jobs) {
+				self.upcomingJobs = jobs;
+				self.renderUpcomingJobs();
+			}
+		};
+		this.predictUpcomingJobs(opts);
+	}
+	
+	renderUpcomingJobs() {
+		// got jobs from prediction engine, so render them!
+		var self = this;
+		var html = '';
+		
+		// make sure page is still active (API may be slow)
+		if (!this.active) return;
+		if (!this.upcomingJobs) return;
+		if (!this.upcomingOffset) this.upcomingOffset = 0;
+		
+		var grid_args = {
+			resp: {
+				rows: this.upcomingJobs.slice( this.upcomingOffset, this.upcomingOffset + config.alt_items_per_page ),
+				list: { length: this.upcomingJobs.length }
+			},
+			cols: ['Event', 'Category', 'Target', 'Source', 'Scheduled Time', 'Countdown', 'Actions'],
+			data_type: 'job',
+			offset: this.upcomingOffset,
+			limit: config.alt_items_per_page,
+			class: 'data_grid dash_job_upcoming_grid',
+			pagination_link: '$P().jobUpcomingNav'
+		};
+		
+		html += this.getPaginatedGrid( grid_args, function(job, idx) {
+			var countdown = Math.max( 60, Math.abs(job.epoch - app.epoch) );
+			var nice_source = (job.type == 'single') ? '<i class="mdi mdi-alarm-check">&nbsp;</i>Single Shot' : '<i class="mdi mdi-update">&nbsp;</i>Scheduler';
+			var event = find_object( app.events, { id: job.event } ) || {};
+			
+			return [
+				'<b>' + self.getNiceEvent(job.event, true) + '</b>',
+				self.getNiceCategory(event.category, true),
+				// self.getNicePlugin(event.plugin, true),
+				self.getNiceTargetList(event.targets),
+				nice_source,
+				self.getRelativeDateTime( job.epoch ),
+				'<i class="mdi mdi-clock-outline">&nbsp;</i>' + get_text_from_seconds_round( countdown ),
+				'<span class="link danger" onClick="$P().doSkipUpcomingJob(' + idx + ')"><b>Skip Job...</b></span>'
+				// '<a href="#Job?id=' + job.id + '">Details</a>'
+			];
+		} );
+		
+		this.div.find('#d_upcoming_jobs > .box_content').removeClass('loading').html(html);
+	}
+	
+	jobUpcomingNav(offset) {
+		// user clicked on upcoming job pagination nav
+		this.upcomingOffset = offset;
+		this.div.find('#d_upcoming_jobs > .box_content').addClass('loading');
+		this.renderUpcomingJobs();
+	}
+	
+	doSkipUpcomingJob(idx) {
+		// add blackout range for upcoming job
+		var self = this;
+		var job = this.upcomingJobs[idx];
+		var event = find_object( app.events, { id: job.event } );
+		if (!event) return app.doError("Event not found: " + job.event);
+		
+		var msg = 'Are you sure you want to skip the upcoming job at "' + this.getShortDateTimeText( job.epoch ) + '"?';
+		
+		switch (job.type) {
+			case 'single': msg += '  Since this is a "Single Shot" timing rule, it will simply be disabled.'; break;
+			case 'schedule': msg += '  Since this is a scheduled timing rule, a new "Blackout" range will be added to disable it.'; break;
+		}
+		
+		Dialog.confirmDanger( 'Skip Upcoming Job', msg, ['alert-decagram', 'Skip Job'], function(result) {
+			if (!result) return;
+			app.clearError();
+			Dialog.showProgress( 1.0, "Skipping Job..." );
+			
+			switch (job.type) {
+				case 'single':
+					delete_object( event.timings, { type: 'single', enabled: true, epoch: job.epoch } );
+				break;
+				
+				case 'schedule':
+					event.timings.push({ type: 'blackout', enabled: true, start: job.epoch, end: job.epoch }); // Note: end is inclusive!
+				break;
+			} // switch job.type
+			
+			app.api.post( 'app/update_event', { id: event.id, timings: event.timings }, function(resp) {
+				Dialog.hideProgress();
+				app.showMessage('success', "The selected upcoming job will be skipped.");
+				
+				if (!self.active) return; // sanity
+				
+				self.upcomingJobs.splice( idx, 1 );
+				self.renderUpcomingJobs();
+			} ); // api.post
+		} ); // confirm
+	}
+	
+	autoExpireUpcomingJobs() {
+		// automatically remove upcoming jobs that upcame
+		if (!this.upcomingJobs || !this.upcomingJobs.length) return;
+		
+		while (this.upcomingJobs.length && (this.upcomingJobs[0].epoch <= app.epoch)) {
+			this.upcomingJobs.shift();
+		}
+	}
+	
 };
