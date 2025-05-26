@@ -209,6 +209,20 @@ The timestamp at which the job was completed (Epoch seconds).
 
 The duration of the job run in seconds (calculated as the difference between [Job.started](#job-started) and [Job.completed](#job-completed)).  This does not include time spent in queue or start delay.
 
+## Job.code
+
+When a job completes, the `code` denotes the result.  Zero (`0`) means success, any other value means the job failed.  You can use this to specify your own internal error code, or just specify `1` for a generic error.  Any number or string is acceptable.  There are a few special values that Orchestra recognizes:
+
+| Job Code | Meaning |
+|----------|---------|
+| `warning` | This denotes that a job failed by only with a "warning", not a full error. |
+| `critical` | This denotes that the job failed critically, and needs immediate attention. |
+| `abort` | This denotes that the job was manually aborted, either by a user or an API call. |
+
+## Job.description
+
+When a job fails, the `description` property can contain a summary of the error message.
+
 ## Job.remote
 
 Set to `true` when the job has an active remote server connection (job request was sent to remote server).
