@@ -909,6 +909,8 @@ Page.Groups = class Groups extends Page.ServerUtils {
 					});
 				}); // foreach mon
 			} // foreach server
+			
+			self.quickReady = true;
 		}); // api.get
 		
 		// prepopulate filter if saved
@@ -958,6 +960,7 @@ Page.Groups = class Groups extends Page.ServerUtils {
 		// append sample to chart (real-time from server)
 		// { id, row }
 		var self = this;
+		if (!this.quickReady) return; // prevent race condition
 		
 		// locate matching server
 		var server = find_object( this.servers, { id: data.id } );
@@ -1674,6 +1677,7 @@ Page.Groups = class Groups extends Page.ServerUtils {
 		delete this.chartZoom;
 		delete this.upcomingJobs;
 		delete this.upcomingOffset;
+		delete this.quickReady;
 		
 		// destroy charts if applicable (view page)
 		if (this.charts) {
