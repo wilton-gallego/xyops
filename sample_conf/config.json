@@ -162,7 +162,12 @@
 			"enabled": true,
 			"targets": [],
 			"params": {},
+			"fields": [],
 			"timings": [
+				{
+					"enabled": true,
+					"type": "manual"
+				},
 				{
 					"enabled": true,
 					"type": "schedule",
