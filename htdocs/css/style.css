@@ -1,5 +1,9 @@
 /* Orchestra Custom Styles */
 
+div.sidebar > div.title {
+	background-image: url(../images/arcestro-logotype.png);	
+}
+
 div.header, div.main {
 	margin-left: 60px;
 	margin-right: 60px;
@@ -99,7 +103,7 @@ body.dark .button.secondary {
 
 .button.secondary:hover {
 	color: var(--green);
-	border: 1px solid var(--green-highlight);
+	border: 1px solid var(--green);
 }
 .button.secondary.marquee:hover {
 	color: var(--green);
@@ -845,6 +849,9 @@ div.td_big {
 .dialog_box_content.maximize .form_row > div.fr_suffix {
 	display: none;
 }
+.dialog_box_content.maximize .form_row > div.fr_caption {
+	margin-top: 3px;
+}
 
 .dialog_intro {
 	width: 560px;
@@ -897,6 +904,9 @@ div.td_big {
 
 .data_grid > ul.grid_row:has(div:hover) > div {
 	background: var(--theme-color-naught-seven);
+}
+.data_grid > ul.grid_row:has(div:active) > div {
+	background: transparent !important;
 }
 
 /* Box Button Floater */
@@ -972,7 +982,7 @@ body.dark .plugin_param_editor_cont div.button.secondary {
 	border-color: var(--icon-color-half);
 }
 body.dark .plugin_param_editor_cont div.button.secondary:hover {
-	border-color: var(--green-highlight);
+	border-color: var(--green);
 }
 
 #dialog .plugin_param_editor_cont {
@@ -1009,6 +1019,7 @@ body.dark #dialog .plugin_param_editor_cont {
 .summary_grid .info_label {
 	text-indent: 1px;
 	font-size: 13px;
+	color: var(--alt-label-color);
 }
 
 .summary_grid .info_value {
@@ -1801,6 +1812,9 @@ i.mdi.mdi-moon-waning-crescent:before {
 	.form_row > div.fr_suffix {
 		display: none;
 	}
+	.form_row > div.fr_caption {
+		margin-top: 3px;
+	}
 	
 	.form_row.widest {
 		grid-template-columns: 1fr 20fr 1fr !important;
@@ -2169,6 +2183,9 @@ i.mdi.mdi-moon-waning-crescent:before {
 	}
 	.form_row > div.fr_suffix {
 		display: none;
+	}
+	.form_row > div.fr_caption {
+		margin-top: 3px;
 	}
 	
 	.form_row.widest {
