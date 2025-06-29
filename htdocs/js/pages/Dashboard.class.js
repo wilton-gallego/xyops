@@ -504,7 +504,7 @@ Page.Dashboard = class Dashboard extends Page.PageUtils {
 				self.getNiceCategory(item.event.category, true),
 				self.getNicePlugin(item.event.plugin, true),
 				self.getNiceJobSourceList( Object.keys(item.sources).sort() ),
-				self.getNiceTargetList( Object.keys(item.targets).sort() ),
+				self.getNiceTargetList( Object.keys(item.targets).sort(), true ),
 				commify( item.states.queued ),
 				'<span class="link danger" onClick="$P().doFlushQueue(\'' + item.id + '\')"><b>Flush Queue</b></a>'
 			];
