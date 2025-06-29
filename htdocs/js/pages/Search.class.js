@@ -96,7 +96,7 @@ Page.Search = class Search extends Page.Base {
 							id: 'fe_s_event',
 							title: 'Select Event',
 							placeholder: 'All Events',
-							options: [['', 'Any Event']].concat( app.events.filter( function(event) { return event.type != 'workflow'; } ) ),
+							options: [['', 'Any Event']].concat( this.getCategorizedEvents() ),
 							value: args.event || '',
 							default_icon: 'calendar-clock',
 							'data-shrinkwrap': 1
@@ -153,7 +153,6 @@ Page.Search = class Search extends Page.Base {
 								{ id: 'key', title: "Manual (API Key)", icon: 'key' },
 								{ id: 'action', title: "Action Trigger", icon: 'eye-outline' },
 								{ id: 'alert', title: "Server Alert", icon: 'bell-outline' },
-								{ id: 'workflow', title: "Workflow", icon: 'clipboard-flow-outline' },
 								{ id: 'plugin', title: "Plugin", icon: 'power-plug' }
 							],
 							value: args.source || '',
@@ -170,7 +169,9 @@ Page.Search = class Search extends Page.Base {
 							id: 'fe_s_plugin',
 							title: 'Select Plugin',
 							placeholder: 'All Plugins',
-							options: [['', 'Any Plugin']].concat( app.plugins.filter( function(plugin) { return plugin.type == 'event'; } ) ),
+							options: [['', 'Any Plugin']]
+								.concat( app.plugins.filter( function(plugin) { return plugin.type == 'event'; } ) )
+								.concat([ { id: "_workflow", title: "Workflow", icon: "clipboard-flow-outline", group: "Special" } ]),
 							value: args.plugin || '',
 							default_icon: 'power-plug-outline',
 							'data-shrinkwrap': 1
