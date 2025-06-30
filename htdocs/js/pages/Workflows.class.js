@@ -194,7 +194,7 @@ Page.Workflows = class Workflows extends Page.Events {
 			<div class="button primary right mobile_collapse" onClick="$P().do_save_workflow()"><i class="mdi mdi-floppy">&nbsp;</i>Save Changes</div>
 			<div class="button secondary right mobile_collapse" onClick="$P().go_edit_history()"><i class="mdi mdi-history">&nbsp;</i><span>History...</span></div>
 			<div class="button secondary right mobile_collapse" onClick="$P().do_export()"><i class="mdi mdi-cloud-download-outline">&nbsp;</i><span>Export...</span></div>
-			<div class="button secondary right mobile_collapse" onClick="$P().do_test_event()"><i class="mdi mdi-test-tube">&nbsp;</i><span>Test Workflow...</span></div>
+			<div class="button secondary right mobile_collapse" onClick="$P().do_test_event()"><i class="mdi mdi-test-tube">&nbsp;</i><span>Test...</span></div>
 			<div class="button danger right mobile_collapse" onClick="$P().show_delete_event_dialog()"><i class="mdi mdi-trash-can-outline">&nbsp;</i><span>Delete...</span></div>
 			<div class="button right mobile_collapse" onClick="$P().cancel_workflow_edit()"><i class="mdi mdi-close-circle-outline">&nbsp;</i><span>Cancel</span></div>
 		`);
@@ -206,7 +206,7 @@ Page.Workflows = class Workflows extends Page.Events {
 		// this.renderPluginParamEditor();
 		this.renderParamEditor();
 		// this.updateAddRemoveMe('#fe_ee_email');
-		$('#fe_ee_title').focus();
+		// $('#fe_ee_title').focus();
 		// this.setupBoxButtonFloater();
 		
 		this.setupWorkflowEditor();
@@ -2034,9 +2034,6 @@ Page.Workflows = class Workflows extends Page.Events {
 		if (!force) {
 			if (!event.title.length) {
 				return app.badField('#fe_ee_title', "Please enter a title for the workflow.");
-			}
-			if (!event.nodes.length) {
-				return app.doError("You must add at least one node to the workflow canvas before saving.");
 			}
 		}
 		
