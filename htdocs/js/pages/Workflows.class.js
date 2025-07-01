@@ -1447,7 +1447,7 @@ Page.Workflows = class Workflows extends Page.Events {
 			node = { 
 				id: gen_workflow_id('n'),
 				type: 'controller', 
-				data: { controller: 'multiplex', continue: 100 } 
+				data: { controller: 'multiplex', stagger: 0, continue: 100 } 
 			};
 		} // do_create
 		
@@ -1480,6 +1480,17 @@ Page.Workflows = class Workflows extends Page.Events {
 		});
 		
 		// dynamic fields based on type:
+		
+		// multiplex stagger
+		html += this.getFormRow({
+			id: 'd_wfd_stagger',
+			label: 'Stagger Delay:',
+			content: this.getFormRelativeTime({
+				id: 'fe_wfd_stagger',
+				value: node.data.stagger || 0
+			}),
+			caption: 'Optionally enter a duration to stagger the start of each multiplexed job.'
+		});
 		
 		// repeat iterations
 		html += this.getFormRow({
@@ -1573,8 +1584,11 @@ Page.Workflows = class Workflows extends Page.Events {
 			app.clearError();
 			
 			node.data.controller = $('#fe_wfd_type').val();
+			['stagger', 'repeat', 'split', 'decision', 'label', 'icon', 'continue'].forEach( function(key) { delete node.data[key]; } );
+			
 			switch (node.data.controller) {
 				case 'multiplex':
+					node.data.stagger = parseInt( $('#fe_wfd_stagger').val() ) || 0;
 					node.data.continue = parseInt( $('#fe_wfd_continue').val() ) || 0;
 				break;
 				
@@ -1585,6 +1599,7 @@ Page.Workflows = class Workflows extends Page.Events {
 				
 				case 'split':
 					node.data.split = $('#fe_wfd_split').val();
+					if (!node.data.split.length) return app.badField('#fe_wfd_split', "Please enter a path to the array data to split on.");
 					node.data.continue = parseInt( $('#fe_wfd_continue').val() ) || 0;
 				break;
 				
@@ -1634,15 +1649,16 @@ Page.Workflows = class Workflows extends Page.Events {
 		
 		// MultiSelect.init( $('#fe_wfd_targets') );
 		SingleSelect.init( $('#fe_wfd_type, #fe_wfd_icon') );
+		RelativeTime.init( $('#fe_wfd_stagger') );
 		
 		// handle type change
 		var do_change_type = function() {
 			// show/hide sections based on type
-			$('#d_wfd_repeat, #d_wfd_split, #d_wfd_if, #d_wfd_title, #d_wfd_icon, #d_wfd_continue').hide();
+			$('#d_wfd_stagger, #d_wfd_repeat, #d_wfd_split, #d_wfd_if, #d_wfd_title, #d_wfd_icon, #d_wfd_continue').hide();
 			
 			var type = $('#fe_wfd_type').val();
 			switch (type) {
-				case 'multiplex': $('#d_wfd_continue').show(); break;
+				case 'multiplex': $('#d_wfd_stagger, #d_wfd_continue').show(); break;
 				case 'repeat': $('#d_wfd_repeat, #d_wfd_continue').show(); break;
 				case 'split': $('#d_wfd_split, #d_wfd_continue').show(); break;
 				case 'decision': $('#d_wfd_if, #d_wfd_title, #d_wfd_icon').show(); break;

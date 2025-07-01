@@ -1407,6 +1407,10 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		var label = '';
 		
 		switch (node.data.controller) {
+			case 'multiplex':
+				if (node.data.stagger) label = get_text_from_seconds(node.data.stagger, true, true) + ' stagger';
+			break;
+			
 			case 'repeat':
 				label = '' + node.data.repeat + ' ' + pluralize('iteration', node.data.repeat);
 			break;
