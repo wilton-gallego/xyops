@@ -35,6 +35,7 @@
 		"bcrypt-node": "0.1.0",
 		"codemirror": "5.65.17",
 		"diff": "5.0.0",
+		"jexl": "2.3.0",
 		"jimp": "0.16.1",
 		"jquery": "3.6.0",
 		"marked": "2.0.3",
