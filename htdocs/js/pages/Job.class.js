@@ -41,6 +41,14 @@ Page.Job = class Job extends Page.PageUtils {
 		
 		if (!this.active) return; // sanity
 		
+		var is_workflow = this.isWorkflow = (job.type == 'workflow');
+		var is_sub_job = !!(job.workflow && job.workflow.job);
+		var is_adhoc = is_sub_job && (job.type == 'adhoc');
+		this.workflow = this.isWorkflow ? this.job.workflow : null;
+		
+		// we need the event present
+		this.event = find_object( app.events, { id: this.job.event } );
+		
 		// sanity
 		if (!job.timelines) job.timelines = {};
 		if (!job.timelines.second) job.timelines.second = [];
@@ -52,7 +60,11 @@ Page.Job = class Job extends Page.PageUtils {
 		if (job.final) {
 			// complete
 			this.live = false;
-			icon = 'timer-' + (job.code ? 'alert' : 'check') + '-outline';
+			
+			if (is_workflow) icon = 'clipboard';
+			else icon = 'timer';
+			
+			icon += '-' + (job.code ? 'alert' : 'check') + '-outline';
 			// app.setHeaderTitle( '<i class="mdi mdi-timer-' + (job.code ? 'alert' : 'check') + '-outline">&nbsp;</i>Completed Job' );
 			app.setWindowTitle( "Completed Job: #" + job.id );
 			
@@ -64,15 +76,16 @@ Page.Job = class Job extends Page.PageUtils {
 		else {
 			// in progress
 			this.live = true;
-			icon = 'timer-play-outline';
+			icon = is_workflow ? 'clipboard-play-outline' : 'timer-play-outline';
 			// app.setHeaderTitle( '<i class="mdi mdi-timer-play-outline">&nbsp;</i>Live Job Progress' );
 			app.setWindowTitle( "Live Job Progress: #" + job.id );
 		}
 		
 		// construct nav bar
-		var nav_items = [
-			{ icon: icon, title: "Job #" + job.id }
-		];
+		var nav_items = [];
+		if (is_sub_job) nav_items.push({ icon: 'clipboard-play-outline', title: "Workflow #" + job.workflow.job, loc: '#Job?id=' + job.workflow.job });
+		if (is_workflow) nav_items.push({ icon: icon, title: "Workflow #" + job.id });
+		else nav_items.push({ icon: icon, title: "Job #" + job.id });
 		
 		if (job.final) {
 			// job is complete
@@ -95,11 +108,6 @@ Page.Job = class Job extends Page.PageUtils {
 		}
 		
 		app.setHeaderNav( nav_items );
-		// app.setHeaderNav([
-		// 	{ icon: 'calendar-multiple', loc: '#Events?sub=list', title: 'Events' },
-		// 	{ icon: event.icon || 'file-clock-outline', loc: '#Events?sub=view&id=' + job.event, title: event.title },
-		// 	{ icon: icon, title: "Job #" + job.id }
-		// ]);
 		
 		var html = '';
 		
@@ -170,7 +178,7 @@ Page.Job = class Job extends Page.PageUtils {
 					html += '<div class="button icon right secondary" title="Update Tags..." onMouseDown="$P().do_update_tags(this)"><i class="mdi mdi-tag-plus-outline"></i></div>';
 					
 					// html += '<div class="button icon right secondary" title="View JSON..." onClick="$P().do_view_job_data()"><i class="mdi mdi-code-json"></i></div>';
-					html += '<div class="button icon right" title="Run Again" onClick="$P().do_confirm_run_again()"><i class="mdi mdi-run-fast"></i></div>';
+					html += '<div class="button icon right" title="Run Again..." onClick="$P().do_confirm_run_again()"><i class="mdi mdi-run-fast"></i></div>';
 					
 					html += '<div class="clear"></div>';
 				}
@@ -216,7 +224,7 @@ Page.Job = class Job extends Page.PageUtils {
 					// row 2
 					html += '<div>';
 						html += '<div class="info_label">Event</div>';
-						html += '<div class="info_value">' + this.getNiceEvent(job.event, true) + '</div>';
+						html += '<div class="info_value">' + (is_adhoc ? 'n/a' : this.getNiceEvent(job.event, true)) + '</div>';
 					html += '</div>';
 					
 					html += '<div>';
@@ -236,12 +244,12 @@ Page.Job = class Job extends Page.PageUtils {
 					
 					// row 3
 					html += '<div>';
-						html += '<div class="info_label">Workflow</div>';
-						html += '<div class="info_value">' + this.getNiceWorkflowJob(job.workflow, true) + '</div>'; // TODO: is this still a thing?
+						html += '<div class="info_label">Parent Workflow</div>';
+						html += '<div class="info_value">' + this.getNiceWorkflowJob(job.workflow, true) + '</div>';
 					html += '</div>';
 					
 					html += '<div>';
-						html += '<div class="info_label">Parent Job</div>';
+						html += '<div class="info_label">Linked Job</div>';
 						html += '<div class="info_value">' + this.getNiceJob(job.parent, true) + '</div>';
 					html += '</div>';
 					
@@ -285,6 +293,40 @@ Page.Job = class Job extends Page.PageUtils {
 				html += '</div>';
 			html += '</div>';
 		html += '</div>';
+		
+		// workflow preview
+		if (is_workflow) {
+			html += '<div class="box">';
+			html += '<div class="box_content">';
+			html += '<div class="wf_container preview" id="d_wf_container" style="height:40vh; min-height:400px;">';
+			
+			html += `<div class="wf_grid_header">
+				<div class="wf_title left"><i class="mdi mdi-clipboard-play-outline">&nbsp;</i>Workflow Map</div>
+				<div class="button secondary right" onClick="$P().goEditWorkflow()"><i class="mdi mdi-clipboard-edit-outline">&nbsp;</i>Edit...</div>
+				<div class="clear"></div>
+			</div>`;
+			
+			html += `<div class="wf_grid_footer">
+				<div class="button icon left" onClick="$P().wfZoomAuto()" title="Auto-fit workflow"><i class="mdi mdi-home"></i></div>
+				<div class="button icon left" id="d_btn_wf_zoom_out" onClick="$P().wfZoomOut()" title="Zoom out"><i class="mdi mdi-magnify-minus"></i></div>
+				<div class="button icon left" id="d_btn_wf_zoom_in" onClick="$P().wfZoomIn()" title="Zoom in"><i class="mdi mdi-magnify-plus"></i></div>
+				<div class="wf_zoom_msg left tablet_hide"></div>
+				<div class="clear"></div>
+			</div>`;
+			
+			html += '</div>'; // wf_container
+			html += '</div>'; // box_content
+			html += '</div>'; // box
+			
+			html += '<div class="box toggle" id="d_job_wf_jobs">';
+				html += '<div class="box_title">';
+					html += '<i></i><span>Workflow Jobs</span>';
+				html += '</div>';
+				html += '<div class="box_content table">';
+					// html += '<div class="loading_container"><div class="loading"></div></div>';
+				html += '</div>'; // box_content
+			html += '</div>'; // box
+		} // workflow
 		
 		// plugin parameters
 		html += '<div class="box toggle" id="d_job_params" style="display:none">';
@@ -368,53 +410,55 @@ Page.Job = class Job extends Page.PageUtils {
 			html += '</div>'; // box
 		}
 		
-		// job log
-		html += '<div class="box">';
-			html += '<div class="box_title">';
-				if (job.final) html += 'Job Output (' + get_text_from_bytes(job.log_file_size || 0) + ')';
-				else html += 'Live Job Output';
-				html += '<div class="button right" onClick="$P().do_view_job_log()"><i class="mdi mdi-open-in-new">&nbsp;</i>View Raw...</div>';
-				html += '<div class="button right" onClick="$P().do_download_job_log()"><i class="mdi mdi-cloud-download-outline">&nbsp;</i>Download...</div>';
-				html += '<div class="clear"></div>';
-			html += '</div>';
-			html += '<div class="box_content table">';
-				html += '<div id="d_live_job_log"></div>';
-			html += '</div>'; // box_content
-		html += '</div>'; // box
-		
-		// charts
-		html += '<div class="box" id="d_job_graphs" >';
-			html += '<div class="box_title">';
-				html += this.getChartSizeSelector('chart_size_quick');
-				html += 'Job Monitors';
-			html += '</div>';
-			html += '<div class="box_content table">';
-				html += '<div class="chart_grid_horiz ' + (app.getPref('chart_size_quick') || 'medium') + '">';
-				
-					html += '<div><canvas id="c_live_cpu" class="chart"></canvas></div>';
-					html += '<div><canvas id="c_live_mem" class="chart"></canvas></div>';
+		if (!is_workflow) {
+			// job log
+			html += '<div class="box">';
+				html += '<div class="box_title">';
+					if (job.final) html += 'Job Output (' + get_text_from_bytes(job.log_file_size || 0) + ')';
+					else html += 'Live Job Output';
+					html += '<div class="button right" onClick="$P().do_view_job_log()"><i class="mdi mdi-open-in-new">&nbsp;</i>View Raw...</div>';
+					html += '<div class="button right" onClick="$P().do_download_job_log()"><i class="mdi mdi-cloud-download-outline">&nbsp;</i>Download...</div>';
+					html += '<div class="clear"></div>';
+				html += '</div>';
+				html += '<div class="box_content table">';
+					html += '<div id="d_live_job_log"></div>';
+				html += '</div>'; // box_content
+			html += '</div>'; // box
+			
+			// charts
+			html += '<div class="box" id="d_job_graphs" >';
+				html += '<div class="box_title">';
+					html += this.getChartSizeSelector('chart_size_quick');
+					html += 'Job Monitors';
+				html += '</div>';
+				html += '<div class="box_content table">';
+					html += '<div class="chart_grid_horiz ' + (app.getPref('chart_size_quick') || 'medium') + '">';
 					
-					html += '<div><canvas id="c_live_disk" class="chart"></canvas></div>';
-					html += '<div><canvas id="c_live_net" class="chart"></canvas></div>';
-				
+						html += '<div><canvas id="c_live_cpu" class="chart"></canvas></div>';
+						html += '<div><canvas id="c_live_mem" class="chart"></canvas></div>';
+						
+						html += '<div><canvas id="c_live_disk" class="chart"></canvas></div>';
+						html += '<div><canvas id="c_live_net" class="chart"></canvas></div>';
+					
+					html += '</div>';
 				html += '</div>';
 			html += '</div>';
-		html += '</div>';
-		
-		// process table
-		html += '<div class="box">';
-			html += '<div class="box_title">';
-				html += 'Job Processes';
-			html += '</div>';
-			html += '<div class="box_content table">';
-				html += '<div id="d_process_table">' + this.getProcessTable() + '</div>';
-			html += '</div>'; // box_content
-		html += '</div>'; // box
+			
+			// process table
+			html += '<div class="box">';
+				html += '<div class="box_title">';
+					html += 'Job Processes';
+				html += '</div>';
+				html += '<div class="box_content table">';
+					html += '<div id="d_process_table">' + this.getProcessTable() + '</div>';
+				html += '</div>'; // box_content
+			html += '</div>'; // box
+		} // not workflow
 		
 		// meta log
 		html += '<div class="box" id="d_job_meta">';
 			html += '<div class="box_title">';
-				html += 'Metadata Log';
+				html += (is_workflow ? 'Workflow Log' : 'Metadata Log');
 			html += '</div>';
 			html += '<div class="box_content table">';
 				html += this.getMetaLog();
@@ -459,6 +503,238 @@ Page.Job = class Job extends Page.PageUtils {
 		this.updateUserContent();
 		this.getJobAlerts();
 		this.setupToggleBoxes();
+		
+		if (is_workflow) {
+			this.setupActiveWorkflow();
+			this.renderWorkflowJobs();
+		}
+	}
+	
+	goEditWorkflow() {
+		// jump over to editing workflow (scroll it too)
+		Nav.go(`#Workflows?sub=edit&id=${this.job.event}&scroll=bottom`);
+	}
+	
+	setupActiveWorkflow() {
+		// setup workflow and augment with active job tracking scaffolds
+		this.setupWorkflow();
+		
+		if (!this.job.final) {
+			// setup active job trackers for each node
+			var $cont = this.wfGetContainer();
+			$cont.find('.wf_node.wf_event').each( function() {
+				$(this).append('<div class="wf_active_bar"><div class="wf_active_widget wf_jobs" style="display:none"></div><div class="wf_active_widget wf_queued" style="display:none"></div><div class="clear"></div></div>');
+			} );
+		}
+	}
+	
+	renderWorkflowJobs() {
+		// render table showing all workflow sub-jobs, and also update workflow preview
+		// called on load and when jobs changed
+		var self = this;
+		var workflow = this.workflow;
+		var html = '';
+		
+		// active jobs on top, sorted
+		var rows = Object.values(app.activeJobs).filter( function(job) {
+			return job.workflow && (job.workflow.job == self.job.id);
+		} ).sort( function(a, b) {
+			return (a.started < b.started) ? 1 : -1;
+		} );
+		
+		// completed jobs on bottom, sorted
+		var completed_stubs = [];
+		
+		for (var node_id in this.workflow.jobs) {
+			var node = find_object( workflow.nodes, { id: node_id } );
+			if (!node) continue; // sanity
+			
+			var event = node.data.event ? find_object(app.events, { id: node.data.event }) : null;
+			
+			this.workflow.jobs[node_id].forEach( function(job) {
+				var stub = { ...job, state: 'complete', final: true, workflow: {} };
+				if (event) {
+					stub.event = node.data.event;
+					stub.category = event.category;
+					stub.type = event.type;
+				}
+				else {
+					stub.type = 'adhoc';
+					stub.plugin = node.data.plugin;
+					stub.label = node.data.label;
+					stub.icon = node.data.icon;
+				}
+				completed_stubs.push(stub);
+			} );
+		} // foreach node
+		
+		sort_by( completed_stubs, 'completed', { dir: -1, type: 'number' } );
+		
+		// all together now
+		rows = rows.concat( completed_stubs );
+		
+		var grid_args = {
+			rows: rows,
+			cols: ['Job ID', 'Event', 'Category', 'Server', 'State', 'Elapsed', 'Progress/Result', 'Actions'],
+			data_type: 'job',
+			class: 'data_grid wf_active_grid', // TODO: css rules for this?
+			empty_msg: 'No workflow jobs found.'
+		};
+		
+		html += this.getBasicGrid( grid_args, function(job, idx) {
+			if (!job.completed) return [
+				'<b>' + self.getNiceJob(job, true) + '</b>',
+				// self.getNiceJobSource(job),
+				// self.getShortDateTime( job.started ),
+				self.getNiceJobEvent(job, true),
+				self.getNiceCategory(job.category, true),
+				'<div id="d_wf_jt_server_' + job.id + '">' + self.getNiceServer(job.server, true) + '</div>',
+				'<div id="d_wf_jt_state_' + job.id + '">' + self.getNiceJobState(job) + '</div>',
+				'<div id="d_wf_jt_elapsed_' + job.id + '">' + self.getNiceJobElapsedTime(job, false) + '</div>',
+				'<div id="d_wf_jt_progress_' + job.id + '">' + self.getNiceJobProgressBar(job) + '</div>',
+				// '<div id="d_wf_jt_remaining_' + job.id + '">' + self.getNiceJobRemainingTime(job, false) + '</div>',
+				
+				'<span class="link danger" onClick="$P().doAbortJob(\'' + job.id + '\')"><b>Abort Job</b></a>'
+			];
+			else return [
+				'<b>' + self.getNiceJob(job, true) + '</b>',
+				self.getNiceJobEvent(job, true),
+				self.getNiceCategory(job.category, true),
+				self.getNiceServer(job.server, true),
+				self.getNiceJobState(job),
+				self.getNiceJobElapsedTime(job, false),
+				self.getNiceJobResult(job),
+				`<a href="#Job?id=${job.id}"><b>View Details...</b></a>`
+			];
+		} );
+		
+		this.div.find('#d_job_wf_jobs > .box_content').html(html);
+		
+		// set classes on workflow nodes to indicate status
+		this.decorateWorkflowNodes();
+		
+		// we have to fetch queued job information separately
+		if (!this.job.final) this.getWorkflowQueueSummary();
+	}
+	
+	decorateWorkflowNodes() {
+		// after rendering the table, assign css classes to workflow nodes, etc.
+		var self = this;
+		var workflow = this.workflow;
+		var $cont = this.wfGetContainer();
+		
+		workflow.nodes.forEach( function(node) {
+			var state = workflow.state[node.id] || {};
+			var $elem = $cont.find(`#d_wfn_${node.id}`);
+			
+			if (node.type.match(/^(trigger|controller|action)$/)) {
+				// these node types have simple state props we can key off of
+				$elem.toggleClass('wf_active', !!state.active);
+				$elem.toggleClass('wf_completed', !!state.completed);
+				$elem.toggleClass('disabled', !state.active && !state.completed);
+			}
+			else if (node.type.match(/^(event|job)$/)) {
+				// event and job types are more complex
+				var jobs = Object.values(app.activeJobs).filter( function(job) {
+					return job.workflow && job.workflow.job && (job.workflow.job == self.job.id) && (job.workflow.node == node.id);
+				} );
+				var num_jobs = jobs.length;
+				var num_completed = 0;
+				var num_success = 0;
+				
+				if (num_jobs) {
+					// one or more jobs active for node
+					$elem.find('> .wf_active_bar > .wf_active_widget.wf_jobs').show().html( `<i class="mdi mdi-run-fast"></i><span>${commify(num_jobs)}</span>` );
+					$elem.toggleClass('wf_active', true);
+				}
+				else {
+					// no active jobs, hide bar widget
+					$elem.find('> .wf_active_bar > .wf_active_widget.wf_jobs').hide().html('');
+					$elem.toggleClass('wf_active', false);
+					
+					// if 1+ jobs completed, set node class accordingly
+					(workflow.jobs[node.id] || []).forEach( function(stub) {
+						num_completed++;
+						if (!stub.code) num_success++;
+					} );
+					
+					$elem.toggleClass('wf_completed', !!(num_completed && (num_success == num_completed)) );
+					$elem.toggleClass('wf_error', !!(num_completed && (num_success < num_completed)) );
+				}
+				
+				$elem.toggleClass('disabled', !num_jobs && !num_completed);
+				
+				// decorate limits too
+				find_objects( workflow.connections, { source: node.id } ).forEach( function(conn) {
+					var dest = find_object( workflow.nodes, { id: conn.dest } );
+					if (dest.type != 'limit') return;
+					$cont.find(`#d_wfn_${dest.id}`).toggleClass('disabled', !num_jobs && !num_completed);
+				} );
+			} // event or job
+		} ); // foreach node
+		
+		workflow.connections.forEach( function(conn) {
+			if (!conn.condition) return;
+			var state = workflow.state[conn.id] || {};
+			var $elem = $cont.find(`#d_wft_${conn.id}`);
+			$elem.toggleClass('disabled', !state.completed);
+		} ); // foreach conn
+	}
+	
+	getWorkflowQueueSummary() {
+		// fetch summary of queued job counts per node
+		var self = this;
+		var workflow = this.workflow;
+		var $cont = this.wfGetContainer();
+		
+		app.api.get( 'app/get_workflow_job_summary', { 'workflow.job': this.job.id, state: 'queued' }, function(resp) {
+			if (!self.active || !resp || !resp.nodes || !self.job || self.job.final) return; // sanity checks
+			
+			workflow.nodes.filter( function(node) { return !!node.type.match(/^(event|job)$/); } ).forEach( function(node) {
+				var $div = $cont.find(`#d_wfn_${node.id} > .wf_active_bar > .wf_active_widget.wf_queued`);
+				var count = resp.nodes[node.id] || 0;
+				
+				if (count) $div.show().html( `<i class="mdi mdi-tray-full"></i><span>${commify(count)}</span>` );
+				else $div.hide().html('');
+			} );
+		}); // api.get
+	}
+	
+	updateWorkflowJobs() {
+		// update live jobs in table without redrawing entire table
+		// called on status update (every 1s)
+		var self = this;
+		var div = this.div;
+		var bar_width = this.bar_width || 100;
+		
+		var rows = Object.values(app.activeJobs).filter( function(job) {
+			return job.workflow && (job.workflow.job == self.job.id);
+		} );
+		
+		rows.forEach( function(job) {
+			div.find('#d_wf_jt_state_' + job.id).html( self.getNiceJobState(job) );
+			div.find('#d_wf_jt_server_' + job.id).html( self.getNiceServer(job.server, true) );
+			div.find('#d_wf_jt_elapsed_' + job.id).html( self.getNiceJobElapsedTime(job, false) );
+			// div.find('#d_wf_jt_remaining_' + job.id).html( self.getNiceJobRemainingTime(job, false) );
+			
+			// update progress bar without redrawing it (so animation doesn't jitter)
+			var counter = job.progress || 1;
+			var cx = Math.floor( counter * bar_width );
+			var label = '' + Math.floor( (counter / 1.0) * 100 ) + '%';
+			var $cont = div.find('#d_wf_jt_progress_' + job.id + ' > div.progress_bar_container');
+			
+			if ((counter == 1.0) && !$cont.hasClass('indeterminate')) {
+				$cont.addClass('indeterminate').attr('title', "");
+			}
+			else if ((counter < 1.0) && $cont.hasClass('indeterminate')) {
+				$cont.removeClass('indeterminate');
+			}
+			
+			if (counter < 1.0) $cont.attr('title', '' + Math.floor( (counter / 1.0) * 100 ) + '%');
+			
+			$cont.find('> div.progress_bar_inner').css( 'width', '' + cx + 'px' );
+			$cont.find('div.progress_bar_label').html( label );
+		} ); // foreach job
 	}
 	
 	renderJobTags() {
@@ -612,11 +888,19 @@ Page.Job = class Job extends Page.PageUtils {
 		var job = this.job;
 		if (!this.active) return; // sanity
 		
-		// decorate actions with idx, for linking
-		(job.actions || []).forEach( function(action, idx) { action.idx = idx; } );
-		
 		// we're only interested in actions that actually fired (and aren't hidden)
 		var actions = this.actions = (job.actions || []).filter( function(action) { return !!(action.date && !action.hidden); } );
+		
+		// if workflow, add sub-job actions that fired
+		if (this.isWorkflow) {
+			find_objects(this.workflow.nodes, { type: 'action' }).forEach( function(node) {
+				var state = self.workflow.state[node.id] || null;
+				if (state && state.date) actions.push( state );
+			} );
+		}
+		
+		// decorate actions with idx, for linking
+		actions.forEach( function(action, idx) { action.idx = idx; } );
 		
 		if (!actions.length) {
 			$('#d_job_actions').hide();
@@ -946,6 +1230,7 @@ Page.Job = class Job extends Page.PageUtils {
 		
 		if (!job.final) return; // sanity
 		if (this.live) return; // more sanity
+		if (this.isWorkflow) return; // workflows have no job log
 		
 		if (!job.log_file_size) {
 			$cont.html('<div class="log_message">(Job log is empty.)</div>');
@@ -1025,6 +1310,7 @@ Page.Job = class Job extends Page.PageUtils {
 	setupLiveJobLog() {
 		// kickstart the log stream
 		var self = this;
+		if (this.isWorkflow) return; // workflows do not have a job log
 		
 		if (this.emptyLogAttempts >= 3) return;
 		this.emptyLogAttempts++;
@@ -1050,6 +1336,8 @@ Page.Job = class Job extends Page.PageUtils {
 	appendLiveJobLog(text) {
 		// append text to live server log, and possibly pin-scroll to the bottom
 		var self = this;
+		if (this.isWorkflow) return; // workflows do not have a job log
+		
 		var $cont = this.div.find('#d_live_job_log');
 		var scroll_y = $cont.scrollTop();
 		var scroll_max = Math.max(0, $cont.prop('scrollHeight') - $cont.height());
@@ -1081,17 +1369,19 @@ Page.Job = class Job extends Page.PageUtils {
 	
 	formatMetaRow(row) {
 		// convert meta log row into table columns
-		var nice_timestamp = this.formatDate(row.epoch, { 
-			year: 'numeric',
-			month: 'numeric',
-			day: 'numeric',
-			// weekday: 'long',
-			hour: 'numeric',
-			minute: '2-digit',
-			second: '2-digit'
-		});
 		
-		var nice_server = 'n/a';
+		// var nice_timestamp = this.formatDate(row.epoch, { 
+		// 	year: 'numeric',
+		// 	month: 'numeric',
+		// 	day: 'numeric',
+		// 	// weekday: 'long',
+		// 	hour: 'numeric',
+		// 	minute: '2-digit',
+		// 	second: '2-digit'
+		// });
+		var nice_timestamp = this.getRelativeDateTime(row.epoch, true);
+		
+		var nice_server = '-';
 		if (row.server) {
 			if (row.server.match(/^\w+$/)) nice_server = this.getNiceServer(row.server);
 			else nice_server = this.getNiceMaster(row.server);
@@ -1100,10 +1390,30 @@ Page.Job = class Job extends Page.PageUtils {
 			nice_server = this.getNiceUser(row.username);
 		}
 		
+		var nice_msg = row.msg.replace(/\#(\w+)/g, '<code>#$1</code>').replace(/\{(.+?)\}/g, '<code>$1</code>');
+		
+		if (this.isWorkflow) {
+			var nice_node_id = '-';
+			var nice_node_type = '-';
+			
+			if (row.node) {
+				nice_node_id = '#' + row.node;
+				var node = find_object( this.workflow.nodes, { id: row.node } );
+				if (node) nice_node_type = this.getNiceWorkflowNodeType(node);
+			}
+			return [
+				nice_timestamp,
+				nice_server,
+				'<span class="monospace">' + nice_node_id + '</span>',
+				nice_node_type,
+				nice_msg
+			];
+		} // workflow
+		
 		return [
-			'<span class="nowrap">' + nice_timestamp + '</span>',
-			'<span class="nowrap">' + nice_server + '</span>',
-			row.msg
+			nice_timestamp,
+			nice_server,
+			nice_msg
 		];
 	}
 	
@@ -1114,16 +1424,27 @@ Page.Job = class Job extends Page.PageUtils {
 		var activity = job.activity || [];
 		var html = '';
 		
-		html += this.getBasicTable({
-			attribs: { class: 'data_table' },
-			compact: true,
-			cols: ['Timestamp', 'Server', 'Message'],
+		var grid_opts = {
 			rows: activity,
+			cols: this.isWorkflow ? ['Date/Time', 'Server', 'Node ID', 'Type', 'Message'] : ['Date/Time', 'Server', 'Message'],
 			data_type: 'row',
-			callback: function(row) {
-				return self.formatMetaRow(row);
-			}
+			hide_pagination: true
+		};
+		
+		html += this.getBasicGrid( grid_opts, function(row, idx) {
+			return self.formatMetaRow(row);
 		});
+		
+		// html += this.getBasicTable({
+		// 	attribs: { class: 'data_table' },
+		// 	compact: true,
+		// 	cols: this.isWorkflow ? ['Timestamp', 'Node ID', 'Type', 'Message'] : ['Timestamp', 'Server', 'Message'],
+		// 	rows: activity,
+		// 	data_type: 'row',
+		// 	callback: function(row) {
+		// 		return self.formatMetaRow(row);
+		// 	}
+		// });
 		
 		// save row count to compare on live updates
 		this.metaRowCount = activity.length;
@@ -1138,12 +1459,27 @@ Page.Job = class Job extends Page.PageUtils {
 		var activity = job.activity || [];
 		if (activity.length <= this.metaRowCount) return;
 		
-		var $table = this.div.find('#d_job_meta table');
+		var $table = this.div.find('#d_job_meta div.data_grid');
 		activity.slice(this.metaRowCount).forEach( function(row) {
-			$table.append( '<tr><td>' + self.formatMetaRow(row).join('</td><td>') + '</td></tr>' );
+			$table.append( '<ul class="grid_row"><div>' + self.formatMetaRow(row).join('</div><div>') + '</div></ul>' );
 		} );
 		
 		this.metaRowCount = activity.length;
+	}
+	
+	appendLiveMetaLog(row) {
+		// append single row to meta log, after dupe check
+		var job = this.job;
+		
+		if (!job.activity) job.activity = [];
+		var activity = job.activity;
+		if (find_object(activity, { id: row.id } )) return; // dupe row
+		
+		activity.push(row);
+		this.metaRowCount = activity.length;
+		
+		var $table = this.div.find('#d_job_meta table');
+		$table.append( '<ul class="grid_row"><div>' + this.formatMetaRow(row).join('</div><div>') + '</div></ul>' );
 	}
 	
 	updateLiveJobStats(state_changed) {
@@ -1233,6 +1569,8 @@ Page.Job = class Job extends Page.PageUtils {
 		var timelines = job.timelines;
 		var tline = (job.final && (job.elapsed > 300)) ? 'minute' : 'second';
 		this.charts = {};
+		
+		if (this.isWorkflow) return;
 		
 		// if (!timelines.second || !timelines.second.length) {
 		// 	this.div.find('#d_job_graphs').hide();
@@ -1328,6 +1666,8 @@ Page.Job = class Job extends Page.PageUtils {
 		var job = this.job;
 		var timelines = job.timelines;
 		
+		if (this.isWorkflow) return;
+		
 		['cpu', 'mem', 'disk', 'net'].forEach( function(key) {
 			var chart = self.charts[key];
 			
@@ -1376,6 +1716,8 @@ Page.Job = class Job extends Page.PageUtils {
 		var procs = job.procs;
 		var conns = job.conns || [];
 		var rows = [];
+		
+		if (this.isWorkflow) return '';
 		
 		/* "30835": {
 			"pid": 30835,
@@ -1706,6 +2048,7 @@ Page.Job = class Job extends Page.PageUtils {
 	
 	updateLiveProcessTable() {
 		// update process table if we're live, and it is visible
+		if (this.isWorkflow) return;
 		var $div = this.div.find('#d_process_table');
 		if (!this.snapEpoch && $div.visible(true)) {
 			$div.html( this.getProcessTable() );
@@ -1791,7 +2134,7 @@ Page.Job = class Job extends Page.PageUtils {
 			app.clearError();
 			Dialog.showProgress( 1.0, "Deleting File..." );
 			
-			app.api.post( 'app/delete_job_file', { id: job.id, path: file.path }, function(resp) {
+			app.api.post( 'app/delete_job_file', { id: file.job || job.id, path: file.path }, function(resp) {
 				Dialog.hideProgress();
 				app.showMessage('success', "Job file &ldquo;<b>" + filename + "</b>&rdquo; was deleted successfully.");
 				
@@ -1820,7 +2163,8 @@ Page.Job = class Job extends Page.PageUtils {
 				
 				if (!self.active) return; // sanity
 				
-				Nav.go('#Events?sub=view&id=' + job.event);
+				if (job.workflow && job.workflow.job) Nav.go('#Job&id=' + job.workflow.job);
+				else Nav.go('#Events?sub=view&id=' + job.event);
 			} ); // api.post
 		} ); // confirm
 	}
@@ -1848,7 +2192,10 @@ Page.Job = class Job extends Page.PageUtils {
 		var self = this;
 		if (!app.requirePrivilege('run_jobs')) return;
 		
-		Dialog.confirm( 'Run Job Again', "Are you sure you want to run the current job again?", ['run-fast', 'Run Now'], function(result) {
+		var text = "Are you sure you want to run the current job again?";
+		if (this.job.workflow && this.job.workflow.job) text += "  Please note that this job originally ran as part of a workflow.  If you run it manually like this, it will execute in isolation, outside of the workflow context.";
+		
+		Dialog.confirm( 'Run Job Again', text, ['run-fast', 'Run Now'], function(result) {
 			if (!result) return;
 			self.do_run_again();
 		} ); // confirm
@@ -1858,13 +2205,29 @@ Page.Job = class Job extends Page.PageUtils {
 		// run current job again
 		var self = this;
 		var job = this.job;
-		var event = find_object( app.events, { id: job.event } );
-		if (!event) return app.doError("Failed to locate event ID: " + job.event);
 		
-		var new_job = deep_copy_object(event);
-		new_job.params = job.params;
-		if (job.parent) new_job.parent = job.parent;
-		if (job.input) new_job.input = job.input;
+		var new_job = deep_copy_object(job);
+		for (var key in new_job) {
+			if (!key.match(/^(type|event|category|plugin|targets|algo|workflow|input|params|parent|actions|limits|icon|label|test)$/)) delete new_job[key];
+		}
+		
+		// TODO: copy tags from event?  maybe?  NO, we're doing away with tags in events!  Set to empty array on each job launch
+		
+		// cleanse tainted actions which ran
+		(new_job.actions || []).forEach( function(action) {
+			delete action.code;
+			delete action.description;
+			delete action.details;
+			delete action.loc;
+		} );
+		
+		// remove workflow running context (state, etc.)
+		if (new_job.workflow) {
+			for (var key in new_job.workflow) {
+				if (!key.match(/^(nodes|connections|start)$/)) delete new_job.workflow[key];
+			}
+			if (!num_keys(new_job.workflow)) delete new_job.workflow;
+		}
 		
 		Dialog.showProgress( 1.0, "Launching Job..." );
 		
@@ -2002,11 +2365,14 @@ Page.Job = class Job extends Page.PageUtils {
 			this.updateUserContent();
 			this.updateLiveMetaLog();
 			
+			// fast-update jobs table for workflows
+			if (this.isWorkflow) this.updateWorkflowJobs();
+			
 			// race condition with setting up live log and jobs that immediately print something at startup
 			if (this.job.log_file_size && this.emptyLogMessage) this.setupLiveJobLog();
 			
 			// massage UX with jobs coming out of queue, delay, etc.
-			if (this.emptyLogMessage && !this.job.log_file_size) {
+			if (!this.isWorkflow && this.emptyLogMessage && !this.job.log_file_size) {
 				this.div.find('#d_live_job_log > div.inline_page_message').html( this.getEmptyLogMessageHTML() );
 			}
 		}
@@ -2016,6 +2382,9 @@ Page.Job = class Job extends Page.PageUtils {
 			this.updateLiveJobStats(); // basically for elapsed time
 			return;
 		}
+		
+		// for workflows, if jobs changed, redraw our special table
+		if (this.isWorkflow && data.jobsChanged) this.renderWorkflowJobs();
 		
 		// if (!updates || ((old_state != 'complete') && (this.job.state == 'complete'))) {
 		// 	// job has completed under our noses!  reload page!
@@ -2053,6 +2422,10 @@ Page.Job = class Job extends Page.PageUtils {
 				this.renderJobComments();
 				this.updateLiveMetaLog();
 			break;
+			
+			case 'meta_row':
+				this.appendLiveMetaLog(pdata);
+			break;
 		} // switch
 	}
 	
@@ -2063,9 +2436,15 @@ Page.Job = class Job extends Page.PageUtils {
 		}
 	}
 	
+	onResize() {
+		// called when page is resized
+		if (this.isWorkflow && this.wfZoom) this.renderWFConnections();
+	}
+	
 	onDeactivate() {
 		// called when page is deactivated
 		delete this.job;
+		delete this.event;
 		delete this.logSpool;
 		delete this.converter;
 		delete this.liveLogReady;
@@ -2076,6 +2455,12 @@ Page.Job = class Job extends Page.PageUtils {
 		delete this.metaRowCount;
 		delete this.live;
 		delete this.actions;
+		
+		delete this.workflow;
+		delete this.wfScroll;
+		delete this.wfZoom;
+		delete this.wfSelection;
+		delete this.isWorkflow;
 		
 		// destroy charts if applicable
 		if (this.charts) {
