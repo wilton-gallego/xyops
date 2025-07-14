@@ -636,7 +636,7 @@ Page.Job = class Job extends Page.PageUtils {
 			else if (node.type.match(/^(event|job)$/)) {
 				// event and job types are more complex
 				var jobs = Object.values(app.activeJobs).filter( function(job) {
-					return job.workflow && job.workflow.job && (job.workflow.job == self.job.id) && (job.workflow.node == node.id);
+					return job.workflow && job.workflow.job && (job.workflow.job == self.job.id) && (job.workflow.node == node.id) && (job.state == 'active');
 				} );
 				var num_jobs = jobs.length;
 				var num_completed = 0;
