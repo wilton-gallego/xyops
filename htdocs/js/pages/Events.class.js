@@ -2471,7 +2471,8 @@ Page.Events = class Events extends Page.PageUtils {
 			this.event.triggers.filter( function(row) { return row.type == 'schedule'; } ),
 			this.event.triggers.filter( function(row) { return row.type == 'single'; } ),
 			this.event.triggers.filter( function(row) { return row.type == 'continuous'; } ),
-			this.event.triggers.filter( function(row) { return !(row.type || '').match(/^(schedule|continuous|single|manual)$/); } )
+			this.event.triggers.filter( function(row) { return row.type == 'plugin'; } ),
+			this.event.triggers.filter( function(row) { return !(row.type || '').match(/^(schedule|continuous|single|manual|plugin)$/); } )
 		);
 	}
 	
