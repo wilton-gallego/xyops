@@ -391,9 +391,9 @@ User writable property for providing a markdown-formatted report.  Should be spe
 User writable property for providing a text-formatted report.  Should be specified as an object with `title`, `content` and `caption` properties.  The `title` and `caption` may be omitted.  This gets converted to HTML using a `<pre>` element.
 
 
-## Job.single
+## Job.stype
 
-This is set to `true` by the scheduler when a job was launched from a "single-shot" trigger configuration.  Only used for UI hinting.
+This is set to a string when a job is launched via a special scheduler trigger like "single" (single-shot) or "interval".  Only used for UI hinting.
 
 ## Job.splugin
 
@@ -573,11 +573,13 @@ Each trigger has a `type` property which describes its behavior.  The different 
 |---------|-------------|
 | `schedule` | Set a repeating schedule to run the event (hourly, daily, etc.).  See [Schedule Rules](#schedule-rules) below. |
 | `continuous` | Run the event continuously, forever. |
+| `interval` | Run the event on a repeating interval, given a starting date/time. |
 | `single` | Set a single future exact date/time to run.  Requires an additional `epoch` property, set to the [Epoch timestamp](https://en.wikipedia.org/wiki/Unix_time) at which to run. |
 | `catchup` | Ensure that *every* scheduled job runs, even if it has to run late. |
 | `range` | Set a starting and/or ending date for a repeating event.  Requires additional `start` and/or `end` properties, set to [Epoch timestamps](https://en.wikipedia.org/wiki/Unix_time). |
 | `blackout` | Set a blackout date/time range when the event *cannot* run.  Requires additional `start` and `end` properties, set to [Epoch timestamps](https://en.wikipedia.org/wiki/Unix_time). |
 | `delay` | Set an optional starting delay for all scheduled jobs.  Requires an additional `duration` property, set to the number of seconds to delay each job by. |
+| `precision` | Set an optional list of exact seconds to fire jobs within the current scheduled minute. |
 | `plugin` | Custom scheduler Plugin (user-defined).  Requires an additional `plugin_id` property, as well as a `params` object, for Plugin-defined configuration. |
 
 #### Schedule Rules
