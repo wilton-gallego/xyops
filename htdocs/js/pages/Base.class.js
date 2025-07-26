@@ -600,7 +600,7 @@ Page.Base = class Base extends Page {
 		icon = '<i class="mdi mdi-' + icon + '"></i>';
 		
 		if (link) {
-			html += '<a href="' + link + '">';
+			html += '<a href="' + link + '" target="_blank">';
 			html += icon + '<span>' + filename + '</span></a>';
 		}
 		else {
@@ -1854,7 +1854,7 @@ Page.Base = class Base extends Page {
 				if (action.users) parts.push( '' + commify(action.users.length) + ' ' + pluralize('user', action.users.length) );
 				if (action.email) parts.push( action.email );
 				disp.text = disp.desc = parts.join(', ');
-				disp.icon = 'email-send-outline';
+				disp.icon = 'email-arrow-right-outline';
 			break;
 			
 			case 'web_hook':
@@ -1885,6 +1885,22 @@ Page.Base = class Base extends Page {
 				disp.type = "Take Snapshot";
 				disp.text = disp.desc = "(Current Server)";
 				disp.icon = 'monitor-screenshot';
+			break;
+			
+			case 'store':
+				disp.type = "Store Bucket";
+				var bucket = find_object( app.buckets, { id: action.bucket_id } );
+				disp.text = bucket ? bucket.title : "(Bucket not found)";
+				disp.desc = this.getNiceBucket(bucket, link);
+				disp.icon = 'import';
+			break;
+			
+			case 'fetch':
+				disp.type = "Fetch Bucket";
+				var bucket = find_object( app.buckets, { id: action.bucket_id } );
+				disp.text = bucket ? bucket.title : "(Bucket not found)";
+				disp.desc = this.getNiceBucket(bucket, link);
+				disp.icon = 'export';
 			break;
 			
 			case 'disable':
@@ -2116,6 +2132,49 @@ Page.Base = class Base extends Page {
 			caption: 'Select which channel to notify for the action.'
 		});
 		
+		// bucket
+		html += this.getFormRow({
+			id: 'd_eja_bucket',
+			label: 'Storage Bucket:',
+			content: this.getFormMenuSingle({
+				id: 'fe_eja_bucket',
+				title: 'Select Bucket',
+				options: app.buckets,
+				value: action.bucket_id || '',
+				default_icon: 'pail-outline'
+			}),
+			caption: 'Select which bucket to use for the action.'
+		});
+		
+		// bucket type
+		html += this.getFormRow({
+			id: 'd_eja_bucket_sync',
+			label: 'Sync Type:',
+			content: this.getFormMenuSingle({
+				id: 'fe_eja_bucket_sync',
+				title: 'Select Sync Type',
+				options: [ { id: 'data_and_files', title: "Both" }, { id: 'data', title: "Data Only" }, { id: 'files', title: "Files Only" } ],
+				value: action.bucket_sync || '',
+				default_icon: ''
+			}),
+			caption: 'For this action you can choose to sync data only, files only, or both data and files with the bucket.'
+		});
+		
+		// bucket filespec
+		html += this.getFormRow({
+			id: 'd_eja_bucket_glob',
+			label: 'File Match:',
+			content: this.getFormText({
+				id: 'fe_eja_bucket_glob',
+				class: 'monospace',
+				spellcheck: 'false',
+				maxlength: 256,
+				placeholder: '*',
+				value: action.bucket_glob || ''
+			}),
+			caption: 'If you have chosen to sync files, optionally enter a glob pattern here to include only certain files.'
+		});
+		
 		// plugin
 		html += this.getFormRow({
 			id: 'd_eja_plugin',
@@ -2173,6 +2232,15 @@ Page.Base = class Base extends Page {
 					if (!action.channel_id) return app.badField('#fe_eja_channel', "Please select a notification channel for the action.");
 				break;
 				
+				case 'store':
+				case 'fetch':
+					action.bucket_id = $('#fe_eja_bucket').val();
+					if (!action.bucket_id) return app.badField('#fe_eja_bucket', "Please select a storage bucket for the action.");
+					
+					action.bucket_sync = $('#fe_eja_bucket_sync').val();
+					action.bucket_glob = $('#fe_eja_bucket_glob').val();
+				break;
+				
 				case 'plugin':
 					action.plugin_id = $('#fe_eja_plugin').val();
 					if (!action.plugin_id) return app.badField('#fe_eja_plugin', "Please select a Plugin for the action.");
@@ -2185,7 +2253,7 @@ Page.Base = class Base extends Page {
 		} ); // Dialog.confirm
 		
 		var change_action_type = function(new_type) {
-			$('#d_eja_email, #d_eja_users, #d_eja_web_hook, #d_eja_run_job, #d_eja_channel, #d_eja_plugin, #d_eja_plugin_params').hide();
+			$('#d_eja_email, #d_eja_users, #d_eja_web_hook, #d_eja_run_job, #d_eja_channel, #d_eja_bucket, #d_eja_bucket_sync, #d_eja_bucket_glob, #d_eja_plugin, #d_eja_plugin_params').hide();
 			
 			switch (new_type) {
 				case 'email':
@@ -2207,6 +2275,11 @@ Page.Base = class Base extends Page {
 				
 				case 'snapshot':
 					// hide all
+				break;
+				
+				case 'store':
+				case 'fetch':
+					$('#d_eja_bucket, #d_eja_bucket_sync, #d_eja_bucket_glob').show();
 				break;
 				
 				case 'disable':
@@ -2239,7 +2312,7 @@ Page.Base = class Base extends Page {
 		}); // type change
 		
 		MultiSelect.init( $('#fe_eja_users') );
-		SingleSelect.init( $('#fe_eja_condition, #fe_eja_type, #fe_eja_event, #fe_eja_channel, #fe_eja_web_hook, #fe_eja_plugin') );
+		SingleSelect.init( $('#fe_eja_condition, #fe_eja_type, #fe_eja_event, #fe_eja_channel, #fe_eja_web_hook, #fe_eja_plugin, #fe_eja_bucket, #fe_eja_bucket_sync') );
 		
 		Dialog.autoResize();
 	}
