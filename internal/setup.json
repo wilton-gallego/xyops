@@ -69,9 +69,7 @@
 			"params": [
 				{ "id":"duration", "type":"text", "title":"Test Duration (seconds)", "value": "60" },
 				{ "id":"action", "type":"select", "title":"Simulate Result", "value": "Success, Error, Warning, Critical, Crash" },
-				{ "id":"progress", "type":"checkbox", "title":"Report Progress", "value": true },
 				{ "id":"burn", "type":"checkbox", "title":"Burn Memory/CPU", "value": false },
-				{ "id":"spawn", "type":"checkbox", "title":"Spawn Child Process", "value": false },
 				{ "id":"network", "type":"checkbox", "title":"Generate Network Traffic", "value": false },
 				{ "id":"upload", "type":"checkbox", "title":"Upload Sample File", "value": false },
 				{ "id":"secret", "type":"hidden", "title":"Secret", "value":"Will not be shown in UI" }
