@@ -2333,4 +2333,169 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		return text;
 	}
 	
+	// Run Event
+	
+	doRunEvent(event) {
+		// show dialog to run event and collect user form fields, if applicable
+		var self = this;
+		var title = "Run Event";
+		var btn = ['run-fast', 'Run Now'];
+		app.clearError();
+		
+		if (typeof(event) == 'string') {
+			event = find_object( app.events, { id: event } );
+			if (!event) return app.doError("Event not found.");
+		}
+		
+		var html = '';
+		html += `<div class="dialog_intro">You are about to manually launch a job for the event &ldquo;<b>${event.title}</b>&rdquo;.  Please enter values for all the event-defined parameters if applicable.</div>`;
+		html += '<div class="dialog_box_content scroll maximize">';
+		
+		// event may disallow files
+		var ok_show_files = true;
+		var limit = find_object( event.limits || [], { type: 'file', enabled: true } );
+		if (limit && (limit.amount == 0)) ok_show_files = false;
+		
+		if (ok_show_files) {
+			// user files
+			var cap_suffix = '';
+			if (limit) {
+				var limit_args = this.getResLimitDisplayArgs(limit);
+				cap_suffix += "  " + limit_args.nice_desc + " allowed.";
+			}
+			
+			html += this.getFormRow({
+				label: 'User Files:',
+				content: this.getDialogFileUploader(limit),
+				caption: 'Optionally upload and attach files to the job.' + cap_suffix
+			});
+		}
+		
+		// user form fields
+		html += this.getFormRow({
+			label: 'User Parameters:',
+			content: '<div class="plugin_param_editor_cont">' + this.getParamEditor(event.fields, {}) + '</div>',
+			// caption: 'Enter values for all the event-defined parameters here.'
+		});
+		
+		html += '</div>';
+		Dialog.confirm( title, html, btn, function(result) {
+			if (!result) return;
+			app.clearError();
+			
+			var fields = self.getParamValues(event.fields || []);
+			if (!fields) return; // validation error
+			
+			var job = deep_copy_object(event);
+			if (!job.params) job.params = {};
+			merge_hash_into( job.params, fields );
+			
+			// add files if user uploaded
+			if (self.dialogFiles && self.dialogFiles.length) {
+				if (!job.input) job.input = {};
+				job.input.files = self.dialogFiles;
+				delete self.dialogFiles;
+			}
+			
+			Dialog.showProgress( 1.0, "Launching Job..." );
+			
+			app.api.post( 'app/run_event', job, function(resp) {
+				Dialog.hideProgress();
+				if (!self.active) return; // sanity
+				
+				// jump immediately to live job details page
+				Nav.go('Job?id=' + resp.id);
+			} ); // api.post
+		}); // Dialog.confirm
+		
+		Dialog.onHide = function() {
+			// cleanup
+			// FUTURE: If self.dialogFiles still exists here, delete in background (user canceled job)
+			delete self.dialogFiles;
+		};
+		
+		Dialog.autoResize();
+	}
+	
+	getDialogFileUploader(limit) {
+		// setup file upload subsystem for jobs (for use in dialog)
+		var self = this;
+		var html = '';
+		var settings = config.job_upload_settings;
+		var btn = '<div class="button small secondary" onClick="$P().uploadDialogFiles()"><i class="mdi mdi-cloud-upload-outline">&nbsp;</i>Upload Files...</div>';
+		
+		this.dialogFiles = [];
+		
+		if (!limit) limit = { amount: 0, size: 0, accept: "" };
+		
+		var max_files = 0;
+		if (limit.amount) max_files = Math.min(limit.amount, settings.max_files_per_job);
+		else max_files = settings.max_files_per_job;
+		
+		var max_size = 0;
+		if (limit.size) max_size = Math.min(limit.size, settings.max_file_size);
+		else max_size = settings.max_file_size;
+		
+		ZeroUpload.setURL( '/api/app/upload_job_input_files' );
+		ZeroUpload.setMaxFiles( max_files );
+		ZeroUpload.setMaxBytes( max_size );
+		ZeroUpload.setFileTypes( limit.accept || settings.accepted_file_types );
+		
+		ZeroUpload.on('start', function() {
+			$('#d_dialog_uploader').html( self.getNiceProgressBar(0, 'wider', true) );
+		} );
+		
+		ZeroUpload.on('progress', function(progress) {
+			self.updateProgressBar( progress.amount, $('#d_dialog_uploader .progress_bar_container') );
+		} );
+		
+		ZeroUpload.on('complete', function(response, userData) {
+			var data = null;
+			try { data = JSON.parse( response.data ); }
+			catch (err) {
+				$('#d_dialog_uploader').html( btn );
+				return app.doError("Upload Failed: JSON Parse Error: " + err);
+			}
+			
+			if (data && (data.code != 0)) {
+				$('#d_dialog_uploader').html( btn );
+				return app.doError("Upload Failed: " + data.description);
+			}
+			
+			// update local copy
+			self.dialogFiles = self.dialogFiles.concat( data.files );
+			
+			var num_files = data.files.length;
+			var total_size = 0;
+			
+			data.files.forEach( function(file) { total_size += file.size; } );
+			
+			$('#d_dialog_uploader').html(
+				'<div class="button small secondary" onClick="$P().uploadDialogFiles()">' + 
+					'<i class="mdi mdi-check-circle-outline">&nbsp;</i>' + commify(num_files) + ' ' + pluralize('file', num_files) + ' uploaded (' + get_text_from_bytes(total_size) + ')' + 
+				'</div>'
+			);
+		} );
+		
+		ZeroUpload.on('error', function(type, message, userData) {
+			$('#d_dialog_uploader').html( btn );
+			return app.doError("Upload Failed: " + message);
+		} );
+		
+		ZeroUpload.init();
+		
+		html += '<div id="d_dialog_uploader">';
+			html += btn;
+		html += '</div>';
+		
+		return html;
+	}
+	
+	uploadDialogFiles() {
+		// upload files using ZeroUpload (for progress, etc.)
+		ZeroUpload.chooseFiles({}, {
+			session_id: app.getPref('session_id')
+		});
+	}
+	
 };
