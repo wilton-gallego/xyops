@@ -635,7 +635,7 @@ Page.Events = class Events extends Page.PageUtils {
 		
 		// user form fields
 		html += this.getFormRow({
-			label: 'Event Parameters:',
+			label: 'User Parameters:',
 			content: '<div class="plugin_param_editor_cont">' + this.getParamEditor(this.event.fields, {}) + '</div>',
 			// caption: 'Enter values for all the event-defined parameters here.'
 		});
@@ -2016,7 +2016,7 @@ Page.Events = class Events extends Page.PageUtils {
 		
 		// user form fields
 		html += this.getFormRow({
-			label: 'Event Parameters:',
+			label: 'User Parameters:',
 			content: '<div class="plugin_param_editor_cont">' + this.getParamEditor(event.fields, {}) + '</div>',
 			caption: (event.fields && event.fields.length) ? 'Enter values for all the event-defined parameters here.' : ''
 		});

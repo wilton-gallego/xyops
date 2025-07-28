@@ -332,6 +332,16 @@ Page.Job = class Job extends Page.PageUtils {
 			html += '</div>'; // box
 		} // workflow
 		
+		// event parameters (user fields)
+		html += '<div class="box toggle" id="d_event_params" style="display:none">';
+			html += '<div class="box_title">';
+				html += '<i></i><span>User Parameters</span>';
+			html += '</div>';
+			html += '<div class="box_content table">';
+				// html += '<div class="loading_container"><div class="loading"></div></div>';
+			html += '</div>'; // box_content
+		html += '</div>'; // box
+		
 		// plugin parameters
 		html += '<div class="box toggle" id="d_job_params" style="display:none">';
 			html += '<div class="box_title">';
@@ -510,6 +520,7 @@ Page.Job = class Job extends Page.PageUtils {
 			this.getAdditionalJobs();
 			// this.showJobData();
 			this.renderPluginParams('#d_job_params');
+			this.renderEventParams();
 			this.renderJobActions();
 			this.renderJobTags();
 			this.renderJobComments();
@@ -524,6 +535,22 @@ Page.Job = class Job extends Page.PageUtils {
 			this.setupActiveWorkflow();
 			this.renderWorkflowJobs();
 		}
+	}
+	
+	renderEventParams() {
+		// render event parameters (user fields)
+		var self = this;
+		var params = this.job.params || {};
+		var fields = this.event.fields || [];
+		var html = '';
+		
+		if (!fields.length) return;
+		if (this.job.workflow && (this.job.type == 'adhoc')) return; // adhoc wf jobs do not have user fields
+		if (this.job.source.match(/(scheduler|plugin|action|alert)/)) return; // these sources do not populate user fields
+		
+		html += this.getParamSummaryGrid(fields, params);
+		
+		this.div.find('#d_event_params').show().find( '> .box_content').html( html );
 	}
 	
 	copyJobData(elem) {

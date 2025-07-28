@@ -3139,11 +3139,22 @@ Page.Base = class Base extends Page {
 			return;
 		}
 		
+		html += this.getParamSummaryGrid(plugin.params, params);
+		
+		this.div.find(sel).show();
+		this.div.find( sel + ' > .box_title > span').html( plugin.title + " Parameters" );
+		this.div.find( sel + ' > .box_content').html( html );
+	}
+	
+	getParamSummaryGrid(fields, params) {
+		// get HTML for a summary grid containing param previews
+		// (for plugin params or event params)
+		var html = '';
 		var none = '<span>(None)</span>';
 		
 		html += '<div class="summary_grid">';
 		
-		plugin.params.forEach( function(param, idx) {
+		fields.forEach( function(param, idx) {
 			var elem_value = (param.id in params) ? params[param.id] : param.value;
 			var elem_icon = config.ui.control_type_icons[param.type];
 			if (param.type == 'hidden') return;
@@ -3189,9 +3200,7 @@ Page.Base = class Base extends Page {
 		
 		html += '</div>'; // summary_grid
 		
-		this.div.find(sel).show();
-		this.div.find( sel + ' > .box_title > span').html( plugin.title + " Parameters" );
-		this.div.find( sel + ' > .box_content').html( html );
+		return html;
 	}
 	
 	copyPluginParamValue(idx) {

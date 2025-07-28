@@ -1124,7 +1124,7 @@ Page.Workflows = class Workflows extends Page.Events {
 		
 		// params
 		html += this.getFormRow({
-			label: 'Event Parameters:',
+			label: 'User Parameters:',
 			content: '<div id="d_wfd_param_editor" class="plugin_param_editor_cont"></div>',
 			caption: 'Enter values for all the event-defined parameters here.'
 		});
