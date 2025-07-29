@@ -1517,6 +1517,20 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		});
 		
 		html += this.getFormRow({
+			id: 'd_eja_web_hook_text',
+			label: 'Custom Text Content:',
+			content: this.getFormTextarea({
+				id: 'fe_eja_web_hook_text',
+				rows: 5,
+				class: 'monospace',
+				autocomplete: 'off',
+				maxlength: 8192,
+				value: action.text
+			}),
+			caption: 'Optionally customize the text content of the web hook.  Leave blank to use a default system message for the action.'
+		});
+		
+		html += this.getFormRow({
 			id: 'd_eja_run_job',
 			label: 'Event:',
 			content: this.getFormMenuSingle({
@@ -1632,6 +1646,7 @@ Page.PageUtils = class PageUtils extends Page.Base {
 				case 'web_hook':
 					action.web_hook = $('#fe_eja_web_hook').val();
 					if (!action.web_hook) return app.badField('#fe_eja_web_hook', "Please select a web hook for the action.");
+					action.text = $('#fe_eja_web_hook_text').val().trim();
 				break;
 				
 				case 'run_event':
@@ -1665,7 +1680,7 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		} ); // Dialog.confirm
 		
 		var change_action_type = function(new_type) {
-			$('#d_eja_email, #d_eja_users, #d_eja_web_hook, #d_eja_run_job, #d_eja_channel, #d_eja_bucket, #d_eja_bucket_sync, #d_eja_bucket_glob, #d_eja_plugin, #d_eja_plugin_params').hide();
+			$('#d_eja_email, #d_eja_users, #d_eja_web_hook, #d_eja_web_hook_text, #d_eja_run_job, #d_eja_channel, #d_eja_bucket, #d_eja_bucket_sync, #d_eja_bucket_glob, #d_eja_plugin, #d_eja_plugin_params').hide();
 			
 			switch (new_type) {
 				case 'email':
@@ -1675,6 +1690,7 @@ Page.PageUtils = class PageUtils extends Page.Base {
 				
 				case 'web_hook':
 					$('#d_eja_web_hook').show();
+					$('#d_eja_web_hook_text').show();
 				break;
 				
 				case 'run_event':
