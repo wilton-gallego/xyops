@@ -595,6 +595,7 @@
 	},
 	
 	"messages": {
+		"job_aborted": "The job abort request was sent successfully.",
 		"rollback_draft": "Revision [event.revision] has been loaded as a draft edit.  Click 'Save Changes' to complete the rollback.  Note that a new revision number will be assigned.",
 		"draft_restored": "Your previous unsaved edits were restored.  Click the 'Cancel' button to discard them.",
 		"wf_new_save": "The new workflow was created successfully.",

@@ -2248,7 +2248,7 @@ Page.Job = class Job extends Page.PageUtils {
 			
 			app.api.post( 'app/abort_job', { id: job.id }, function(resp) {
 				Dialog.hideProgress();
-				app.showMessage('success', "The job was aborted successfully.");
+				app.showMessage('success', config.ui.messages.job_aborted);
 			} ); // api.post
 		} ); // confirm
 	}

@@ -309,7 +309,7 @@ Page.Dashboard = class Dashboard extends Page.PageUtils {
 			
 			app.api.post( 'app/abort_job', { id: id }, function(resp) {
 				Dialog.hideProgress();
-				app.showMessage('success', "The job &ldquo;" + id + "&rdquo; was aborted successfully.");
+				app.showMessage('success', config.ui.messages.job_aborted);
 			} ); // api.post
 		} ); // confirm
 	}
