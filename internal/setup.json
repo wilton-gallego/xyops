@@ -71,8 +71,7 @@
 				{ "id":"action", "type":"select", "title":"Simulate Result", "value": "Success, Error, Warning, Critical, Crash" },
 				{ "id":"burn", "type":"checkbox", "title":"Burn Memory/CPU", "value": false },
 				{ "id":"network", "type":"checkbox", "title":"Generate Network Traffic", "value": false },
-				{ "id":"upload", "type":"checkbox", "title":"Upload Sample File", "value": false },
-				{ "id":"secret", "type":"hidden", "title":"Secret", "value":"Will not be shown in UI" }
+				{ "id":"upload", "type":"checkbox", "title":"Upload Sample File", "value": false }
 			]
 		} ],
 		[ "listPush", "global/plugins", {
