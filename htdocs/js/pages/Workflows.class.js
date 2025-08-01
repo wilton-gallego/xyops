@@ -923,9 +923,10 @@ Page.Workflows = class Workflows extends Page.Events {
 			content: this.getFormTextarea({
 				id: 'fe_ete_input',
 				rows: 1,
-				value: `{\n\t\n}`,
+				value: JSON.stringify({ data: {}, files: [] }, null, "\t"),
 				style: 'display:none'
-			}) + `<div class="button small secondary" onClick="$P().edit_test_input()"><i class="mdi mdi-text-box-edit-outline">&nbsp;</i>${config.ui.buttons.wfd_edit_json}</div>`
+			}) + `<div class="button small secondary" onClick="$P().openJobDataExplorer()"><i class="mdi mdi-database-search-outline">&nbsp;</i>${config.ui.buttons.wfd_data_explorer}</div>` + 
+				`<div class="button small secondary" style="margin-left:15px;" onClick="$P().edit_test_input()"><i class="mdi mdi-text-box-edit-outline">&nbsp;</i>${config.ui.buttons.wfd_edit_json}</div>`
 		});
 		
 		// user files
@@ -980,8 +981,7 @@ Page.Workflows = class Workflows extends Page.Events {
 			// parse custom input json
 			var raw_json = $('#fe_ete_input').val();
 			if (raw_json) try {
-				if (!job.input) job.input = {};
-				job.input.data = JSON.parse( raw_json );
+				job.input = JSON.parse( raw_json );
 			}
 			catch (err) {
 				return app.badField( '#fe_ete_input', "", { err } );
@@ -990,7 +990,8 @@ Page.Workflows = class Workflows extends Page.Events {
 			// add files if user uploaded
 			if (self.dialogFiles && self.dialogFiles.length) {
 				if (!job.input) job.input = {};
-				job.input.files = self.dialogFiles;
+				if (!job.input.files) job.input.files = [];
+				job.input.files = job.input.files.concat( self.dialogFiles );
 				delete self.dialogFiles;
 			}
 			
@@ -1645,7 +1646,7 @@ Page.Workflows = class Workflows extends Page.Events {
 				maxlength: 8192,
 				class: 'monospace',
 				value: node.data.split || ''
-			}) + '<div class="text_field_icon mdi mdi-database-search-outline" title="' + config.ui.tooltips.wfd_exp_builder + '" onClick="$P().openJobDataExplorer(this)"></div>'
+			}) + '<div class="text_field_icon mdi mdi-database-search-outline" title="' + config.ui.tooltips.wfd_exp_builder + '" onClick="$P().openExpressionBuilder(this)"></div>'
 		});
 		
 		// if expression
@@ -1659,7 +1660,7 @@ Page.Workflows = class Workflows extends Page.Events {
 				maxlength: 8192,
 				class: 'monospace',
 				value: node.data.decision || ''
-			}) + '<div class="text_field_icon mdi mdi-database-search-outline" title="' + config.ui.tooltips.wfd_exp_builder + '" onClick="$P().openJobDataExplorer(this)"></div>'
+			}) + '<div class="text_field_icon mdi mdi-database-search-outline" title="' + config.ui.tooltips.wfd_exp_builder + '" onClick="$P().openExpressionBuilder(this)"></div>'
 		});
 		
 		// custom title
@@ -1796,11 +1797,11 @@ Page.Workflows = class Workflows extends Page.Events {
 		do_change_type();
 	}
 	
-	openJobDataExplorer(elem) {
-		// open data explorer dialog
+	openExpressionBuilder(elem) {
+		// open expression builder dialog
 		var self = this;
 		var $input = $(elem).closest('.fr_content').find('input');
-		var title = "Expression Builder";
+		var title = config.ui.titles.wfd_exp_builder;
 		var html = '';
 		
 		html += `<div class="dialog_intro">${config.ui.intros.wfd_exp_builder}</div>`;
@@ -1811,7 +1812,7 @@ Page.Workflows = class Workflows extends Page.Events {
 			id: 'd_ex_job',
 			content: this.getFormMenuSingle({
 				id: 'fe_ex_job',
-				options: [ { id: '', title: "Loading..." } ],
+				options: [ { id: '', title: config.ui.menu_bits.generic_loading } ],
 				value: ''
 			})
 		});
@@ -1889,7 +1890,7 @@ Page.Workflows = class Workflows extends Page.Events {
 			
 			if (!items.length) {
 				$('#fe_ex_job').html( render_menu_options( [{ id: '', title: config.ui.errors.fe_ex_job }], '' ) ).trigger('change');
-				$('#d_ex_tree').html(`<div class="ex_tree_none">${config.ui.errors.ex_tree_none}</div>`);
+				$('#d_ex_tree > .ex_tree_inner').html(`<div class="ex_tree_none">${config.ui.errors.ex_tree_none}</div>`);
 				return;
 			}
 			

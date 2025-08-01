@@ -1947,7 +1947,7 @@ Page.Events = class Events extends Page.PageUtils {
 			content: this.getFormCheckbox({
 				id: 'fe_ete_actions',
 				label: 'Enable All Actions',
-				checked: false
+				checked: true
 			}),
 			caption: 'Enable all event actions for the test run.'
 		});
@@ -1958,7 +1958,7 @@ Page.Events = class Events extends Page.PageUtils {
 			content: this.getFormCheckbox({
 				id: 'fe_ete_limits',
 				label: 'Enable All Limits',
-				checked: false
+				checked: true
 			}),
 			caption: 'Enable all resource limits for the test run.'
 		});
@@ -1969,9 +1969,10 @@ Page.Events = class Events extends Page.PageUtils {
 			content: this.getFormTextarea({
 				id: 'fe_ete_input',
 				rows: 1,
-				value: `{\n\t\n}`,
+				value: JSON.stringify({ data: {}, files: [] }, null, "\t"),
 				style: 'display:none'
-			}) + '<div class="button small secondary" onClick="$P().edit_test_input()"><i class="mdi mdi-text-box-edit-outline">&nbsp;</i>Edit JSON...</div>',
+			}) + `<div class="button small secondary" onClick="$P().openJobDataExplorer()"><i class="mdi mdi-database-search-outline">&nbsp;</i>${config.ui.buttons.wfd_data_explorer}</div>` + 
+				`<div class="button small secondary" style="margin-left:15px;" onClick="$P().edit_test_input()"><i class="mdi mdi-text-box-edit-outline">&nbsp;</i>${config.ui.buttons.wfd_edit_json}</div>`,
 			caption: 'Optionally customize the JSON input data for the job.  This is used to simulate data being passed to it from a previous job.'
 		});
 		
@@ -2011,17 +2012,17 @@ Page.Events = class Events extends Page.PageUtils {
 			// parse custom input json
 			var raw_json = $('#fe_ete_input').val();
 			if (raw_json) try {
-				if (!job.input) job.input = {};
-				job.input.data = JSON.parse( raw_json );
+				job.input = JSON.parse( raw_json );
 			}
 			catch (err) {
-				return app.badField( '#fe_ete_input', "Invalid JSON: " + err.message );
+				return app.badField( '#fe_ete_input', "", { err } );
 			}
 			
 			// add files if user uploaded
 			if (self.dialogFiles && self.dialogFiles.length) {
 				if (!job.input) job.input = {};
-				job.input.files = self.dialogFiles;
+				if (!job.input.files) job.input.files = [];
+				job.input.files = job.input.files.concat( self.dialogFiles );
 				delete self.dialogFiles;
 			}
 			
@@ -2062,9 +2063,97 @@ Page.Events = class Events extends Page.PageUtils {
 	
 	edit_test_input() {
 		// popup json editor for test dialog
-		this.editCodeAuto("Edit Input JSON", $('#fe_ete_input').val(), function(new_value) {
+		this.editCodeAuto("Edit Raw Input Data", $('#fe_ete_input').val(), function(new_value) {
 			$('#fe_ete_input').val( new_value );
 		});
+	}
+	
+	openJobDataExplorer() {
+		// open job data explorer dialog
+		var self = this;
+		var $input = $('#fe_ete_input');
+		var title = config.ui.titles.wfd_data_explorer;
+		var html = '';
+		var temp_data = null;
+		
+		html += `<div class="dialog_intro">${config.ui.intros.wfd_data_explorer}</div>`;
+		html += '<div class="dialog_box_content scroll maximize">';
+		
+		// job picker
+		html += this.getFormRow({
+			id: 'd_ex_job',
+			content: this.getFormMenuSingle({
+				id: 'fe_ex_job',
+				options: [ { id: '', title: config.ui.menu_bits.generic_loading } ],
+				value: ''
+			})
+		});
+		
+		// json tree viewer
+		html += this.getFormRow({
+			id: 'd_ex_code_viewer',
+			content: '<div id="d_ex_tree"><div class="ex_tree_inner"><div class="loading_container"><div class="loading"></div></div></div></div>'
+		});
+		
+		html += '</div>'; // dialog_box_content
+		
+		var buttons_html = "";
+		buttons_html += `<div class="button" onClick="CodeEditor.hide()"><i class="mdi mdi-close-circle-outline">&nbsp;</i>${config.ui.buttons.cancel}</div>`;
+		buttons_html += `<div id="btn_ex_apply" class="button primary"><i class="mdi mdi-check-circle">&nbsp;</i>${config.ui.buttons.import_confirm}</div>`;
+		
+		CodeEditor.showSimpleDialog(title, html, buttons_html);
+		
+		SingleSelect.init('#fe_ex_job');
+		
+		$('#fe_ex_job').on('change', function() {
+			var id = $(this).val();
+			if (!id) return; // sanity
+			
+			// now load job details
+			app.api.get( 'app/get_job', { id, remove: ['timelines', 'activity'] }, function(resp) {
+				// see if job actually produced data and/or files
+				var job = resp.job;
+				
+				if ((job.data && first_key(job.data)) || (job.files && job.files.length)) {
+					temp_data = { data: job.data || {}, files: job.files || [] };
+					
+					$('#d_ex_tree > .ex_tree_inner').html( 
+						'<pre><code class="hljs">' + app.highlightAuto(JSON.stringify(temp_data, null, "\t"), 'json') + '</code></pre>' 
+					);
+				}
+				else {
+					$('#d_ex_tree > .ex_tree_inner').html(`<div class="ex_tree_none">${config.ui.errors.ex_tree_no_data}</div>`);
+					temp_data = null;
+				}
+			} ); // api.get
+		}); // on change
+		
+		$('#btn_ex_apply').on('click', function() {
+			// apply changes and exit dialog
+			if (temp_data) {
+				$input.val( JSON.stringify(temp_data, null, "\t") );
+			}
+			CodeEditor.hide();
+		});
+		
+		// job search
+		var squery = (this.workflow ? 'source:workflow' : 'event:' + this.event.id) + ' tags:_success _last';
+		
+		app.api.get( 'app/search_jobs', { query: squery, limit: config.alt_items_per_page }, function(resp) {
+			var items = (resp.rows || []).map( function(job) {
+				var args = self.getJobDisplayArgs(job);
+				return { id: job.id, title: args.title, icon: args.icon };
+			} );
+			
+			if (!items.length) {
+				$('#fe_ex_job').html( render_menu_options( [{ id: '', title: config.ui.errors.fe_ex_job }], '' ) ).trigger('change');
+				$('#d_ex_tree > .ex_tree_inner').html(`<div class="ex_tree_none">${config.ui.errors.ex_tree_none}</div>`);
+				return;
+			}
+			
+			// change menu items and fire onChange event for redraw
+			$('#fe_ex_job').html( render_menu_options( items, items[0].id ) ).trigger('change');
+		} ); // api.get
 	}
 	
 	do_save_event() {

@@ -310,7 +310,7 @@
 		"fe_ete_scope": {
 			"title": "Select Test Scope",
 			"options": [
-				{ "id": "single", "title": "Single node in isolation", "icon": "timer-play-outline" },
+				{ "id": "single", "title": "Single selected node by itself", "icon": "timer-play-outline" },
 				{ "id": "entire", "title": "Entire workflow starting at selection", "icon": "clipboard-play-outline" }
 			]
 		},
@@ -329,8 +329,8 @@
 			"label": "Enable All Limits"
 		},
 		"d_ete_input": {
-			"label": "Custom JSON Input:",
-			"caption": "Optionally customize the JSON input data for the first job.  This is used to simulate data being passed to it from a previous job."
+			"label": "Data Input:",
+			"caption": "Optionally customize the JSON input data for the first job.  This is used to simulate data being passed in from a previous job."
 		},
 		"d_ete_files": {
 			"label": "File Input:",
@@ -477,6 +477,11 @@
 		"d_ex_exp": {
 			"label": "Expression:",
 			"caption": "Build your final expression here."
+		},
+		
+		"d_ex_code_viewer": {
+			"label": "Job Data Viewer:",
+			"caption": "View the output data and/or files produced by the selected job."
 		}
 	},
 	
@@ -487,6 +492,7 @@
 		"fe_wfd_if": "Please enter an expression to evaluate.",
 		"fe_ex_job": "(No jobs found)",
 		"ex_tree_none": "No previous jobs were found.",
+		"ex_tree_no_data": "The selected job produced no output data or files.",
 		"new_wf_no_cats": "You must define at least one category to add workflows.",
 		"wfde_no_events": "Please create at least one event before adding a workflow event node.",
 		"wfde_event_not_found": "Event ID \"[node.data.event]\" could not be found.  Did someone delete it?",
@@ -518,7 +524,10 @@
 		"wfdl_edit": "Editing Limiter Node",
 		
 		"wfdc_new": "New Controller",
-		"wfdc_edit": "Editing Controller"
+		"wfdc_edit": "Editing Controller",
+		
+		"wfd_exp_builder": "Expression Builder",
+		"wfd_data_explorer": "Job Data Explorer"
 	},
 	
 	"buttons": {
@@ -530,9 +539,13 @@
 		"history": "History...",
 		"save_changes": "Save Changes",
 		
+		"import": "Import...",
+		"import_confirm": "Import",
+		
 		"wf_new_save": "Save Workflow",
 		"wfd_run_test": "Run Test",
-		"wfd_edit_json": "Edit JSON...",
+		"wfd_edit_json": "Edit Raw Data...",
+		"wfd_data_explorer": "Import From Job...",
 		"wfd_add_node": "Add Node",
 		"wfd_add_action": "Add Action",
 		"wfd_add_limit": "Add Limiter",
@@ -564,7 +577,8 @@
 	},
 	
 	"intros": {
-		"wfd_exp_builder": "This allows you to explore output data from recently completed jobs, and pick out a specific JSON key path to use for your controller expression."
+		"wfd_exp_builder": "This allows you to explore output data from recently completed jobs, and pick out a specific JSON key path to use for your controller expression.",
+		"wfd_data_explorer": "Select a previously completed job to import the data and/or files from it.  This is so you can use it as simulated input for your test run."
 	},
 	
 	"nav": {
@@ -587,6 +601,7 @@
 	
 	"menu_bits": {
 		"generic_none": "(None)",
+		"generic_loading": "Loading...",
 		"wf_targets_groups": "Groups:",
 		"wf_targets_servers": "Servers:",
 		"wf_algo_default": "(Use event default)",
