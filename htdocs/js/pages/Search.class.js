@@ -4,7 +4,7 @@
 // Released under the PixlCore Sustainable Use License.
 // See the LICENSE.md file in this repository.
 
-Page.Search = class Search extends Page.Base {
+Page.Search = class Search extends Page.PageUtils {
 	
 	onInit() {
 		// called once at page load
@@ -261,12 +261,13 @@ Page.Search = class Search extends Page.Base {
 		// buttons at bottom
 		html += '<div class="box_buttons" style="padding:0">';
 			// html += '<div class="search_help"><a href="http://source.dev.ca.admission.net/doc/codepress/#searching" target="_blank">Search Help<i class="mdi mdi-open-in-new"></i></a></div>';
-			html += '<div id="btn_s_reset" class="button" style="display:none" onClick="$P().resetFilters()"><i class="mdi mdi-undo-variant">&nbsp;</i>Reset Filters</div>';
+			html += '<div id="btn_search_opts" class="button phone_collapse" onClick="$P().toggleSearchOpts()"><i>&nbsp;</i><span>Options<span></div>';
+			html += '<div id="btn_s_reset" class="button phone_collapse" style="display:none" onClick="$P().resetFilters()"><i class="mdi mdi-undo-variant">&nbsp;</i>Reset</div>';
 			
 			if (preset) {
-				html += '<div class="button danger" onMouseUp="$P().doDeletePreset()"><i class="mdi mdi-trash-can-outline">&nbsp;</i><span>Delete Preset...</span></div>';
+				html += '<div class="button danger phone_collapse" onMouseUp="$P().doDeletePreset()"><i class="mdi mdi-trash-can-outline">&nbsp;</i><span>Delete Preset...</span></div>';
 			}
-			html += '<div id="btn_s_save" class="button secondary" onMouseUp="$P().doSavePreset()"><i class="mdi mdi-floppy">&nbsp;</i><span>' + (preset ? 'Edit' : 'Save') + ' Preset...</span></div>';
+			html += '<div id="btn_s_save" class="button secondary phone_collapse" onMouseUp="$P().doSavePreset()"><i class="mdi mdi-floppy">&nbsp;</i><span>' + (preset ? 'Edit' : 'Save') + ' Preset...</span></div>';
 			// html += '<div class="button" id="btn_s_download" onMouseUp="$P().doDownload()"><i class="mdi mdi-cloud-download-outline">&nbsp;</i>Download All...</div>';
 			html += '<div class="button primary" onMouseUp="$P().navSearch(true)"><i class="mdi mdi-magnify">&nbsp;</i>Search</div>';
 			// html += '<div class="clear"></div>';
@@ -285,6 +286,7 @@ Page.Search = class Search extends Page.Base {
 		// MultiSelect.init( this.div.find('#fe_s_tags') );
 		SingleSelect.init( this.div.find('#fe_s_tag, #fe_s_result, #fe_s_event, #fe_s_source, #fe_s_date, #fe_s_category, #fe_s_plugin, #fe_s_server, #fe_s_group, #fe_s_sort') );
 		// $('.header_search_widget').hide();
+		this.setupSearchOpts();
 		
 		this.div.find('#fe_s_date').on('change', function() {
 			if (this.value == 'custom') self.showDateRangePicker( self.navSearch.bind(self) );

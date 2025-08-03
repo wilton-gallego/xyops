@@ -204,8 +204,9 @@ Page.Events = class Events extends Page.PageUtils {
 		
 		// buttons at bottom
 		html += '<div class="search_buttons" style="padding:0">';
-			html += '<div id="btn_el_reset" class="button" style="display:none" onClick="$P().resetFilters()"><i class="mdi mdi-undo-variant">&nbsp;</i>Reset Filters</div>';
-			html += '<div class="button primary" onClick="$P().applyTableFilters(true)"><i class="mdi mdi-magnify">&nbsp;</i>Search</div>';
+			html += '<div id="btn_search_opts" class="button" onClick="$P().toggleSearchOpts()"><i>&nbsp;</i><span>Options<span></div>';
+			html += '<div id="btn_el_reset" class="button" style="display:none" onClick="$P().resetFilters()"><i class="mdi mdi-undo-variant">&nbsp;</i><span>Reset</span></div>';
+			html += '<div class="button primary" onClick="$P().applyTableFilters(true)"><i class="mdi mdi-magnify">&nbsp;</i><span>Search</span></div>';
 		html += '</div>'; // search_buttons
 		
 		html += '</div>'; // box_content
@@ -218,6 +219,7 @@ Page.Events = class Events extends Page.PageUtils {
 		// MultiSelect.init( this.div.find('#fe_el_tags') );
 		SingleSelect.init( this.div.find('#fe_el_status, #fe_el_category, #fe_el_target, #fe_el_plugin, #fe_el_tag, #fe_el_trigger, #fe_el_username, #fe_el_action') );
 		// $('.header_search_widget').hide();
+		this.setupSearchOpts();
 		
 		this.div.find('#fe_el_tag, #fe_el_status, #fe_el_category, #fe_el_target, #fe_el_plugin, #fe_el_trigger, #fe_el_username, #fe_el_action').on('change', function() {
 			self.applyTableFilters(true);

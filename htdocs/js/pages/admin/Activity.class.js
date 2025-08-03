@@ -4,7 +4,7 @@
 // Released under the PixlCore Sustainable Use License.
 // See the LICENSE.md file in this repository.
 
-Page.ActivityLog = class ActivityLog extends Page.Base {
+Page.ActivityLog = class ActivityLog extends Page.PageUtils {
 	
 	onInit() {
 		// called once at page load
@@ -130,7 +130,8 @@ Page.ActivityLog = class ActivityLog extends Page.Base {
 		
 		// buttons at bottom
 		html += '<div class="box_buttons" style="padding:0">';
-			html += '<div id="btn_sa_reset" class="button" style="display:none" onClick="$P().resetFilters()"><i class="mdi mdi-undo-variant">&nbsp;</i>Reset Filters</div>';
+			html += '<div id="btn_search_opts" class="button" onClick="$P().toggleSearchOpts()"><i>&nbsp;</i><span>Options<span></div>';
+			html += '<div id="btn_sa_reset" class="button" style="display:none" onClick="$P().resetFilters()"><i class="mdi mdi-undo-variant">&nbsp;</i>Reset</div>';
 			html += '<div class="button primary" onMouseUp="$P().navSearch()"><i class="mdi mdi-magnify">&nbsp;</i>Search</div>';
 		html += '</div>'; // box_buttons
 		
@@ -146,6 +147,7 @@ Page.ActivityLog = class ActivityLog extends Page.Base {
 		// MultiSelect.init( this.div.find('#fe_s_tags') );
 		SingleSelect.init( this.div.find('#fe_sa_action, #fe_sa_username, #fe_sa_date, #fe_sa_sort') );
 		// $('.header_search_widget').hide();
+		this.setupSearchOpts();
 		
 		this.div.find('#fe_sa_action, #fe_sa_username, #fe_sa_date, #fe_sa_sort').on('change', function() {
 			self.navSearch();

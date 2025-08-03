@@ -1976,6 +1976,96 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		}
 	}
 	
+	// Search Options Toggle:
+	
+	setupSearchOpts() {
+		// make search options animate smoothly
+		var self = this;
+		
+		var $btn = this.div.find('#btn_search_opts');
+		var $icon = $btn.find('i').first();
+		// var $title = $btn.find('span').first();
+		var $content = $btn.closest('.box').find('div.form_grid');
+		
+		$content.css('overflow', 'hidden');
+		
+		var state = app.getPref('search_opts.' + this.ID) || 'collapsed'; // default collapsed
+		if (state == 'expanded') $content.addClass('expanded');
+		
+		if ($content.hasClass('expanded')) {
+			// $title.html('Hide Options');
+			$icon.addClass('mdi mdi-chevron-up');
+		}
+		else {
+			$content.css({ height: 0, marginBottom: 0 });
+			// $title.html('Show Options');
+			$icon.addClass('mdi mdi-chevron-down');
+		}
+	}
+	
+	toggleSearchOpts(elem) {
+		// toggle details section open/closed
+		var $btn = this.div.find('#btn_search_opts');
+		var $content = $btn.closest('.box').find('div.form_grid');
+		
+		if ($content.hasClass('expanded')) this.collapseSearchOpts();
+		else this.expandSearchOpts();
+	}
+	
+	collapseSearchOpts() {
+		// collapse toggle box
+		var $btn = this.div.find('#btn_search_opts');
+		var $content = $btn.closest('.box').find('div.form_grid');
+		var $icon = $btn.find('i').first();
+		// var $title = $btn.find('span').first();
+		
+		if ($content.hasClass('expanded')) {
+			$content.removeClass('expanded');
+			
+			$content.scrollTop(0).css({ height: $content[0].scrollHeight, marginBottom: '25px' });
+			
+			$content.stop().animate({
+				scrollTop: $content[0].scrollHeight,
+				height: 0,
+				marginBottom: 0
+			}, {
+				duration: 500,
+				easing: 'easeOutQuart'
+			});
+			
+			// $title.html('Show Options');
+			$icon.removeClass().addClass('mdi mdi-chevron-down');
+			app.setPref('search_opts.' + this.ID, 'collapsed');
+		}
+	}
+	
+	expandSearchOpts() {
+		// expand toggle box
+		var $btn = this.div.find('#btn_search_opts');
+		var $content = $btn.closest('.box').find('div.form_grid');
+		var $icon = $btn.find('i').first();
+		// var $title = $btn.find('span').first();
+		
+		if (!$content.hasClass('expanded')) {
+			$content.addClass('expanded');
+			
+			$content.css({ height: 0, marginBottom: 0 }).scrollTop( $content[0].scrollHeight );
+			
+			$content.stop().animate({
+				scrollTop: 0,
+				height: $content[0].scrollHeight,
+				marginBottom: '25px'
+			}, {
+				duration: 500,
+				easing: 'easeOutQuart'
+			});
+			
+			// $title.html('Hide Options');
+			$icon.removeClass().addClass('mdi mdi-chevron-up');
+			app.setPref('search_opts.' + this.ID, 'expanded');
+		}
+	}
+	
 	// Workflow Utilities:
 	
 	setupWorkflow() {

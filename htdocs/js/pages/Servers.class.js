@@ -521,7 +521,8 @@ Page.Servers = class Servers extends Page.ServerUtils {
 		
 		// buttons at bottom
 		html += '<div class="box_buttons" style="padding:0">';
-			html += '<div id="btn_ss_reset" class="button" style="display:none" onClick="$P().resetFilters()"><i class="mdi mdi-undo-variant">&nbsp;</i>Reset Filters</div>';
+			html += '<div id="btn_search_opts" class="button" onClick="$P().toggleSearchOpts()"><i>&nbsp;</i><span>Options<span></div>';
+			html += '<div id="btn_ss_reset" class="button" style="display:none" onClick="$P().resetFilters()"><i class="mdi mdi-undo-variant">&nbsp;</i>Reset</div>';
 			html += '<div class="button primary" onMouseUp="$P().navSearch()"><i class="mdi mdi-magnify">&nbsp;</i>Search</div>';
 			// html += '<div class="clear"></div>';
 		html += '</div>'; // box_buttons
@@ -539,6 +540,7 @@ Page.Servers = class Servers extends Page.ServerUtils {
 		// MultiSelect.init( this.div.find('#fe_s_tags') );
 		SingleSelect.init( this.div.find('#fe_ss_groups, #fe_ss_os_platform, #fe_ss_os_distro, #fe_ss_os_release, #fe_ss_os_arch, #fe_ss_cpu_virt, #fe_ss_cpu_brand, #fe_ss_cpu_cores, #fe_ss_created, #fe_ss_modified') );
 		// $('.header_search_widget').hide();
+		this.setupSearchOpts();
 		
 		this.div.find('#fe_ss_groups, #fe_ss_os_platform, #fe_ss_os_distro, #fe_ss_os_release, #fe_ss_os_arch, #fe_ss_cpu_virt, #fe_ss_cpu_brand, #fe_ss_cpu_cores, #fe_ss_created, #fe_ss_modified').on('change', function() {
 			self.navSearch();
