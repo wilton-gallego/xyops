@@ -329,11 +329,11 @@ Page.Events = class Events extends Page.PageUtils {
 				actions.join(' | ')
 			];
 			
-			if (item.category != last_cat_id) {
-				var is_hidden = !!(item.category in hidden_cats);
-				tds.insertAbove = '<ul class="tr_event_category' + (is_hidden ? ' collapsed' : '') + '" id="tr_ee_cat_' + item.category + '" data-cat="' + item.category + '"><div style="grid-column-start: span ' + cols.length + ';" onClick="$P().toggle_category_collapse(this)"><i class="mdi mdi-' + (is_hidden ? 'folder-outline' : 'folder-open-outline') + '">&nbsp;</i>' + cat.title + '</div></ul>';
-				last_cat_id = item.category;
-			}
+			// if (item.category != last_cat_id) {
+			// 	var is_hidden = !!(item.category in hidden_cats);
+			// 	tds.insertAbove = '<ul class="tr_event_category' + (is_hidden ? ' collapsed' : '') + '" id="tr_ee_cat_' + item.category + '" data-cat="' + item.category + '"><div style="grid-column-start: span ' + cols.length + ';" onClick="$P().toggle_category_collapse(this)"><i class="mdi mdi-' + (is_hidden ? 'folder-outline' : 'folder-open-outline') + '">&nbsp;</i>' + cat.title + '</div></ul>';
+			// 	last_cat_id = item.category;
+			// }
 			
 			if (!item.enabled) classes.push('disabled');
 			if (cat.color) classes.push( 'clr_' + cat.color );
@@ -344,8 +344,8 @@ Page.Events = class Events extends Page.PageUtils {
 		html += '</div>'; // box_content
 		
 		html += '<div class="box_buttons">';
-			html += '<div class="button phone_collapse" onClick="$P().doFileImportPrompt()"><i class="mdi mdi-cloud-upload-outline">&nbsp;</i><span>Import File...</span></div>';
-			html += '<div class="button phone_collapse secondary" onClick="$P().go_history()"><i class="mdi mdi-history">&nbsp;</i><span>Revision History...</span></div>';
+			html += '<div class="button tablet_collapse" onClick="$P().doFileImportPrompt()"><i class="mdi mdi-cloud-upload-outline">&nbsp;</i><span>Import File...</span></div>';
+			html += '<div class="button tablet_collapse secondary" onClick="$P().go_history()"><i class="mdi mdi-history">&nbsp;</i><span>Revision History...</span></div>';
 			html += '<div class="button phone_collapse default" onClick="$P().go_new_workflow()"><i class="mdi mdi-clipboard-plus-outline">&nbsp;</i><span>New Workflow...</span></div>';
 			html += '<div class="button phone_collapse default" onClick="$P().edit_event(-1)"><i class="mdi mdi-plus-circle-outline">&nbsp;</i><span>New Event...</span></div>';
 		html += '</div>'; // box_buttons
