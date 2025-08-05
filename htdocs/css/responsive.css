@@ -2,7 +2,7 @@
 
 @media only screen and (min-width: 1451px) and (max-width: 1600px) {
 	.form_row {
-		grid-template-columns: 2fr 6fr 1fr;
+		grid-template-columns: 1fr 6fr 1fr;
 	}
 	
 	/* 'Enabled', 'Event Title', 'Category', 'Plugin', 'Target', 'Trigger', 'Status', 'Actions' */
@@ -337,11 +337,21 @@
 		display: none;
 	}
 	
-	/* .form_row {
-		grid-template-columns: 2fr 6fr 1fr;
-	} */
+	.form_row {
+		grid-template-columns: 1fr min-content;
+		grid-column-gap: 0px;
+		
+		grid-template-areas:
+			"a a"
+			"b c"
+			"d d";
+	}
+	
+	.form_suffix_icon {
+		left: 3px;
+	}
 	 
-	.form_row, .dialog_content .form_row {
+	.dialog_content .form_row {
 		grid-template-columns: 1fr;
 		
 		grid-template-areas:
@@ -355,16 +365,8 @@
 		justify-self: start;
 		margin-bottom: 6px;
 	}
-	.form_row > div.fr_suffix {
+	.dialog_content .form_row > div.fr_suffix {
 		display: none;
-	}
-	
-	.form_row.widest {
-		grid-template-columns: 1fr 20fr 1fr !important;
-		
-		grid-template-areas:
-			"a b c"
-			". d ." !important;
 	}
 	
 	.dialog.inline {
@@ -765,7 +767,21 @@
 		display: none;
 	}
 	
-	.form_row, .dialog_content .form_row {
+	.form_row {
+		grid-template-columns: 1fr min-content;
+		grid-column-gap: 0px;
+		
+		grid-template-areas:
+			"a a"
+			"b c"
+			"d d";
+	}
+	
+	.form_suffix_icon {
+		left: 3px;
+	}
+	
+	.dialog_content .form_row {
 		grid-template-columns: 1fr;
 		
 		grid-template-areas:
@@ -779,16 +795,8 @@
 		justify-self: start;
 		margin-bottom: 6px;
 	}
-	.form_row > div.fr_suffix {
+	.dialog_content .form_row > div.fr_suffix {
 		display: none;
-	}
-	
-	.form_row.widest {
-		grid-template-columns: 1fr 20fr 1fr !important;
-		
-		grid-template-areas:
-			"a b c"
-			". d ." !important;
 	}
 	
 	.dialog.inline {
