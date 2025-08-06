@@ -1479,10 +1479,12 @@ Page.Servers = class Servers extends Page.ServerUtils {
 		// append sample to quickmon chart (real-time from server)
 		// { id, row }
 		var self = this;
-		if (!this.active) return; // sanity
+		if (!this.active || !this.charts) return; // sanity
 		
 		config.quick_monitors.forEach( function(def) {
 			var chart = self.charts[def.id];
+			if (!chart) return; // sanity
+			
 			var layer_idx = find_object_idx( chart.layers, { id: data.id } );
 			
 			if ((layer_idx > -1) && data.row.date && (typeof(data.row[def.id]) == 'number')) {
