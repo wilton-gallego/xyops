@@ -502,7 +502,7 @@
 			"id": "active_jobs_high",
 			"title": "High Active Jobs",
 			"expression": "monitors.active_jobs >= 50",
-			"message": "Active job count is too high: {{commify(monitors.active_jobs)}}",
+			"message": "Active job count is too high: {{number(monitors.active_jobs)}}",
 			"groups": [],
 			"monitor_id": "active_jobs",
 			"enabled": true,
