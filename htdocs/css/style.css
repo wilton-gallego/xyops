@@ -506,6 +506,18 @@ body.dark div.maint_unit {
 	animation-timing-function: ease-in-out;
 }
 
+@keyframes sh_rflash {
+	0% { box-shadow: inset 0px 0px 7px 4px var(--red); }
+	100% { box-shadow: inset 0px 0px 0px 0px transparent; }
+}
+
+.rflash {
+	animation-name: sh_rflash;
+	animation-duration: 1.2s;
+	animation-fill-mode: none;
+	animation-timing-function: ease-in-out;
+}
+
 /* Diff */
 
 .diff_content {
@@ -983,6 +995,42 @@ div.td_big {
 }
 .fr_content:has(.text_field_icon) > textarea {
 	padding-right: 24px;
+}
+
+.form_result {
+	line-height: 20px;
+	padding-left: 6px;
+	padding-top: 5px;
+	padding-bottom: 4px;
+	border: 1px solid var(--border-color);
+	font-size: 13px;
+	color: var(--body-text-color);
+	background: var(--form-background-color);
+}
+.dialog_content .form_result {
+	background: var(--box-background-color);
+}
+body.dark .dialog_content .form_result {
+	background: var(--form-background-color);
+}
+.form_result i.mdi:before {
+	transform: scale(1.30);
+}
+.form_result i {
+	padding-right: 5px;
+}
+
+.form_result.success {
+	color: var(--green) !important;
+}
+.form_result.fail {
+	color: var(--gray) !important;
+}
+.form_result.triggered {
+	color: var(--red) !important;
+}
+.form_result.invalid {
+	color: var(--red) !important;
 }
 
 /* JSON Tree Data Explorer */
