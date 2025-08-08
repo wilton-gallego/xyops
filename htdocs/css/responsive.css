@@ -53,7 +53,7 @@
 	}
 	
 	.form_row {
-		grid-template-columns: 2fr 10fr min-content;
+		grid-template-columns: 2fr 10fr 20px;
 	}
 	
 	.wrap_mobile {
