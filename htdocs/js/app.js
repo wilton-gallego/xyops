@@ -615,12 +615,6 @@ app.extend({
 					else app.doExternalLogout(); 
 				}, 250 );
 			}
-			else if (app.auth0) {
-				Debug.trace('auth0', "Logging out of auth0...");
-				app.auth0.logout({
-					returnTo: window.location.origin
-				});
-			}
 			else {
 				Debug.trace("User session cookie was deleted, redirecting to login page");
 				Dialog.hideProgress();

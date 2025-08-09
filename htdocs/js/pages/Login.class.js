@@ -32,10 +32,6 @@ Page.Login = class Login extends Page.Base {
 			this.showRecoverPasswordForm();
 			return true;
 		}
-		else if (config.auth0 && config.auth0.enabled) {
-			this.doAuth0Setup();
-			return true;
-		}
 		
 		app.setWindowTitle('Login');
 		// app.setHeaderTitle( '<i class="mdi mdi-login">&nbsp;</i>Login' );
@@ -477,82 +473,6 @@ Page.Login = class Login extends Page.Base {
 					app.showMessage('success', "Your password was reset successfully.");
 				}, 100 );
 			} ); // post
-		}
-	}
-	
-	async doAuth0Setup() {
-		// auth0 login workflow (https only)
-		Debug.trace('auth0', "Initializing auth0...");
-		Dialog.showProgress( 1.0, "Logging in..." );
-		
-		// https is required for auth0 remote login
-		if (location.protocol !== 'https:') {
-			var url = 'https://' + location.hostname;
-			if (config.https_port != 443) url += ':' + config.https_port;
-			url += '/';
-			if (app.navAfterLogin) url += '#' + app.navAfterLogin;
-			Debug.trace('auth0', "Redirecting to HTTPS... " + url);
-			window.location = url;
-			return;
-		}
-		
-		// setup auth0 client
-		// params: { domain, client_id, ... }
-		app.auth0 = await createAuth0Client( config.auth0.params );
-		
-		// see if we're returning from a login redirect
-		const qs = window.location.search;
-		
-		if (qs.includes("code=") && qs.includes("state=")) {
-			// finish login (post-redirect, phase 2)
-			Debug.trace('auth0', "Parsing redirect: " + qs);
-			try {
-				const result = await app.auth0.handleRedirectCallback();
-				const token = await app.auth0.getTokenSilently();
-				
-				app.api.post( 'app/auth0_login', { token }, function(resp) {
-					Debug.trace("User login from auth0: " + resp.username + ": " + resp.session_id);
-					
-					// cleanup redirect cruft here
-					window.history.replaceState(null, '', "/");
-					
-					Dialog.hideProgress();
-					app.doUserLogin( resp );
-					
-					if (result.appState && result.appState.hash) {
-						Nav.go( result.appState.hash );
-					}
-					else {
-						Nav.go( app.navAfterLogin || config.DefaultPage );
-					}
-				} );
-			} 
-			catch (err) {
-				// something went wrong (expired token?), initiate login again
-				Debug.trace('auth0', "Error parsing redirect: " + err);
-				this.doAuth0Login();
-			}
-		}
-		else {
-			// initiate login (pre-redirect, phase 1)
-			this.doAuth0Login();
-		}
-	}
-	
-	async doAuth0Login() {
-		// initiate auth0 login redirect workflow
-		Debug.trace('auth0', "Performing auth0 login redirect...");
-		const options = {
-			redirect_uri: window.location.origin,
-			appState: {
-				hash: app.navAfterLogin || config.DefaultPage
-			}
-		};
-		try {
-			await app.auth0.loginWithRedirect(options);
-		}
-		catch (err) {
-			Debug.trace('auth0', "AUTH0 ERROR: " + err);
 		}
 	}
 	
