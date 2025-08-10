@@ -155,13 +155,6 @@
 		}
 	},
 	
-	"home_response_headers": {
-		"Content-Security-Policy": "default-src 'none'; script-src 'self'; script-src-elem 'self'; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline'; style-src-attr 'unsafe-inline'; manifest-src 'self';img-src 'self' data: blob:; font-src 'self'; connect-src 'self' ws: wss:; media-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
-		"X-Content-Type-Options": "nosniff",
-		"Referrer-Policy": "strict-origin-when-cross-origin",
-		"Permissions-Policy": "camera=(), microphone=(), geolocation=(), fullscreen=()"
-	},
-	
 	"client": {
 		"name": "xyOps",
 		
@@ -352,6 +345,14 @@
 		"http_startup_message": false,
 		"http_debug_ttl": true,
 		"http_debug_bind_local": true,
+		"http_uri_response_headers": {
+			"(\/|\\.html)$": {
+				"Content-Security-Policy": "default-src 'none'; script-src 'self'; script-src-elem 'self'; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline'; style-src-attr 'unsafe-inline'; manifest-src 'self';img-src 'self' data: blob:; font-src 'self'; connect-src 'self' ws: wss:; media-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
+				"X-Content-Type-Options": "nosniff",
+				"Referrer-Policy": "strict-origin-when-cross-origin",
+				"Permissions-Policy": "camera=(), microphone=(), geolocation=(), fullscreen=()"
+			}
+		},
 		
 		"https": true,
 		"https_port": 5523,
