@@ -87,6 +87,9 @@ Page.Base = class Base extends Page {
 		if (typeof(item) == 'string') item = find_object(app.categories, { id: item });
 		if (!item) return '(None)';
 		
+		// if user cannot edit categories, no linky!
+		if (!app.hasPrivilege('edit_categories')) link = false;
+		
 		var html = '<span class="nowrap">';
 		var icon = '<i class="mdi mdi-' + (item.icon || 'folder-open-outline') + '"></i>';
 		if (link) {
