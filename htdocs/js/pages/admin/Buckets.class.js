@@ -204,7 +204,7 @@ Page.Buckets = class Buckets extends Page.PageUtils {
 		this.div.html( html );
 		
 		// MultiSelect.init( this.div.find('select[multiple]') );
-		// SingleSelect.init( this.div.find('#...') );
+		SingleSelect.init( this.div.find('#fe_bu_icon') );
 		// this.updateAddRemoveMe('#fe_bu_email');
 		$('#fe_bu_title').focus();
 		this.setupBoxButtonFloater();
@@ -292,7 +292,7 @@ Page.Buckets = class Buckets extends Page.PageUtils {
 		this.div.html( html );
 		
 		// MultiSelect.init( this.div.find('select[multiple]') );
-		// SingleSelect.init( this.div.find('#fe_bu_run_event, #fe_bu_icon, #fe_bu_web_hook, #fe_bu_sound') );
+		SingleSelect.init( this.div.find('#fe_bu_icon') );
 		// this.updateAddRemoveMe('#fe_bu_email');
 		this.setupBoxButtonFloater();
 		this.setupUploader();
