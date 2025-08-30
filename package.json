@@ -45,6 +45,7 @@
 		"mime": "2.5.2",
 		"sanitize-html": "2.13.1",
 		"orchestra-theme": "^2.0.0",
+		"pixl-acl": "^1.0.4",
 		"pixl-args": "^1.0.3",
 		"pixl-boot": "^2.0.0",
 		"pixl-chart": "^1.0.0",
@@ -69,5 +70,8 @@
 		"ws": "7.5.10",
 		"ansi_up": "5.1.0",
 		"zeroupload": "^1.0.0"
+	},
+	"devDependencies": {
+		"pixl-unit": "^1.0.14"
 	}
 }
