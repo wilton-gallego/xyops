@@ -119,10 +119,6 @@ do
 		node --trace-warnings $HOMEDIR/lib/main.js --debug --debug_level 9 --repl --color --echo "$@"
 		exit
 	;;
-	maint)
-		node $HOMEDIR/bin/storage-cli.js maint $2
-		exit
-	;;
 	admin)
 		node $HOMEDIR/bin/storage-cli.js admin $2 $3
 		exit
@@ -133,17 +129,6 @@ do
 	;;
 	revoke)
 		node $HOMEDIR/bin/storage-cli.js revoke $2 $3
-		exit
-	;;
-	export)
-		node $HOMEDIR/bin/storage-cli.js export $2 $3 $4
-		exit
-	;;
-	import)
-		if [ $RUNNING -eq 1 ]; then
-			$0 stop
-		fi
-		node $HOMEDIR/bin/storage-cli.js import $2 $3 $4
 		exit
 	;;
 	upgrade)
@@ -164,12 +149,9 @@ stop       - Stops $NAME and wait until it actually exits.
 restart    - Calls stop, then start (hard restart).
 status     - Checks whether $NAME is currently running.
 debug      - Starts $NAME in debug mode (foreground, echo debug log).
-maint      - Runs daily maintenance routine.
 admin      - Creates new emergency admin account (specify user / pass).
 grant      - Grant privilege to specified user.
 revoke     - Revoke privilege from specified user.
-export     - Exports data to specified file.
-import     - Imports data from specified file.
 upgrade    - Upgrades $NAME to the latest stable (or specify version).
 version    - Outputs the current $NAME package version.
 help       - Displays this screen.
