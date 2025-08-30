@@ -91,6 +91,7 @@
 		"version": "latest",
 		"cache_ttl": 86400,
 		"config": { 
+			"port": 5522,
 			"secure": false,
 			"socket_opts": { "rejectUnauthorized": false },
 			"pid_file": "pid.txt",
