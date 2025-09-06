@@ -87,24 +87,25 @@
 	},
 	
 	"satellite": {
+		"list_url": "https://api.github.com/repos/pixlcore/xysat/releases",
 		"base_url": "https://github.com/pixlcore/xysat/releases",
 		"version": "latest",
-		"cache_ttl": 86400,
+		"cache_ttl": 3600,
 		"config": { 
 			"port": 5522,
 			"secure": false,
 			"socket_opts": { "rejectUnauthorized": false },
 			"pid_file": "pid.txt",
 			"log_dir": "logs",
-			"log_filename": "satellite.log",
+			"log_filename": "[component].log",
 			"log_crashes": true,
 			"log_archive_path": "logs/archives/[filename]-[yyyy]-[mm]-[dd].log.gz",
 			"log_archive_keep": "7 days",
 			"temp_dir": "temp",
-			"debug_level": 5,
+			"debug_level": 9,
 			"child_kill_timeout": 10,
-			"max_sleep_ms": 5000,
-			"monitoring_enabled": true
+			"monitoring_enabled": true,
+			"quickmon_enabled": true
 		}
 	},
 	
@@ -407,6 +408,7 @@
 	
 	"Debug": {
 		"enabled": false
-	}
+	},
 	
+	"config_overrides_file": "conf/overrides.json"
 }
