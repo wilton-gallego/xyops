@@ -187,7 +187,8 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 			"names": [],
 			"events": [],
 			"categories": [],
-			"plugins": []
+			"plugins": [],
+			"web_hooks": []
 		};
 		
 		this.fields = []; // start in secret edit mode
@@ -448,6 +449,22 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 			caption: 'Allow one or more plugins access to the secret.  Plugins will automatically receive the secret as environment variables when launched.'
 		});
 		
+		// web hooks
+		html += this.getFormRow({
+			label: 'Web Hook Access:',
+			content: this.getFormMenuMulti({
+				id: 'fe_se_web_hooks',
+				title: 'Allow access to web hooks',
+				placeholder: '(None)',
+				options: app.web_hooks,
+				values: secret.web_hooks || [],
+				default_icon: 'webhook',
+				'data-hold': 1,
+				'data-select-all': 1
+			}),
+			caption: 'Allow one or more web hooks access to the secret.  Web hooks can expand secrets using the `{{ secrets.VAR_NAME }}` syntax.'
+		});
+		
 		// data
 		html += this.getFormRow({
 			label: 'Secret Variables:',
@@ -643,6 +660,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 		secret.events = $('#fe_se_events').val();
 		secret.categories = $('#fe_se_cats').val();
 		secret.plugins = $('#fe_se_plugins').val();
+		secret.web_hooks = $('#fe_se_web_hooks').val();
 		secret.notes = $('#fe_se_notes').val();
 		
 		if (this.fields) secret.fields = this.fields; // edit mode
