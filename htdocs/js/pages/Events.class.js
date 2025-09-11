@@ -2868,7 +2868,7 @@ Page.Events = class Events extends Page.PageUtils {
 		// plugin
 		html += this.getFormRow({
 			id: 'd_et_plugin',
-			label: 'Scheduler Plugin:',
+			label: 'Trigger Plugin:',
 			content: this.getFormMenuSingle({
 				id: 'fe_et_plugin',
 				title: 'Select Scheduler Plugin',
