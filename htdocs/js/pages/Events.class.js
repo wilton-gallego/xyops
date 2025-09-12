@@ -3138,6 +3138,7 @@ Page.Events = class Events extends Page.PageUtils {
 					trigger.plugin_id = $('#fe_et_plugin').val();
 					if (!trigger.plugin_id) return app.badField('#fe_et_plugin', "Please select a Plugin for scheduling.");
 					trigger.params = self.getPluginParamValues( trigger.plugin_id );
+					if (!trigger.params) return false; // invalid
 					if ($('#fe_et_tz').val().length) trigger.timezone = $('#fe_et_tz').val();
 				break;
 			} // switch trigger.type
@@ -3497,8 +3498,10 @@ Page.Events = class Events extends Page.PageUtils {
 		event.targets = $('#fe_ee_targets').val();
 		event.algo = $('#fe_ee_algo').val();
 		event.plugin = $('#fe_ee_plugin').val();
-		event.params = this.getPluginParamValues( event.plugin );
 		event.notes = $('#fe_ee_notes').val();
+		
+		event.params = this.getPluginParamValues( event.plugin, force );
+		if (!event.params) return false; // invalid
 		
 		if (!force) {
 			if (!event.title.length) {

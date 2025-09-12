@@ -1680,6 +1680,7 @@ Page.PageUtils = class PageUtils extends Page.Base {
 					action.plugin_id = $('#fe_eja_plugin').val();
 					if (!action.plugin_id) return app.badField('#fe_eja_plugin', "Please select a Plugin for the action.");
 					action.params = self.getPluginParamValues( action.plugin_id );
+					if (!action.params) return false; // invalid
 				break;
 			} // switch action.type
 			
@@ -1855,19 +1856,26 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		});
 	}
 	
-	getPluginParamValues(plugin_id) {
+	getPluginParamValues(plugin_id, force) {
 		// get all values for params hash
 		var params = {};
 		var plugin = find_object( app.plugins, { id: plugin_id } );
 		if (!plugin) return {}; // should never happen
+		var is_valid = true;
 		
 		plugin.params.forEach( function(param) {
 			if (param.type == 'hidden') params[ param.id ] = param.value;
 			else if (param.type == 'checkbox') params[ param.id ] = !!$('#fe_pp_' + plugin_id + '_' + param.id).is(':checked');
-			else params[ param.id ] = $('#fe_pp_' + plugin_id + '_' + param.id).val();
-		});
+			else {
+				params[ param.id ] = $('#fe_pp_' + plugin_id + '_' + param.id).val();
+				if (param.required && !params[ param.id ].length && !force) {
+					app.badField('#fe_pp_' + plugin_id + '_' + param.id, "The &ldquo;" + param.title + "&rdquo; field is required.");
+					is_valid = false;
+				}
+			}
+		}); // foreach param
 		
-		return params;
+		return is_valid ? params : false;
 	}
 	
 	// Data Tree:
