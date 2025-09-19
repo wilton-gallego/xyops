@@ -70,7 +70,7 @@ Page.System = class System extends Page.Base {
 		
 		// import data
 		html += '<div class="maint_unit">';
-			html += '<div class="button secondary" onClick="$P().prompt_import_data()"><i class="mdi mdi-database-import-outline">&nbsp;</i>Import Data...</div>';
+			html += '<div class="button danger" onClick="$P().prompt_import_data()"><i class="mdi mdi-database-import-outline">&nbsp;</i>Import Data...</div>';
 			html += '<div class="caption">Import data from a local archive file on disk.  <a href="#">Learn More</a></div>';
 		html += '</div>';
 		
@@ -350,26 +350,63 @@ Page.System = class System extends Page.Base {
 		this.div.find('#d_sys_sockets > .box_content').removeClass('loading').html(html);
 	}
 	
-	prompt_import_data() {
+	prompt_import_data_OLD() {
 		// prompt user with instructions and warnings
 		var self = this;
-		var html = "Use this feature to import bulk data into xyOps by providing a file from your local machine.  The file should have been generated from a previous export.  <br><br> <b>Note:</b> It is highly recommended that you stop all running jobs before importing data.  Also note that the scheduler will automatically be paused if it is active.";
+		var html = inline_marked("Use this feature to import bulk data into xyOps by uploading a file from your local machine.  The file should have been generated from a previous export.\n\n**Warning:** This operation is destructive, and will delete all data in the way!  Also, this will abort all running jobs, flush all queued jobs, and the scheduler will automatically be paused.");
 		
-		Dialog.confirm( 'Import Data', html, ['database-import', 'Choose File...'], function(result) {
+		Dialog.confirmDanger( 'Import Data', html, ['database-import', 'Choose File...'], function(result) {
 			if (!result) return;
-			
 			var $file = $('<input type="file" style="display:none">');
-			
 			$file.appendTo('body');
 			$file.on('change', function() {
-				if (this.files && this.files.length) self.do_import_data(this.files[0]);
+				if (this.files && this.files.length) self.do_import_data({ file1: this.files[0] });
 				$file.remove();
 			});
 			$file.get(0).click();
 		} ); // confirm
 	}
 	
-	do_import_data(file) {
+	prompt_import_data() {
+		// prompt user with instructions and warnings
+		var self = this;
+		var text = "Use this feature to bulk import data into xyOps by uploading a file from your local machine.  The file should have been generated from a previous xyOps or Cronicle export.\n\n**Warning:** This operation is destructive, and will delete all data in the way!  Also, this will abort all running jobs, flush all queued jobs, and the scheduler will automatically be paused.  Proceed with extreme caution.";
+		
+		var html = '';
+		html += `<div class="dialog_intro">${inline_marked(text)}</div>`;
+		html += '<div class="dialog_box_content maximize" style="max-height:75vh; overflow-x:hidden; overflow-y:auto;">';
+		
+		html += this.getFormRow({
+			id: 'd_sys_im_fmt',
+			label: 'File Format:',
+			content: this.getFormMenuMulti({
+				id: 'fe_sys_im_fmt',
+				title: 'Select File Format',
+				options: [{ id: 'xyops', title: 'xyOps Data Format', icon: 'rocket-launch' }, { id: 'cronicle', title: 'Cronicle Data Format', icon: 'progress-clock' }],
+				value: 'xyops',
+				'data-shrinkwrap': 1
+			}),
+			caption: "Select the file format of the file you will be uploading."
+		});
+		
+		html += '</div>';
+		Dialog.confirmDanger( 'Bulk Import Data', html, ['database-import', 'Choose File...'], function(result) {
+			if (!result) return;
+			var fmt = $('#fe_sys_im_fmt').val();
+			var $file = $('<input type="file" style="display:none">');
+			$file.appendTo('body');
+			$file.on('change', function() {
+				if (this.files && this.files.length) self.do_import_data({ file1: this.files[0], format: fmt });
+				$file.remove();
+			});
+			$file.get(0).click();
+		} ); // confirm
+		
+		SingleSelect.init( $('#fe_sys_im_fmt') );
+		Dialog.autoResize();
+	}
+	
+	do_import_data(data) {
 		// perform the upload given selected file from prompt
 		var self = this;
 		Dialog.hide();
@@ -377,7 +414,9 @@ Page.System = class System extends Page.Base {
 		
 		// upload file now
 		var form = new FormData();
-		form.append('file1', file);
+		for (var key in data) {
+			form.append(key, data[key]);
+		}
 		
 		app.api.upload( 'app/admin_import_data', form, function(resp) {
 			Dialog.hideProgress();
@@ -445,7 +484,7 @@ Page.System = class System extends Page.Base {
 		});
 		
 		html += '</div>';
-		Dialog.confirm( "Export Data", html, ['database-export', "Export Now"], function(result) {
+		Dialog.confirm( "Bulk Export Data", html, ['database-export', "Export Now"], function(result) {
 			if (!result) return;
 			app.clearError();
 			
