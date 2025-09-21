@@ -78,10 +78,6 @@ node bin/build.js dist
 
 Replace `v1.0.0` with the desired xyOps version from the [official release list](https://github.com/pixlcore/xyops/releases), or `main` for the head revision (unstable).
 
-## Configuration
-
-The xyOps main configuration file is located at `/opt/xyops/conf/config.json`.  See the [Configuration Guide](configuration.md) for full details on how to customize this file.
-
 ## Command Line
 
 Here are all the xyOps services available to you on the command line.  Most of these are accessed via the following shell script:
@@ -188,7 +184,7 @@ cd -
 
 xyOps supports a special environment variable syntax, which can specify command-line options as well as override any configuration settings.  The variable name syntax is `XYOPS_key` where `key` is one of several command-line options (see table below) or a JSON configuration property path.  These can come in handy for automating installations, and using container systems.  
 
-For overriding configuration properties by environment variable, you can specify any top-level JSON key from `config.json`, or a *path* to a nested property using double-underscore (`__`) as a path separator.  For boolean properties, you can use `true` or `false` strings, and xyOps will convert them to actual booleans.  Here is an example of some of the possibilities available:
+For overriding configuration properties by environment variable, you can specify any top-level JSON key from `config.json`, or a *path* to a nested property using double-underscore (`__`) as a path separator.  For boolean properties, you can use `true` or `false` strings, and xyOps will convert them.  Here is an example of some of the possibilities available:
 
 | Variable | Sample Value | Description |
 |----------|--------------|-------------|

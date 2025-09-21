@@ -1,3 +1,9 @@
+&larr; *[Return to the main document](index.md)*
+
+<hr/>
+
+<!-- toc -->
+
 # Overview
 
 This document details all of the data structures used in xyOps.
@@ -653,6 +659,10 @@ The timestamp at which the job was completed (Epoch seconds).
 
 The duration of the job run in seconds (calculated as the difference between [Job.started](#job-started) and [Job.completed](#job-completed)).  This does not include time spent in queue or start delay.
 
+## Job.now
+
+The job's "now" time, as an Epoch timestamp, which is the time at which the job was originally scheduled to launch.  This timestamp may be in the past if the job is running as part of a catch-up operation.
+
 ## Job.code
 
 When a job completes, the `code` denotes the result.  Zero (`0`) means success, any other value means the job failed.  You can use this to specify your own internal error code, or just specify `1` for a generic error.  Any number or string is acceptable.  There are a few special values that xyOps recognizes:
@@ -715,12 +725,14 @@ When the job was launched from another job (custom action or workflow step), thi
 
 ## Job.input
 
-When another job passes data to the current job, an `input` object is populated.  The object has the following properties:
+When another job passes data or files to the current job, an `input` object is populated.  The object may have the following properties:
 
-| Property Name | Description |
-|---------------|-------------|
-| `data` | A copy of the data object from the parent job, if one was populated (user-supplied). |
-| `files` | A copy of the files uploaded from the parent job, if applicable. |
+| Property Name | Type | Description |
+|---------------|------|-------------|
+| `data` | Object | A user-defined object containing arbitrary data for the job. |
+| `files` | Array | An array of files supplied to the job, from a previous job, storage bucket, or trigger plugin |
+
+The format of the `data` object is freeform, and completely user-defined.  The `files` array will be formatted the same as [Job.files](#job-files).
 
 ## Job.retried
 
@@ -2037,9 +2049,11 @@ Contains information about current network throughput on the server.  Example:
 
 The uptime of the server in seconds.
 
+
+
 # Snapshot
 
-
+TODO: this
 
 ## Snapshot.source
 
@@ -2235,10 +2249,73 @@ Here is a list of all the `schedule` type trigger object properties and their de
 | `weekdays` | 0 - 6 | One or more weekdays, where Sunday is 0, and Saturday is 6. |
 | `hours` | 0 - 23 | One or more hours in 24-hour time, from 0 to 23. |
 | `minutes` | 0 - 59 | One or more minutes, from 0 to 59. |
-| `timezone` | n/a | Optional timezone to evaluate the schedule entry in. |
+| `timezone` | n/a | Optional timezone to evaluate the schedule entry in.  Defaults to the master server timezone. |
 
-### Workflow
 
-TBD
 
-### Privileges
+## Workflow
+
+TODO: this
+
+
+
+## Privileges
+
+TODO: this
+
+
+
+## Job Hook Data
+
+When job actions are executed, including firing web hooks and sending emails, the following data structure is used to expand macros in the web hook text and email body content.  It is also passed to custom action Plugins.
+
+| Property Path | Type | Description |
+|---------------|------|-------------|
+| `job` | Object | The current [Job](#job) object. |
+| `action` | Object | The current [Action](#action) object. |
+| `event` | Object | The [Event](#event) object from which the job was launched. |
+| `category` | Object | The [Category](#category) object for the job's category. |
+| `plugin` | Object | The [Plugin](#plugin) object for the job's event plugin (n/a for workflows). |
+| `server` | Object | The [Server](#server) object for the server that ran the job (if applicable). |
+| `nice_server` | String | A nice string representation of the current server (title, hostname or master ID). |
+| `nice_hostname` | String | A nice string representation of the current server hostname, if applicable. |
+| `links` | Object | An object containing URLs for use in the email body text or web hook text. |
+| `links.job_details` | String | A fully-qualified URL to the job details page (requires login). |
+| `links.job_log` | String | A fully-qualified URL to the raw job output (auth included in URL). |
+| `links.job_files` | String | A markdown-formatted list of URLs to all the job's output files (auth included in URLs). |
+| `display` | Object | An object containing various formatted strings ready for display. |
+| `display.elapsed` | String | Human readable job elapsed time, if fired on job complete. |
+| `display.log_size` | String | Human readable job output size, if applicable. |
+| `display.perf` | String | A string representing the job performance metrics, if provided. |
+| `display.mem` | String | A human-readable string representing the average memory usage of the job, if available. |
+| `display.cpu` | String | A human-readable string representing the average CPU usage of the job, if available. |
+| `text` | String | A short summary of the action, using [hook_text_templates](configuration.md#hook_text_templates) as the template, and all macros expanded. |
+
+## Alert Hook Data
+
+When alerts fire and clear, the following data structure is used to expand macros in the web hook text and email body content:
+
+| Property Path | Type | Description |
+|---------------|------|-------------|
+| `template` | String | The current action taking place, will be one of `alert_new` or `alert_cleared`. |
+| `alert_def` | Object | The current [Alert](#alert) definition object. |
+| `alert` | Object | The current [AlertInvocation](#alertinvocation) object. |
+| `params` | Object | The current [ServerMonitorData](#servermonitordata) data from the server. |
+| `server` | Object | The [Server](#server) object for the server on which the alert fired or cleared. |
+| `date_time` | String | A human-readable localized date/time string, in the server's timezone. |
+| `nice_group` | String | A string representing the title of the primary server group. |
+| `nice_elapsed` | String | A human-readable representation of the alert elapsed time (if `alert_cleared`). |
+| `nice_load_avg` | String | A string representation of the current server load average. |
+| `nice_mem_total` | String | A string representation of the current server total memory. |
+| `nice_mem_avail` | String | A string representation of the current server available memory. |
+| `nice_uptime` | String | A string representation of the current server uptime. |
+| `nice_cpu` | String | A string representation of the current server CPU usage. |
+| `nice_os` | String | A string representation of the current server operating system. |
+| `nice_notes` | String | The current alert notes field, from the alert definition. |
+| `nice_hostname` | String | A string representation of the current server hostname. |
+| `nice_server` | String | A string representation of the current server title (or hostname, if no custom title). |
+| `nice_virt` | String | A string representation of the current server virtualization / container system, if applicable. |
+| `links` | Object | An object containing URLs for use in the email body text or web hook text. |
+| `links.server_url` | String | A fully-qualified URL to the job details page (requires login). |
+| `links.alert_url` | String | A fully-qualified URL to the job details page (requires login). |
+| `text` | String | A short summary of the action, using [hook_text_templates](configuration.md#hook_text_templates) as the template, and all macros expanded. |

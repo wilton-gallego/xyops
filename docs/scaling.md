@@ -1,8 +1,16 @@
+&larr; *[Return to the main document](index.md)*
+
+<hr/>
+
+<!-- toc -->
+
 # Overview
 
 Using xyOps on live production?  Got lots of servers?  Please read these best practices for scaling your deployment.
 
 ## Increase Node.js Memory
+
+NODE_MAX_MEMORY
 
 ## Increase Storage RAM Cache
 
@@ -14,3 +22,6 @@ use external shared storage!
 
 ## Automated Critical Backups
 
+
+
+https://github.com/jhuckaby/pixl-server-web#allow_hosts

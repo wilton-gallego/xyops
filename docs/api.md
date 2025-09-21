@@ -346,7 +346,7 @@ And here is an example response:
 			"id": "fme4wijr73h",
 			"date": 1754783040,
 			"filename": "test.png",
-			"path": "files/bucket/bme4wi6pg35/bdY8zZ9nKynfeFUb4xH6fA/test.png",
+			"path": "files/bucket/bme4wi6pg35/bdY8zZ9nKynfFUb4xH6fA/test.png",
 			"size": 92615,
 			"username": "admin"
 		}
