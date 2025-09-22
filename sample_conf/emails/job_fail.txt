@@ -1,35 +1,36 @@
-To: [email_to]
-From: [config/email_from]
-Subject: ⚠️ xyOps Job Failed: [event/title]
+<!-- To: {{email_to}} -->
+<!-- Subject: 🛑 {{config.client.name}} Job Failed: {{event.title}} -->
+<!-- Title: Job Failed -->
+<!-- Button: View Details | {{links.job_details}} -->
 
-Date/Time: [display/date_time]
-Event: [event/title]
-Category: [category/title]
-Plugin: [plugin/title]
+The following {{config.client.name}} job has failed with code: *{{job.code}}**
 
-Job ID: [job/id]
-Server: [server/hostname]
-PID: [job/pid]
-Elapsed Time: [display/elapsed]
-Performance Metrics: [display/perf]
-Avg. Memory Usage: [display/mem]
-Avg. CPU Usage: [display/cpu]
-Error Code: [job/code]
+- **Job ID:** `{{job.id}}`
+- **Error Code:** `{{job.code}}`
+- **Event:** {{event.title}}
+- **Category:** {{category.title}}
+- **Plugin:** {{plugin.title}}
+- **Server:** {{nice_server}}
+- **PID:** {{job.pid}}
+- **Completed:** {{display.date_time}}
+- **Elapsed Time:** {{display.elapsed}}
+- **Performance Metrics:** `{{display.perf}}`
+- **Avg. Memory Usage:** {{display.mem}}
+- **Avg. CPU Usage:** {{display.cpu}}
 
-Error Description:
-[job/description]
+### Error Description:
+{{job.description}}
 
-Job Details:
-[links/job_details]
+### Job Details:
+{{links.job_details}}
 
-Job Log ([display/log_size]):
-[links/job_log]
+### Job Output ({{display/log_size}}):
+{{links.job_log}}
 
-Log Excerpt:
-[log_excerpt]
+### Output Excerpt:
+```
+{{log_excerpt}}
+```
 
-Event Notes:
-[job/notes]
-
-Regards,
-The xyOps Team
+### Event Notes:
+{{job.notes}}

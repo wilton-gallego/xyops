@@ -1,20 +1,16 @@
-To: [job/email]
-From: [config/email_from]
-Subject: xyOps Internal Job Report: [job/title]
+<!-- To: {{job.email}} -->
+<!-- Subject: {{config.client.name}} Internal Job Report: {{job.title}} -->
+<!-- Title: Internal Job Report -->
 
-Job ID: [job/id]
-Job Title: [job/title]
-Job Type: [job/type]
-Requested By: [job/username]
-Master: [hostname]
+- **Job ID:** `{{job.id}}`
+- **Job Title:** {{job.title}}
+- **Job Type:** {{job.type}}
+- **Requested By:** {{job.username}}
+- **Master:** {{hostname}}
+- **Started:** {{display.started}}
+- **Completed:** {{display.completed}}
+- **Elapsed:** {{display.elapsed}}
 
-Started: [display/started]
-Completed: [display/completed]
-Elapsed: [display/elapsed]
+### Details:
 
-Details:
-
-[job/details]
-
-Regards,
-The xyOps Team
+{{job.details}}

@@ -881,6 +881,21 @@
 		{ "id": "decision", "title": "Decision", "icon": "boom-gate-up" }
 	],
 	
+	"ticket_types": [
+		{ "id": "issue", "title": "Issue", "icon": "bug-outline" },
+		{ "id": "feature", "title": "Feature Request", "icon": "lightbulb-outline" },
+		{ "id": "change", "title": "Change Control", "icon": "swap-horizontal-circle-outline" },
+		{ "id": "maintenance", "title": "Maintenance", "icon": "wrench-outline" },
+		{ "id": "question", "title": "Question", "icon": "help-circle-outline" },
+		{ "id": "other", "title": "Other", "icon": "shape-outline" }
+	],
+	
+	"ticket_statuses": [
+		{ "id": "draft", "title": "Draft", "color": "gray", "icon": "dots-horizontal" },
+		{ "id": "open", "title": "Open", "color": "green", "icon": "label-variant-outline" },
+		{ "id": "closed", "title": "Closed", "color": "red", "icon": "label-variant" }
+	],
+	
 	"satellite_install_commands": {
 		"standard": "curl -s \"[base_url]/api/app/satellite/install?t=[token]\" | sudo sh",
 		"windows": "powershell -Command \"IEX (Invoke-WebRequest -UseBasicParsing -Uri '[base_url]/api/app/satellite/install?t=[token]&os=windows').Content\""

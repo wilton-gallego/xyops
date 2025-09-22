@@ -1,19 +1,18 @@
-To: [/user/email]
-From: [/config/email_from]
-Subject: xyOps Sessions Logged Out
+<!-- To: {{user.email}} -->
+<!-- Subject: {{config.client.name}} Sessions Logged Out -->
+<!-- Title: Sessions Logged Out -->
 
-Hey [/user/full_name],
+Hey {{user.full_name}},
 
-Upon your request, we have deleted all user sessions associated with your account.  The following sessions were found and deleted:
+Upon your request, we have deleted all user sessions associated with your {{config.client.name}} account.  The following sessions were found and deleted:
 
-[/report]
+```
+{{report}}
+```
 
 (End of report)
 
 If you have any questions, or if you did not request this action, please e-mail your system administrator.
 
-This request was sent from IP address: [/session/ip]
-Using the following user agent: [/useragent]
-
-Regards,
-The xyOps Team
+- This request was sent from IP address: {{session.ip}}
+- Using the following user agent: {{useragent}}

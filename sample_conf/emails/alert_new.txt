@@ -1,36 +1,35 @@
-To: [email_to]
-From: [config/email_from]
-Subject: xyOps Alert: [nice_server]: [def/title]
+<!-- To: {{email_to}} -->
+<!-- Subject: ⚠️ {{config.client.name}} Alert: {{nice_server}}: {{def.title}} -->
+<!-- Title: Alert Cleared -->
+<!-- Button: View Alert | {{links.alert_url}} -->
 
-The following xyOps alert has fired: [def/title]
+The following {{config.client.name}} alert has fired: **{{def.title}}**
 
-Message: [alert/message]
-Hostname: [params/hostname]
-IP Address: [params/ip]
-Group: [nice_group]
-Date/Time: [date_time]
-Expression: [def/expression]
-Evaluation: [alert/exp]
+- **Message:** {{alert.message}}
+- **Server:** {{nice_server}}
+- **Hostname:** {{params.hostname}}
+- **IP Address:** {{params.ip}}
+- **Group:** {{nice_group}}
+- **Date/Time:** {{date_time}}
+- **Expression:** `{{def.expression}}`
 
-Alert Detail View:
-[links/alert_url]
+### Alert Detail View:
+{{links.alert_url}}
 
-Live Server View:
-[links/server_url]
+### Live Server View:
+{{links.server_url}}
 
-Alert Notes:
-[nice_notes]
+### Alert Notes:
+{{nice_notes}}
 
-Server Information:
-CPU Load Average: [nice_load_avg]
-CPU Cores: [params/data/cpu/cores]
-Virtualization: [nice_virt]
-Total Memory: [nice_mem_total]
-Available Memory: [nice_mem_avail]
-Disk Usage (Root): [params/data/mounts/root/use]%
-CPU: [nice_cpu]
-Operating System: [nice_os]
-Uptime: [nice_uptime]
+### Server Information:
 
-Regards,
-The xyOps Team
+- **CPU Load Average:** {{nice_load_avg}}
+- **CPU Usage:** {{nice_cpu}}
+- **CPU Cores:** {{params.data.cpu.cores}}
+- **Virtualization:** {{nice_virt}}
+- **Total Memory:** {{nice_mem_total}}
+- **Available Memory:** {{nice_mem_avail}}
+- **Disk Usage (Root):** {{params.data.mounts.root.use}}%
+- **Operating System:** {{nice_os}}
+- **Uptime:** {{nice_uptime}}

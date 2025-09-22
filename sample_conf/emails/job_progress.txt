@@ -1,20 +1,22 @@
-To: [email_to]
-From: [config/email_from]
-Subject: xyOps Job In Progress: [event/title]
+<!-- To: {{email_to}} -->
+<!-- Subject: ⏱️ {{config.client.name}} Job In Progress: {{event.title}} -->
+<!-- Title: Job In Progress -->
+<!-- Button: View Details | {{links.job_details}} -->
 
-Date/Time: [display/date_time]
-Event: [event/title]
-Category: [category/title]
-Plugin: [plugin/title]
+The following {{config.client.name}} job is in progress:
 
-Job ID: [job/id]
-Server: [server/hostname]
+- **Job ID:** `{{job.id}}`
+- **Event:** {{event.title}}
+- **Category:** {{category.title}}
+- **Plugin:** {{plugin.title}}
+- **Server:** {{nice_server}}
+- **PID:** {{job.pid}}
+- **Elapsed Time:** {{display.elapsed}}
+- **Avg. Memory Usage:** {{display.mem}}
+- **Avg. CPU Usage:** {{display.cpu}}
 
-Job Details:
-[links/job_details]
+### Job Details:
+{{links.job_details}}
 
-Event Notes:
-[job/notes]
-
-Regards,
-The xyOps Team
+### Event Notes:
+{{job.notes}}

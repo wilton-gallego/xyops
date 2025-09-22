@@ -249,6 +249,120 @@
 					"divide": 3600
 				}
 			]
+		},
+		
+		"tickets": {
+			"default_search_field": "body",
+			"fields": [
+				{
+					"id": "type",
+					"source": "/type",
+					"master_list": true
+				},
+				{
+					"id": "num",
+					"source": "/num",
+					"type": "number"
+				},
+				{
+					"id": "status",
+					"source": "/status",
+					"master_list": true
+				},
+				{
+					"id": "category",
+					"source": "/category"
+				},
+				{
+					"id": "username",
+					"source": "/username",
+					"filter": "alphanum"
+				},
+				{
+					"id": "assignee",
+					"source": "/assignee",
+					"filter": "alphanum",
+					"master_list": true
+				},
+				{
+					"id": "cc",
+					"source": "/cc",
+					"filter": "alphanum_array"
+				},
+				{
+					"id": "jobs",
+					"source": "/jobs"
+				},
+				{
+					"id": "tags",
+					"source": "/tags",
+					"master_list": true
+				},
+				{
+					"id": "created",
+					"source": "/created",
+					"type": "number",
+					"divide": 3600
+				},
+				{
+					"id": "modified",
+					"source": "/modified",
+					"type": "number",
+					"divide": 3600
+				},
+				{
+					"id": "due",
+					"source": "/due",
+					"type": "number",
+					"divide": 3600
+				},
+				{
+					"id": "subject",
+					"source": "/subject",
+					"min_word_length": 1,
+					"max_word_length": 32,
+					"max_words": 50,
+					"use_stemmer": true
+				},
+				{
+					"id": "body",
+					"source": "[/username] [/subject] [/body]",
+					"min_word_length": 1,
+					"max_word_length": 32,
+					"max_words": 500,
+					"use_stemmer": true
+				},
+				{
+					"id": "changes",
+					"source": "/changes",
+					"min_word_length": 1,
+					"max_word_length": 32,
+					"max_words": 500,
+					"use_stemmer": true
+				}
+			],
+			"sorters": [
+				{
+					"id": "num",
+					"source": "/num",
+					"type": "number"
+				},
+				{
+					"id": "created",
+					"source": "/created",
+					"type": "number"
+				},
+				{
+					"id": "modified",
+					"source": "/modified",
+					"type": "number"
+				},
+				{
+					"id": "due",
+					"source": "/due",
+					"type": "due"
+				}
+			]
 		}
 		
 	}

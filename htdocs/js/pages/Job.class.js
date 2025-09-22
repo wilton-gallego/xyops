@@ -1330,11 +1330,11 @@ Page.Job = class Job extends Page.PageUtils {
 		if (this.isWorkflow) return; // workflows have no job log
 		
 		if (!job.log_file_size) {
-			$cont.html('<div class="log_message">(Job log is empty.)</div>');
+			$cont.html('<div class="log_message">(Job output is empty.)</div>');
 			return;
 		}
 		if (job.log_file_size > 1024 * 1024 * 10) {
-			$cont.html('<div class="log_message">(Job log is over 10 MB.)</div>');
+			$cont.html('<div class="log_message">(Job output is over 10 MB.)</div>');
 			return;
 		}
 		
@@ -1369,7 +1369,7 @@ Page.Job = class Job extends Page.PageUtils {
 						self.logSpool = text.trimEnd().split(/\n/);
 						self.spoolNextLogChunk();
 					}
-					else $cont.html('<div class="log_message">(Job log is empty.)</div>');
+					else $cont.html('<div class="log_message">(Job output is empty.)</div>');
 					
 				}, 1 );
 			} )

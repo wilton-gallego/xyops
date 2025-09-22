@@ -11,6 +11,7 @@
 			"pass": ""
 		}
 	},
+	"email_format": "html",
 	"max_emails_per_day": 0,
 	
 	"log_dir": "logs",
@@ -407,7 +408,6 @@
 			"welcome_new_user": "conf/emails/welcome_new_user.txt",
 			"changed_password": "conf/emails/changed_password.txt",
 			"recover_password": "conf/emails/recover_password.txt",
-			"verify_email": "conf/emails/verify_email.txt",
 			"logout_all_sessions": "conf/emails/logout_all_sessions.txt"
 		},
 		

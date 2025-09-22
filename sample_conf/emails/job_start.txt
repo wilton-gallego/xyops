@@ -1,20 +1,18 @@
-To: [email_to]
-From: [config/email_from]
-Subject: xyOps Job Started Successfully: [event/title]
+<!-- To: {{email_to}} -->
+<!-- Subject: ▶️ {{config.client.name}} Job Has Started: {{event.title}} -->
+<!-- Title: Job Started -->
+<!-- Button: View Details | {{links.job_details}} -->
 
-Date/Time: [display/date_time]
-Event: [event/title]
-Category: [category/title]
-Plugin: [plugin/title]
+The following {{config.client.name}} job has started:
 
-Job ID: [job/id]
-Server: [server/hostname]
+- **Job ID:** `{{job.id}}`
+- **Event:** {{event.title}}
+- **Category:** {{category.title}}
+- **Plugin:** {{plugin.title}}
+- **Server:** {{nice_server}}
 
-Job Details:
-[links/job_details]
+### Job Details:
+{{links.job_details}}
 
-Event Notes:
-[job/notes]
-
-Regards,
-The xyOps Team
+### Event Notes:
+{{job.notes}}
