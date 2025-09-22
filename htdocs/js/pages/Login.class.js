@@ -347,7 +347,7 @@ Page.Login = class Login extends Page.Base {
 			$('#fe_pr_username, #fe_pr_email').keypress( function(event) {
 				if (event.keyCode == '13') { // enter key
 					event.preventDefault();
-					$P().doSendEmail();
+					$P().doSendRecoveryEmail();
 				}
 			} );
 			$( '#fe_pr_username' ).focus();
@@ -361,10 +361,10 @@ Page.Login = class Login extends Page.Base {
 		var username = trim($('#fe_pr_username').val()).toLowerCase();
 		var email = trim($('#fe_pr_email').val());
 		
-		if (username.match(/^\w+$/)) {
+		if (username.match(/^[\w\-\.]+$/)) {
 			if (email.match(/.+\@.+/)) {
 				Dialog.hide();
-				Dialog.showProgress( 1.0, "Sending e-mail..." );
+				Dialog.showProgress( 1.0, "Sending Email..." );
 				
 				app.api.post( 'user/forgot_password', {
 					username: username,
@@ -372,13 +372,13 @@ Page.Login = class Login extends Page.Base {
 				}, 
 				function(resp) {
 					Dialog.hideProgress();
-					app.showMessage('success', "Password reset instructions sent successfully.");
+					app.showMessage('info', "Please check your email for password reset instructions.");
 					Nav.go('Login', true);
 				} ); // api.post
 				
 			} // good address
 			else {
-				app.badField('#fe_pr_email', "The e-mail address you entered does not appear to be correct.");
+				app.badField('#fe_pr_email', "The email address you entered does not appear to be correct.");
 			}
 		} // good username
 		else {
