@@ -273,7 +273,7 @@ Page.Alerts = class Alerts extends Page.Base {
 			return [
 				'<b>' + self.getNiceAlertID(item, true) + '</b>',
 				self.getNiceAlert(item.alert, false),
-				item.message,
+				encode_entities(item.message),
 				self.getNiceServer(item.server, false),
 				self.getNiceAlertStatus(item),
 				self.getRelativeDateTime(item.date),
@@ -340,7 +340,7 @@ Page.Alerts = class Alerts extends Page.Base {
 			html += '<div class="box_title">';
 				
 				html += `<div style="display: grid; grid-template-columns: 1fr auto; gap: 15px;">`;
-					html += `<div style="text-align:left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${alert.message}</div>`;
+					html += `<div style="text-align:left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${encode_entities(alert.message)}</div>`;
 					html += `<div style="text-align:right"><div class="button danger phone_collapse" onClick="$P().showDeleteAlertDialog()"><i class="mdi mdi-trash-can-outline">&nbsp;</i><span>Delete...</span></div></div>`;
 				html += `</div>`;
 				
@@ -583,7 +583,7 @@ Page.Alerts = class Alerts extends Page.Base {
 			return [
 				'<b>' + self.getNiceAlertID(item, true) + '</b>',
 				self.getNiceAlert(item.alert, true),
-				item.message,
+				encode_entities(item.message),
 				self.getNiceServer(item.server, true),
 				self.getNiceAlertStatus(item),
 				self.getRelativeDateTime(item.date),
