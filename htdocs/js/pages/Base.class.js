@@ -466,6 +466,22 @@ Page.Base = class Base extends Page {
 		else return this.getNiceEvent(job.event, link);
 	}
 	
+	getNiceTicketStatus(status) {
+		// get formatted ticket status with suitable icon
+		if (!status) return 'n/a';
+		var info = find_object( config.ui.ticket_statuses, { id: status } );
+		if (!info) return '(' + status + ')';
+		return '<i class="mdi mdi-' + info.icon +'">&nbsp;</i>' + info.title;
+	}
+	
+	getNiceTicketType(type) {
+		// get formatted ticket type with suitable icon
+		if (!type) return 'n/a';
+		var info = find_object( config.ui.ticket_types, { id: type } );
+		if (!info) return '(' + type + ')';
+		return '<i class="mdi mdi-' + info.icon +'">&nbsp;</i>' + info.title;
+	}
+	
 	getNiceServer(item, link) {
 		// get formatted server with icon, plus optional link
 		if (!item) return '(None)';
@@ -1102,6 +1118,7 @@ Page.Base = class Base extends Page {
 		var self = this;
 		if (!glue) glue = ', ';
 		if (typeof(users) == 'string') users = users.split(/\,\s*/);
+		if (!users.length) return '(None)';
 		return users.map( function(user) { return self.getNiceUser(user, link); } ).join(glue);
 	}
 	
@@ -2176,11 +2193,11 @@ Page.Base = class Base extends Page {
 		var filename = '';
 		
 		// possibly customize filename for current page
-		if (this.job) filename = 'job-' + this.job.id + '-' + get_unique_id(8) + '-' + key + '.png';
-		else if (this.server) filename = 'server-' + this.server.id + '-' + get_unique_id(8) + '-' + key + '.png';
-		else if (this.snapshot) filename = 'snapshot-' + this.snapshot.id + '-' + get_unique_id(8) + '-' + key + '.png';
-		else if (this.event) filename = 'event-' + this.event.id + '-' + get_unique_id(8) + '-' + key + '.png';
-		else filename = '' + get_unique_id(8) + '-' + key + '.png';
+		if (this.job) filename = 'job-' + this.job.id + '-' + get_unique_id(16) + '-' + key + '.png';
+		else if (this.server) filename = 'server-' + this.server.id + '-' + get_unique_id(16) + '-' + key + '.png';
+		else if (this.snapshot) filename = 'snapshot-' + this.snapshot.id + '-' + get_unique_id(16) + '-' + key + '.png';
+		else if (this.event) filename = 'event-' + this.event.id + '-' + get_unique_id(16) + '-' + key + '.png';
+		else filename = '' + get_unique_id(16) + '-' + key + '.png';
 		
 		var clip_url = location.origin + '/files/' + app.username + '/' + filename;
 		copyToClipboard(clip_url);
@@ -2711,6 +2728,32 @@ Page.Base = class Base extends Page {
 		}; // onload
 		
 		reader.readAsText(file);
+	}
+	
+	expandInlineImages(elem) {
+		// expand all inline image URLs in doc
+		var self = this;
+		if (!elem) elem = this.div;
+		else if (typeof(elem) == 'string') elem = $(elem);
+		
+		elem.find('div.markdown-body p img').each( function() {
+			var $this = $(this);
+			if (!$this.hasClass('inline_image')) {
+				$this.addClass('inline_image').click( function() { window.open(this.src); } );
+			}
+		});
+		
+		// elem.find('div.markdown-body p a').each( function() {
+		// 	var $this = $(this);
+		// 	var href = $this.attr('href') || '';
+		// 	if (!href.match(/\.(jpg|jpeg|gif|png)(\?|$)/i)) return; // supported images only
+		// 	if ($this.data('expanded')) return; // do not re-expand an expanded link
+		// 	if ($this.next().length) return; // only process links at the end of parent blocks
+			
+		// 	$this.after('<img src="' + href + '" class="inline_image" onClick="window.open(this.src)">');
+		// 	// $this.data('expanded', true);
+		// 	$this.remove();
+		// });
 	}
 	
 	// 
