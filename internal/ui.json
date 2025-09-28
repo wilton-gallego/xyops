@@ -2,31 +2,36 @@
 	"privilege_list": [
 		{ "id": "admin", "title": "Administrator", "icon": "account-wrench" },
 		
-		{ "id": "create_events", "title": "Create Events", "icon": "calendar-clock" },
-		{ "id": "edit_events", "title": "Edit Events", "icon": "calendar-clock" },
-		{ "id": "delete_events", "title": "Delete Events", "icon": "calendar-clock" },
+		{ "id": "create_alerts", "title": "Create Alerts", "icon": "bell-outline" },
+		{ "id": "edit_alerts", "title": "Edit Alerts", "icon": "bell-outline" },
+		{ "id": "delete_alerts", "title": "Delete Alerts", "icon": "bell-outline" },
 		
-		{ "id": "run_jobs", "title": "Run Jobs", "icon": "timer-outline" },
-		{ "id": "abort_jobs", "title": "Abort Jobs", "icon": "timer-outline" },
-		{ "id": "delete_jobs", "title": "Delete Jobs", "icon": "timer-outline" },
-		{ "id": "tag_jobs", "title": "Job Tags", "icon": "timer-outline" },
-		{ "id": "comment_jobs", "title": "Job Comments", "icon": "timer-outline" },
-		
-		{ "id": "create_groups", "title": "Create Groups", "icon": "server-network" },
-		{ "id": "edit_groups", "title": "Edit Groups", "icon": "server-network" },
-		{ "id": "delete_groups", "title": "Delete Groups", "icon": "server-network" },
+		{ "id": "create_buckets", "title": "Create Buckets", "icon": "pail-outline" },
+		{ "id": "edit_buckets", "title": "Edit Buckets", "icon": "pail-outline" },
+		{ "id": "delete_buckets", "title": "Delete Buckets", "icon": "pail-outline" },
 		
 		{ "id": "create_categories", "title": "Create Categories", "icon": "folder-open-outline" },
 		{ "id": "edit_categories", "title": "Edit Categories", "icon": "folder-open-outline" },
 		{ "id": "delete_categories", "title": "Delete Categories", "icon": "folder-open-outline" },
 		
-		{ "id": "create_alerts", "title": "Create Alerts", "icon": "bell-outline" },
-		{ "id": "edit_alerts", "title": "Edit Alerts", "icon": "bell-outline" },
-		{ "id": "delete_alerts", "title": "Delete Alerts", "icon": "bell-outline" },
-		
 		{ "id": "create_channels", "title": "Create Channels", "icon": "bullhorn-outline" },
 		{ "id": "edit_channels", "title": "Edit Channels", "icon": "bullhorn-outline" },
 		{ "id": "delete_channels", "title": "Delete Channels", "icon": "bullhorn-outline" },
+		
+		{ "id": "create_events", "title": "Create Events", "icon": "calendar-clock" },
+		{ "id": "edit_events", "title": "Edit Events", "icon": "calendar-clock" },
+		{ "id": "delete_events", "title": "Delete Events", "icon": "calendar-clock" },
+		
+		{ "id": "create_groups", "title": "Create Groups", "icon": "server-network" },
+		{ "id": "edit_groups", "title": "Edit Groups", "icon": "server-network" },
+		{ "id": "delete_groups", "title": "Delete Groups", "icon": "server-network" },
+		
+		{ "id": "run_jobs", "title": "Run Jobs", "icon": "timer-outline" },
+		{ "id": "abort_jobs", "title": "Abort Jobs", "icon": "timer-outline" },
+		{ "id": "delete_jobs", "title": "Delete Jobs", "icon": "timer-outline" },
+		{ "id": "tag_jobs", "title": "Job Tags", "icon": "timer-outline" },
+		{ "id": "ticket_jobs", "title": "Job Tickets", "icon": "timer-outline" },
+		{ "id": "comment_jobs", "title": "Job Comments", "icon": "timer-outline" },
 		
 		{ "id": "create_monitors", "title": "Create Monitors", "icon": "chart-areaspline" },
 		{ "id": "edit_monitors", "title": "Edit Monitors", "icon": "chart-areaspline" },
@@ -40,15 +45,13 @@
 		{ "id": "edit_tags", "title": "Edit Tags", "icon": "tag-outline" },
 		{ "id": "delete_tags", "title": "Delete Tags", "icon": "tag-outline" },
 		
+		{ "id": "create_tickets", "title": "Create Tickets", "icon": "text-box-outline" },
+		{ "id": "edit_tickets", "title": "Edit Tickets", "icon": "text-box-outline" },
+		{ "id": "delete_tickets", "title": "Delete Tickets", "icon": "text-box-outline" },
+		
 		{ "id": "create_web_hooks", "title": "Create Web Hooks", "icon": "webhook" },
 		{ "id": "edit_web_hooks", "title": "Edit Web Hooks", "icon": "webhook" },
-		{ "id": "delete_web_hooks", "title": "Delete Web Hooks", "icon": "webhook" },
-		
-		{ "id": "create_buckets", "title": "Create Buckets", "icon": "pail-outline" },
-		{ "id": "edit_buckets", "title": "Edit Buckets", "icon": "pail-outline" },
-		{ "id": "delete_buckets", "title": "Delete Buckets", "icon": "pail-outline" },
-		
-		{ "id": "create_snapshots", "title": "Create Snapshots", "icon": "monitor-eye" }
+		{ "id": "delete_web_hooks", "title": "Delete Web Hooks", "icon": "webhook" }
 	],
 	
 	"globalMemoryLists": ["groups", "plugins", "categories", "events", "channels", "web_hooks", "buckets", "secrets", "monitors", "alerts", "tags", "roles"],
@@ -75,7 +78,8 @@
 		{ "id": "jobs", "title": "Jobs", "icon": "timer-outline" },
 		{ "id": "servers", "title": "Servers", "icon": "router-network" },
 		{ "id": "snapshots", "title": "Snapshots", "icon": "monitor-screenshot" },
-		{ "id": "activity", "title": "Activity", "icon": "script-text-outline" }
+		{ "id": "activity", "title": "Activity", "icon": "script-text-outline" },
+		{ "id": "tickets", "title": "Tickets", "icon": "text-box-outline" }
 	],
 	
 	"extra_list": [
@@ -111,6 +115,7 @@
 		
 		"job_update": "Job updated: #[description]",
 		"job_update_tags": "Job tags updated: #[description]",
+		"job_update_tickets": "Job tickets updated: #[description]",
 		"job_update_comments": "Job comments updated: #[description]",
 		"job_abort": "Job aborted: #[description]: [reason]",
 		"job_delete": "Job deleted: #[description]",
@@ -148,6 +153,12 @@
 		"secret_update": "Secret updated: [description] ([secret.id])",
 		"secret_delete": "Secret deleted: [description] ([secret.id])",
 		"secret_access": "Secret was accessed: [description] ([secret.id])",
+		
+		"ticket_create": "Ticket #[ticket.num] created: [ticket.subject] ([ticket.id])",
+		"ticket_update": "Ticket #[ticket.num] updated: [ticket.subject] ([ticket.id])",
+		"ticket_delete": "Ticket #[ticket.num] deleted: [ticket.subject] ([ticket.id])",
+		"ticket_add_change": "Ticket comment added: #[ticket.num]: [ticket.subject] ([ticket.id])",
+		"ticket_update_change": "Ticket comment updated: #[ticket.num]: [ticket.subject] ([ticket.id])",
 		
 		"user_create": "User created: [user.full_name] ([user.username])",
 		"user_update": "User updated: [user.full_name] ([user.username])",
@@ -188,6 +199,7 @@
 		"web_hooks": "^(web_hook_.+)$",
 		"buckets": "^(bucket_.+)$",
 		"secrets": "^(secret_.+)$",
+		"tickets": "^(ticket_.+)$",
 		"users": "^(user_.+)$",
 		"roles": "^(role_.+)$",
 		"servers": "^(server_.+)$",
@@ -226,6 +238,7 @@
 		"^web_hook": { "icon": "webhook", "label": "Web Hook" },
 		"^bucket": { "icon": "pail-outline", "label": "Bucket" },
 		"^secret": { "icon": "shield-lock-outline", "label": "Secret" },
+		"^ticket": { "icon": "text-box-outline", "label": "Ticket" },
 		"^plugin": { "icon": "power-plug-outline", "label": "Plugin" },
 		"^job": { "icon": "timer-outline", "label": "Job" },
 		"^queue": { "icon": "tray-full", "label": "Queue" },
@@ -549,6 +562,35 @@
 				"label": "Stagger Installs:",
 				"caption": "Optionally stagger the installs by a custom interval."
 			}
+		},
+		
+		"Tickets": {
+			"d_td_event": {
+				"label": "Event:",
+				"caption": "Select the event for the ticket."
+			},
+			"fe_td_event": {
+				"title": "Select Event"
+			},
+			"d_td_targets": {
+				"label": "Targets:",
+				"caption": "Optionally override the targets for running the event."
+			},
+			"fe_td_targets": {
+				"title": "Select targets for the event",
+				"placeholder": "(Use event defaults)"
+			},
+			"d_td_algo": {
+				"label": "Algorithm:",
+				"caption": "Optionally override the target selection algorithm for the event."
+			},
+			"fe_td_algo": {
+				"title": "Select algorithm for targets"
+			},
+			"d_td_user_params": {
+				"label": "User Parameters:",
+				"caption": "Enter values for all the event-defined parameters here."
+			}
 		}
 		
 	},
@@ -572,7 +614,10 @@
 		"fe_wfdj_targets": "You must select at least one target for the plugin job.",
 		"fe_wf_title": "Please enter a title for the workflow.",
 		"wf_test_no_limit": "Limit nodes cannot be tested directly.  Please select the attached event or plugin node instead.",
-		"sde_no_servers": "No active or recent servers found.  Please add a server to your cluster and try again."
+		"sde_no_servers": "No active or recent servers found.  Please add a server to your cluster and try again.",
+		
+		"ticket_no_events": "No events found.",
+		"ticket_event_not_found": "Event ID \"[event.id]\" could not be found."
 	},
 	
 	"titles": {
@@ -585,8 +630,8 @@
 		"wfde_new": "New Event Node",
 		"wfde_edit": "Editing Event Node",
 		
-		"wfdj_new": "New Plugin Node",
-		"wfdj_edit": "Editing Plugin Node",
+		"wfdj_new": "New Job Node",
+		"wfdj_edit": "Editing Job Node",
 		
 		"wfda_new": "New Action Node",
 		"wfda_edit": "Editing Action Node",
@@ -600,7 +645,10 @@
 		"wfd_exp_builder": "Expression Builder",
 		"wfd_data_explorer": "Job Data Importer",
 		
-		"server_data_explorer": "Server Data Explorer"
+		"server_data_explorer": "Server Data Explorer",
+		
+		"ticket_event_new": "New Ticket Event",
+		"ticket_event_edit": "Editing Ticket Event"
 	},
 	
 	"buttons": {
@@ -660,7 +708,11 @@
 	"nav": {
 		"event_list": { "icon": "calendar-multiple", "loc": "#Events?sub=list", "title": "Events" },
 		"new_workflow": { "icon": "clipboard-edit-outline", "title": "New Workflow" },
-		"edit_workflow": { "icon": "clipboard-edit-outline", "title": "Edit Workflow" }
+		"edit_workflow": { "icon": "clipboard-edit-outline", "title": "Edit Workflow" },
+		
+		"ticket_search": { "icon": "text-box-multiple-outline", "loc": "#Tickets", "title": "Tickets" },
+		"new_ticket": { "icon": "text-box-plus-outline", "title": "New Ticket" },
+		"edit_ticket": { "icon": "text-box-edit-outline", "title": "Edit Ticket" }
 	},
 	
 	"progress": {
@@ -856,7 +908,7 @@
 	
 	"workflow_node_types": [
 		{ "id": "event", "title": "Event", "icon": "calendar-clock" },
-		{ "id": "job", "title": "Plugin", "icon": "power-plug" },
+		{ "id": "job", "title": "Job", "icon": "timer-outline" },
 		{ "id": "limit", "title": "Limiter", "icon": "gauge" },
 		{ "id": "trigger", "title": "Trigger", "icon": "rocket-launch-outline" },
 		{ "id": "action", "title": "Action", "icon": "gesture-tap" },
@@ -865,7 +917,7 @@
 	
 	"workflow_new_node_menu": [
 		{ "id": "event", "title": "New Event...", "icon": "calendar-clock" },
-		{ "id": "job", "title": "New Plugin...", "icon": "power-plug" },
+		{ "id": "job", "title": "New Job...", "icon": "timer-outline" },
 		{ "id": "limit", "title": "New Limiter...", "icon": "gauge" },
 		{ "id": "trigger", "title": "New Trigger...", "icon": "rocket-launch-outline" },
 		{ "id": "action", "title": "New Action...", "icon": "gesture-tap" },
@@ -895,6 +947,21 @@
 		{ "id": "open", "title": "Open", "color": "green", "icon": "label-variant-outline" },
 		{ "id": "closed", "title": "Closed", "color": "red", "icon": "label-variant" }
 	],
+	
+	"ticket_changes": {
+		"subject": "changed subject to: [disp]",
+		"body": "changed body text.",
+		"status": "changed status to: [disp]",
+		"type": "changed type to: [disp]",
+		"category": "changed category to: [disp]",
+		"assignee": "changed assignee to: [disp]",
+		"due": "changed due date to: [disp]",
+		"cc": "changed Cc list to: [disp]",
+		"notify": "changed notify list to: [disp]",
+		"tags": "changed tags to: [disp]",
+		"created": "created ticket.",
+		"delete": "deleted comment."
+	},
 	
 	"satellite_install_commands": {
 		"standard": "curl -s \"[base_url]/api/app/satellite/install?t=[token]\" | sudo sh",
