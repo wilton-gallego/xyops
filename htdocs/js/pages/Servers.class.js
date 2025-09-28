@@ -197,8 +197,8 @@ Page.Servers = class Servers extends Page.ServerUtils {
 		html += '</div>'; // box_content
 		
 		html += '<div class="box_buttons">';
-			html += '<div class="button secondary" onMouseUp="$P().go_server_search()"><i class="mdi mdi-magnify">&nbsp;</i>Search History...</div>';
-			html += '<div class="button default" onMouseUp="$P().showAddServerDialog()"><i class="mdi mdi-plus-circle-outline">&nbsp;</i>Add Server...</div>';
+			html += '<div class="button secondary" onClick="$P().go_server_search()"><i class="mdi mdi-magnify">&nbsp;</i>Search History...</div>';
+			html += '<div class="button default" onClick="$P().showAddServerDialog()"><i class="mdi mdi-plus-circle-outline">&nbsp;</i>Add Server...</div>';
 		html += '</div>'; // box_buttons
 		
 		html += '</div>'; // box
@@ -206,6 +206,8 @@ Page.Servers = class Servers extends Page.ServerUtils {
 		this.div.html( html );
 		this.applyTableFilters();
 		SingleSelect.init( this.div.find('#fe_es_filter') );
+		
+		if (this.args.add) this.showAddServerDialog();
 	}
 	
 	go_server_search() {
