@@ -30,7 +30,6 @@
 		{ "id": "abort_jobs", "title": "Abort Jobs", "icon": "timer-outline" },
 		{ "id": "delete_jobs", "title": "Delete Jobs", "icon": "timer-outline" },
 		{ "id": "tag_jobs", "title": "Job Tags", "icon": "timer-outline" },
-		{ "id": "ticket_jobs", "title": "Job Tickets", "icon": "timer-outline" },
 		{ "id": "comment_jobs", "title": "Job Comments", "icon": "timer-outline" },
 		
 		{ "id": "create_monitors", "title": "Create Monitors", "icon": "chart-areaspline" },
@@ -94,6 +93,7 @@
 		"alert_create": "Alert definition created: [description] ([alert.id])",
 		"alert_update": "Alert definition updated: [description] ([alert.id])",
 		"alert_delete": "Alert definition deleted: [description] ([alert.id])",
+		"alert_update_tickets": "Alert invocation tickets updated: #[description]",
 		"alert_delete_invocation": "Alert invocation deleted: #[description]",
 		
 		"apikey_create": "API Key created: [description]",
@@ -803,7 +803,9 @@
 		"wfd_data_explorer": "Select a previously completed job to import the data and/or files from it.  This is so you can use it as simulated input for your test run.",
 		"server_data_explorer": "This allows you to explore monitoring data from your servers, and pick out a specific JSON key path to use for your expression.",
 		"job_create_ticket": "Use this form to create a new ticket, which will reference the current job.",
-		"job_add_to_ticket": "Attach the current job to an existing ticket."
+		"job_add_to_ticket": "Attach the current job to an existing ticket.",
+		"alert_create_ticket": "Use this form to create a new ticket, which will reference the current alert.",
+		"alert_add_to_ticket": "Attach the current alert to an existing ticket."
 	},
 	
 	"nav": {
