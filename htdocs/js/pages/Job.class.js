@@ -1346,6 +1346,8 @@ Page.Job = class Job extends Page.PageUtils {
 			};
 			
 			html += this.getBasicGrid( grid_args, function(item, idx) {
+				if (item.err) return [ '(Job deleted)', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a' ];
+				
 				var reason = job.jobs[idx].reason;
 				return [
 					self.getNiceJob(item, true),
