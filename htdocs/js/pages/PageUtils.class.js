@@ -1253,7 +1253,8 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		// get display args for job action
 		// returns: { condition, type, text, desc, icon }
 		var disp = {
-			condition: find_object( config.ui.action_condition_menu, { id: action.condition } )
+			condition: find_object( config.ui.action_condition_menu, { id: action.condition } ) || 
+				find_object( config.ui.alert_action_condition_menu, { id: action.condition } )
 		};
 		
 		if (!disp.condition && action.condition.match(/^tag:(\w+)$/)) {
@@ -1267,8 +1268,9 @@ Page.PageUtils = class PageUtils extends Page.Base {
 			case 'email':
 				disp.type = "Send Email";
 				var parts = [];
-				if (action.users) parts.push( '' + commify(action.users.length) + ' ' + pluralize('user', action.users.length) );
+				if (action.users && action.users.length) parts.push( '' + commify(action.users.length) + ' ' + pluralize('user', action.users.length) );
 				if (action.email) parts.push( action.email );
+				if (!parts.length) parts = [ '(None)' ];
 				disp.text = disp.desc = parts.join(', ');
 				disp.icon = 'email-arrow-right-outline';
 			break;
@@ -1443,7 +1445,7 @@ Page.PageUtils = class PageUtils extends Page.Base {
 				label: 'Action Enabled',
 				checked: action.enabled
 			}),
-			caption: 'Enable or disable the job action.'
+			caption: 'Enable or disable the action.'
 		});
 		
 		if (opts.show_condition) {
@@ -1452,7 +1454,7 @@ Page.PageUtils = class PageUtils extends Page.Base {
 				content: this.getFormMenuSingle({
 					id: 'fe_eja_condition',
 					title: 'Select Condition',
-					options: [ 
+					options: opts.conditions || [ 
 						...config.ui.action_condition_menu.filter( function(item) { return item.id != 'continue'; } )
 					].concat(
 						this.buildOptGroup( app.tags, "On Custom Tag:", 'tag-outline', 'tag:' )
