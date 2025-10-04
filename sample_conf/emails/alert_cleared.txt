@@ -7,7 +7,7 @@ The following {{config.client.name}} alert has been cleared: **{{def.title}}**
 
 - **Server:** {{nice_server}}
 - **Hostname:** {{params.hostname}}
-- **IP Address:** {{params.ip}}
+- **IP Address:** {{nice_ip}}
 - **Groups:** {{nice_groups}}
 - **Date/Time:** {{date_time}}
 - **Expression:** `{{def.expression}}`

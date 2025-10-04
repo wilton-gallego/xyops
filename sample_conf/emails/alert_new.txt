@@ -8,7 +8,7 @@ The following {{config.client.name}} alert has fired: **{{def.title}}**
 - **Message:** {{alert.message}}
 - **Server:** {{nice_server}}
 - **Hostname:** {{params.hostname}}
-- **IP Address:** {{params.ip}}
+- **IP Address:** {{nice_ip}}
 - **Groups:** {{nice_groups}}
 - **Date/Time:** {{date_time}}
 - **Expression:** `{{def.expression}}`
