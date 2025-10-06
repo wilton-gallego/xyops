@@ -2881,7 +2881,7 @@ Page.Base = class Base extends Page {
 			}, {
 				duration: app.reducedMotion() ? 1 : 400,
 				easing: 'easeOutQuart',
-				complete: function() { self.updateBoxButtonFloaterState(); }
+				complete: function() { $content.css('height', 'auto'); self.updateBoxButtonFloaterState(); }
 			});
 			
 			if ($box.prop('id')) app.setPref('toggle_boxes.' + $box.prop('id'), 'expanded');

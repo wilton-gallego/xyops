@@ -2132,7 +2132,7 @@ Page.PageUtils = class PageUtils extends Page.Base {
 			}, {
 				duration: app.reducedMotion() ? 1 : 400,
 				easing: 'easeOutQuart',
-				complete: function() { self.updateBoxButtonFloaterState(); }
+				complete: function() { $content.css('height', 'auto'); self.updateBoxButtonFloaterState(); }
 			});
 			
 			// $title.html('Hide Options');
