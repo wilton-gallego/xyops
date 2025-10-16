@@ -1420,11 +1420,23 @@ Page.Base = class Base extends Page {
 		var color = '';
 		var text = ucfirst( '' + job.code );
 		
-		if (!job.code) {
+		if (!job.final) {
+			icon = 'progress-clock';
+			ocon = icon;
+			color = 'blue';
+			text = 'In Progress';
+		}
+		else if (!job.code) {
 			icon = 'check-circle';
 			ocon = icon + '-outline';
 			color = 'green';
 			text = 'Success';
+		}
+		else if (job.retried) {
+			icon = 'redo-variant';
+			ocon = icon;
+			color = 'orange';
+			text = 'Retried';
 		}
 		else switch(job.code) {
 			case 'warning': icon = 'alert-rhombus'; ocon = icon + '-outline'; color = 'yellow'; break;
@@ -2641,6 +2653,7 @@ Page.Base = class Base extends Page {
 		// show dialog with codemirror for editing code (auto-highlight)
 		var self = this;
 		var html = '';
+		var is_maxed = app.getPref('code_editor_max');
 		
 		var old_editor = this.editor || null;
 		delete this.editor;
@@ -2649,7 +2662,7 @@ Page.Base = class Base extends Page {
 		delete this.defaultEditorMode;
 		
 		// start with a "fake" codemirror element so the dialog can auto-size itself
-		html += '<div id="fe_dialog_editor"><div class="CodeMirror"></div></div>';
+		html += '<div id="fe_dialog_editor"><div class="CodeMirror ' + (is_maxed ? 'maximize' : '') + '"></div></div>';
 		
 		var buttons_html = "";
 		buttons_html += '<div class="button phone_collapse" onClick="CodeEditor.hide()"><i class="mdi mdi-close-circle-outline">&nbsp;</i><span>Cancel</span></div>';
@@ -2657,7 +2670,9 @@ Page.Base = class Base extends Page {
 		buttons_html += '<div class="button phone_collapse" title="Upload File..." onClick="$P().uploadCodeFile()"><i class="mdi mdi-cloud-upload-outline">&nbsp;</i><span>Upload...</span></div>';
 		buttons_html += '<div id="btn_ceditor_confirm" class="button primary"><i class="mdi mdi-check-circle">&nbsp;</i><span>Accept</span></div>';
 		
-		title += ' <div class="dialog_title_widget mobile_hide"><span class="link" onClick="$P().toggleDialogCodeEditorSize(this)">Maximize<i style="padding-left:3px" class="mdi mdi-arrow-top-right-thick"></i></span></div>';
+		title += ' <div class="dialog_title_widget mobile_hide"><span class="link" onClick="$P().toggleDialogCodeEditorSize(this)">';
+		if (is_maxed) title += 'Minimize<i style="padding-left:3px" class="mdi mdi-arrow-bottom-left-thick"></i></span></div>';
+		else title += 'Maximize<i style="padding-left:3px" class="mdi mdi-arrow-top-right-thick"></i></span></div>';
 		
 		CodeEditor.showSimpleDialog(title, html, buttons_html);
 		
@@ -2710,6 +2725,7 @@ Page.Base = class Base extends Page {
 			function(cm_elem) {
 				// replace fake codemirror with real one
 				elem.firstChild.replaceWith(cm_elem);
+				if (is_maxed) cm_elem.classList.add('maximize');
 			}, 
 			merge_objects( config.editor_defaults, {
 				mode: { name: 'mustache', backdrop: mode },
@@ -2736,10 +2752,12 @@ Page.Base = class Base extends Page {
 		if ($cm.hasClass('maximize')) {
 			$cm.removeClass('maximize');
 			$(span).html( 'Maximize<i style="padding-left:3px" class="mdi mdi-arrow-top-right-thick"></i>' );
+			app.setPref('code_editor_max', false);
 		}
 		else {
 			$cm.addClass('maximize');
 			$(span).html( 'Minimize<i style="padding-left:3px" class="mdi mdi-arrow-bottom-left-thick"></i>' );
+			app.setPref('code_editor_max', true);
 		}
 		
 		this.editor.refresh();
