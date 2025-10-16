@@ -178,6 +178,17 @@ body.dark .button.delete {
 	top: 19px;
 }
 
+@keyframes btn_pulse_kf {
+	0% { box-shadow: 0px 0px 2px 1px var(--theme-color-highlight); }
+	25% { box-shadow: 0px 0px 12px 6px var(--theme-color); }
+	100% { box-shadow: 0px 0px 24px 12px transparent; }
+}
+
+.button.pulse {
+	animation: btn_pulse_kf 0.75s ease-in-out;
+	animation-fill-mode: forwards;
+}
+
 #d_logo_overlay {
 	position: absolute;
 	top: 0;
