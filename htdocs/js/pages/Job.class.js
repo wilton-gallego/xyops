@@ -1243,7 +1243,7 @@ Page.Job = class Job extends Page.PageUtils {
 				disp.desc,
 				self.getRelativeDateTime(item.date, true),
 				'<i class="mdi mdi-clock-check-outline">&nbsp;</i>' + get_text_from_ms_round( Math.floor(item.elapsed_ms), true),
-				self.getNiceJobResult(item), // yes, this works for actions too
+				self.getNiceActionResult(item),
 				'<b>' + view_details + '</b>'
 			];
 		}); // grid

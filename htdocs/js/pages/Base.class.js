@@ -1460,6 +1460,21 @@ Page.Base = class Base extends Page {
 		return '<span class="color_label ' + args.color + ' nowrap"><i class="mdi mdi-' + args.icon + '"></i>' + args.text + '</span>';
 	}
 	
+	getNiceActionResult(action) {
+		// color label + icon for action result
+		var icon = 'check-circle';
+		var color = 'green';
+		var text = 'Success';
+		
+		if (action.code) {
+			icon = 'alert-decagram';
+			color = 'red';
+			text = 'Error';
+		}
+		
+		return '<span class="color_label ' + color + ' nowrap"><i class="mdi mdi-' + icon + '"></i>' + text + '</span>';
+	}
+	
 	getNiceJobSource(job) {
 		// get nice job source
 		if (job.source.match(/scheduler/i)) {
