@@ -22,14 +22,14 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		if ($btn.length && !$btn.hasClass('primary')) {
 			$btn.addClass('primary pulse');
 			setTimeout( function() { $btn.removeClass('pulse'); }, 1000 );
-			$('.button.cancel > span').html('Cancel');
+			$('.button.cancel > span').html( config.ui.buttons.cancel );
 		}
 	}
 	
 	triggerSaveComplete() {
 		// remove highlight on save button
 		$('.button.save').removeClass('primary pulse');
-		$('.button.cancel > span').html('Close');
+		$('.button.cancel > span').html( config.ui.buttons.close );
 	}
 	
 	goRevisionHistory(opts) {
