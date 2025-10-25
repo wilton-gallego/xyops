@@ -133,7 +133,7 @@ Page.MySettings = class MySettings extends Page.Base {
 		
 		// buttons at bottom
 		// html += '<div class="box_buttons">';
-		// 	html += '<div class="button primary" onMouseUp="$P().saveChanges()"><i class="mdi mdi-floppy">&nbsp;</i>Save Changes</div>';
+		// 	html += '<div class="button primary" onClick="$P().saveChanges()"><i class="mdi mdi-floppy">&nbsp;</i>Save Changes</div>';
 		// html += '</div>'; // box_buttons
 		
 		html += '</div>'; // box
@@ -245,7 +245,7 @@ Page.MySettings = class MySettings extends Page.Base {
 		
 		// buttons at bottom
 		// html += '<div class="box_buttons">';
-		// 	html += '<div class="button primary" onMouseUp="$P().saveChanges()"><i class="mdi mdi-floppy">&nbsp;</i>Save Changes</div>';
+		// 	html += '<div class="button primary" onClick="$P().saveChanges()"><i class="mdi mdi-floppy">&nbsp;</i>Save Changes</div>';
 		// html += '</div>'; // box_buttons
 		
 		html += '</div>'; // box

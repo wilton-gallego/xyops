@@ -209,8 +209,8 @@ Page.Job = class Job extends Page.PageUtils {
 					
 					html += '<span>Job In Progress</span>';
 					
-					html += '<div class="button right danger" onMouseUp="$P().do_abort_job()"><i class="mdi mdi-cancel">&nbsp;</i>Abort Job...</div>';
-					html += '<div class="button right" id="btn_job_notify" onMouseUp="$P().do_notify_me()"><i class="mdi mdi-' + notify_icon + '">&nbsp;</i>Notify Me</div>';
+					html += '<div class="button right danger" onClick="$P().do_abort_job()"><i class="mdi mdi-cancel">&nbsp;</i>Abort Job...</div>';
+					html += '<div class="button right" id="btn_job_notify" onClick="$P().do_notify_me()"><i class="mdi mdi-' + notify_icon + '">&nbsp;</i>Notify Me</div>';
 					html += '<div class="clear"></div>';
 				}
 			html += '</div>';
@@ -2324,8 +2324,8 @@ Page.Job = class Job extends Page.PageUtils {
 		html += '</div>'; // wrapper
 		
 		var buttons_html = "";
-		// buttons_html += '<div class="button" onMouseUp="$P().copy_unit_results('+idx+')">Copy to Clipboard</div>';
-		buttons_html += '<div class="button primary" onMouseUp="Dialog.confirm_click(true)"><i class="mdi mdi-close-circle-outline">&nbsp;</i>Close</div>';
+		// buttons_html += '<div class="button" onClick="$P().copy_unit_results('+idx+')">Copy to Clipboard</div>';
+		buttons_html += '<div class="button primary" onClick="Dialog.confirm_click(true)"><i class="mdi mdi-close-circle-outline">&nbsp;</i>Close</div>';
 		
 		Dialog.showSimpleDialog('Process Details', html, buttons_html);
 		

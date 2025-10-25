@@ -126,7 +126,7 @@ Page.MySecurity = class MySecurity extends Page.Base {
 		html += '</div>'; // box_content
 		
 		html += '<div class="box_buttons">';
-			html += '<div class="button danger" onMouseUp="$P().logoutAll()"><i class="mdi mdi-power-standby">&nbsp;</i>Logout All Sessions...</div>';
+			html += '<div class="button danger" onClick="$P().logoutAll()"><i class="mdi mdi-power-standby">&nbsp;</i>Logout All Sessions...</div>';
 		html += '</div>'; // box_buttons
 		
 		html += '</div>'; // box

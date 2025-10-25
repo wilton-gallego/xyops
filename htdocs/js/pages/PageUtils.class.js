@@ -960,7 +960,7 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		var html = '';
 		var rows = this.limits;
 		var cols = ['<i class="mdi mdi-checkbox-marked-outline"></i>', 'Limit', 'Description', 'Actions'];
-		var add_link = '<div class="button small secondary" onMouseUp="$P().editResLimit(-1)"><i class="mdi mdi-plus-circle-outline">&nbsp;</i>New Limit...</div>';
+		var add_link = '<div class="button small secondary" onClick="$P().editResLimit(-1)"><i class="mdi mdi-plus-circle-outline">&nbsp;</i>New Limit...</div>';
 		
 		if (!rows.length) return add_link;
 		
@@ -979,8 +979,8 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		
 		html += this.getCompactGrid(targs, function(item, idx) {
 			var actions = [];
-			actions.push( '<span class="link" onMouseUp="$P().editResLimit('+idx+')"><b>Edit</b></span>' );
-			actions.push( '<span class="link danger" onMouseUp="$P().deleteResLimit('+idx+')"><b>Delete</b></span>' );
+			actions.push( '<span class="link" onClick="$P().editResLimit('+idx+')"><b>Edit</b></span>' );
+			actions.push( '<span class="link danger" onClick="$P().deleteResLimit('+idx+')"><b>Delete</b></span>' );
 			
 			var { nice_title, nice_desc, icon } = self.getResLimitDisplayArgs(item);
 			
@@ -1390,7 +1390,7 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		var html = '';
 		var rows = this.actions;
 		var cols = ['<i class="mdi mdi-checkbox-marked-outline"></i>', 'Condition', 'Type', 'Description', 'Actions'];
-		var add_link = '<div class="button small secondary" onMouseUp="$P().editJobAction(-1)"><i class="mdi mdi-plus-circle-outline">&nbsp;</i>New Action...</div>';
+		var add_link = '<div class="button small secondary" onClick="$P().editJobAction(-1)"><i class="mdi mdi-plus-circle-outline">&nbsp;</i>New Action...</div>';
 		
 		if (!rows.length) return add_link;
 		
@@ -1406,8 +1406,8 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		
 		html += this.getCompactGrid(targs, function(item, idx) {
 			var links = [];
-			links.push( '<span class="link" onMouseUp="$P().editJobAction('+idx+')"><b>Edit</b></span>' );
-			links.push( '<span class="link danger" onMouseUp="$P().deleteJobAction('+idx+')"><b>Delete</b></span>' );
+			links.push( '<span class="link" onClick="$P().editJobAction('+idx+')"><b>Edit</b></span>' );
+			links.push( '<span class="link danger" onClick="$P().deleteJobAction('+idx+')"><b>Delete</b></span>' );
 			
 			var disp = self.getJobActionDisplayArgs(item);
 			

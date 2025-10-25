@@ -45,11 +45,11 @@ Page.Document = class Document extends Page.Base {
 			
 			// add create / login buttons to header
 			var html = '';
-			html += '<div id="d_theme_ctrl" class="header_widget icon" onMouseUp="app.toggleTheme()" title="Toggle Light/Dark Theme"></div>';
+			html += '<div id="d_theme_ctrl" class="header_widget icon" onClick="app.toggleTheme()" title="Toggle Light/Dark Theme"></div>';
 			if (config.free_accounts) {
-				html += '<div class="header_widget button" onMouseUp="$P().doCreateAccount()"><i class="mdi mdi-account-plus">&nbsp;</i><span>Sign Up...</span></div>';
+				html += '<div class="header_widget button" onClick="$P().doCreateAccount()"><i class="mdi mdi-account-plus">&nbsp;</i><span>Sign Up...</span></div>';
 			}
-			html += '<div class="header_widget button" onMouseUp="$P().doLogin()"><i class="mdi mdi-key">&nbsp;</i><span>Login...</span></div>';
+			html += '<div class="header_widget button" onClick="$P().doLogin()"><i class="mdi mdi-key">&nbsp;</i><span>Login...</span></div>';
 			
 			$('#d_header_user_container').html( html );
 			app.initTheme();

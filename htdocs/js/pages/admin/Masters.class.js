@@ -55,10 +55,10 @@ Page.Masters = class Masters extends Page.Base {
 		
 		html += this.getBasicGrid( rows, cols, 'master', function(item, idx) {
 			var actions = [
-				'<span class="link" onMouseUp="$P().upgrade_master(' + idx + ')"><b>Upgrade</b></span>',
-				'<span class="link" onMouseUp="$P().restart_master(' + idx + ')"><b>Restart</b></span>',
-				'<span class="link" onMouseUp="$P().shutdown_master(' + idx + ')"><b>Shutdown</b></span>',
-				'<span class="link" onMouseUp="$P().remove_master(' + idx + ')"><b>Remove</b></span>'
+				'<span class="link" onClick="$P().upgrade_master(' + idx + ')"><b>Upgrade</b></span>',
+				'<span class="link" onClick="$P().restart_master(' + idx + ')"><b>Restart</b></span>',
+				'<span class="link" onClick="$P().shutdown_master(' + idx + ')"><b>Shutdown</b></span>',
+				'<span class="link" onClick="$P().remove_master(' + idx + ')"><b>Remove</b></span>'
 			];
 			var status = item.online ? (item.master ? '<span class="color_label green"><i class="mdi mdi-check-circle">&nbsp;</i>Master</span>' : '<span class="color_label blue">Online</span>') : '<span class="color_label gray"><i class="mdi mdi-alert-circle">&nbsp;</i>Offline</span>';
 			
@@ -86,7 +86,7 @@ Page.Masters = class Masters extends Page.Base {
 		html += '</div>'; // box_content
 		
 		// html += '<div class="box_buttons">';
-		// 	html += '<div class="button secondary" onMouseUp="$P().edit_api_key(-1)">Add API Key...</div>';
+		// 	html += '<div class="button secondary" onClick="$P().edit_api_key(-1)">Add API Key...</div>';
 		// html += '</div>'; // box_buttons
 		
 		html += '</div>'; // box

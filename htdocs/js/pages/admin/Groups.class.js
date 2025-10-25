@@ -715,7 +715,7 @@ Page.Groups = class Groups extends Page.ServerUtils {
 		html += '<div class="box" id="d_vg_alerts" style="display:none">';
 			html += '<div class="box_title">';
 				html += 'Group Alerts <span class="s_grp_filtered"></span>';
-				// html += '<div class="button right secondary" onMouseUp="$P().goAlertHistory()"><i class="mdi mdi-magnify">&nbsp;</i>Alert History...</div>';
+				// html += '<div class="button right secondary" onClick="$P().goAlertHistory()"><i class="mdi mdi-magnify">&nbsp;</i>Alert History...</div>';
 				html += '<div class="clear"></div>';
 			html += '</div>';
 			html += '<div class="box_content table">';
@@ -727,7 +727,7 @@ Page.Groups = class Groups extends Page.ServerUtils {
 		html += '<div class="box" id="d_vg_jobs" style="">';
 			html += '<div class="box_title">';
 				html += 'Group Jobs <span class="s_grp_filtered"></span>';
-				// html += '<div class="button right secondary" onMouseUp="$P().goJobHistory()"><i class="mdi mdi-magnify">&nbsp;</i>Job History...</div>';
+				// html += '<div class="button right secondary" onClick="$P().goJobHistory()"><i class="mdi mdi-magnify">&nbsp;</i>Job History...</div>';
 				html += '<div class="clear"></div>';
 			html += '</div>';
 			html += '<div class="box_content table">';
@@ -738,7 +738,7 @@ Page.Groups = class Groups extends Page.ServerUtils {
 		// quickmon charts
 		html += '<div class="box charts" id="d_vg_quickmon" style="display:none">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyQuickMonitorFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyQuickMonitorFilter(this)"></div>';
 				html += this.getChartSizeSelector('chart_size_quick');
 				html += 'Quick Look &mdash; Last Minute <span class="s_grp_filtered"></span>';
 			html += '</div>';
@@ -772,7 +772,7 @@ Page.Groups = class Groups extends Page.ServerUtils {
 		// monitors
 		html += '<div class="box charts" id="d_vg_monitors">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyMonitorFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyMonitorFilter(this)"></div>';
 				html += this.getChartSizeSelector();
 				html += 'Group Monitors &mdash; Last Hour <span class="s_grp_filtered"></span>';
 			html += '</div>';
@@ -784,7 +784,7 @@ Page.Groups = class Groups extends Page.ServerUtils {
 		// processes
 		html += '<div class="box" id="d_vg_procs">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_procs" onInput="$P().applyTableFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_procs" onInput="$P().applyTableFilter(this)"></div>';
 				html += 'Group Processes <span class="s_grp_filtered"></span>';
 			html += '</div>';
 			html += '<div class="box_content table">';
@@ -795,7 +795,7 @@ Page.Groups = class Groups extends Page.ServerUtils {
 		// connections
 		html += '<div class="box" id="d_vg_conns">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_conns" onInput="$P().applyTableFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_conns" onInput="$P().applyTableFilter(this)"></div>';
 				html += 'Group Connections <span class="s_grp_filtered"></span>';
 			html += '</div>';
 			html += '<div class="box_content table">';

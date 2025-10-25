@@ -149,7 +149,7 @@ Page.Servers = class Servers extends Page.ServerUtils {
 		html += '<div class="box">';
 		html += '<div class="box_title">';
 			
-			html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(\'#fe_es_search\').focus()">&nbsp;</i><input type="text" id="fe_es_search" placeholder="Filter" value="' + encode_attrib_entities(args.search ?? '') + '" onInput="$P().applyTableFilters()"/></div>';
+			html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(\'#fe_es_search\').focus()">&nbsp;</i><input type="text" id="fe_es_search" placeholder="Filter" value="' + encode_attrib_entities(args.search ?? '') + '" onInput="$P().applyTableFilters()"/></div>';
 			
 			html += '<div class="box_title_widget" style="overflow:visible; min-width:120px; max-width:200px; font-size:13px;">' + this.getFormMenuSingle({
 				id: 'fe_es_filter',
@@ -352,7 +352,7 @@ Page.Servers = class Servers extends Page.ServerUtils {
 			
 			// search box
 			html += '<div class="search_box">';
-				html += '<i class="mdi mdi-magnify" onMouseUp="$(\'#fe_ss_query\').focus()">&nbsp;</i>'; // TODO: fix search help url below:
+				html += '<i class="mdi mdi-magnify" onClick="$(\'#fe_ss_query\').focus()">&nbsp;</i>'; // TODO: fix search help url below:
 				html += '<div class="search_help"><a href="https://github.com/pixlcore/xyops#search" target="_blank">Search Help<i class="mdi mdi-open-in-new"></i></a></div>';
 				html += '<input type="text" id="fe_ss_query" maxlength="128" placeholder="Search Keywords..." value="' + escape_text_field_value(args.query || '') + '">';
 			html += '</div>';
@@ -526,7 +526,7 @@ Page.Servers = class Servers extends Page.ServerUtils {
 		html += '<div class="box_buttons" style="padding:0">';
 			html += '<div id="btn_search_opts" class="button" onClick="$P().toggleSearchOpts()"><i>&nbsp;</i><span>Options<span></div>';
 			html += '<div id="btn_ss_reset" class="button" style="display:none" onClick="$P().resetFilters()"><i class="mdi mdi-undo-variant">&nbsp;</i>Reset</div>';
-			html += '<div class="button primary" onMouseUp="$P().navSearch()"><i class="mdi mdi-magnify">&nbsp;</i>Search</div>';
+			html += '<div class="button primary" onClick="$P().navSearch()"><i class="mdi mdi-magnify">&nbsp;</i>Search</div>';
 			// html += '<div class="clear"></div>';
 		html += '</div>'; // box_buttons
 		
@@ -807,9 +807,9 @@ Page.Servers = class Servers extends Page.ServerUtils {
 				html += '<div class="button icon right secondary" title="Server History..." onClick="$P().goServerHistory()"><i class="mdi mdi-script-text-outline"></i></div>';
 				
 				// if (!online) html += '<div class="box_title_note">As of ' + this.getShortDateTimeText(snapshot.date) + '</div>';
-				// html += '<div class="button right danger" onMouseUp="$P().showDeleteSnapshotDialog()"><i class="mdi mdi-trash-can-outline">&nbsp;</i>Delete...</div>';
-				// html += '<div class="button secondary right" onMouseUp="$P().do_edit_from_view()"><i class="mdi mdi-file-edit-outline">&nbsp;</i>Edit Event...</div>';
-				// html += '<div class="button right" onMouseUp="$P().do_run_from_view()"><i class="mdi mdi-run-fast">&nbsp;</i>Run Now</div>';
+				// html += '<div class="button right danger" onClick="$P().showDeleteSnapshotDialog()"><i class="mdi mdi-trash-can-outline">&nbsp;</i>Delete...</div>';
+				// html += '<div class="button secondary right" onClick="$P().do_edit_from_view()"><i class="mdi mdi-file-edit-outline">&nbsp;</i>Edit Event...</div>';
+				// html += '<div class="button right" onClick="$P().do_run_from_view()"><i class="mdi mdi-run-fast">&nbsp;</i>Run Now</div>';
 				html += '<div class="clear"></div>';
 			html += '</div>'; // title
 			
@@ -908,7 +908,7 @@ Page.Servers = class Servers extends Page.ServerUtils {
 		html += '<div class="box" id="d_vs_alerts" style="display:none">';
 			html += '<div class="box_title">';
 				html += 'Server Alerts';
-				// html += '<div class="button right secondary" onMouseUp="$P().goAlertHistory()"><i class="mdi mdi-magnify">&nbsp;</i>Alert History...</div>';
+				// html += '<div class="button right secondary" onClick="$P().goAlertHistory()"><i class="mdi mdi-magnify">&nbsp;</i>Alert History...</div>';
 				html += '<div class="clear"></div>';
 			html += '</div>';
 			html += '<div class="box_content table">';
@@ -920,7 +920,7 @@ Page.Servers = class Servers extends Page.ServerUtils {
 		html += '<div class="box" id="d_vs_jobs" style="">';
 			html += '<div class="box_title">';
 				html += 'Server Jobs';
-				// html += '<div class="button right secondary" onMouseUp="$P().goJobHistory()"><i class="mdi mdi-magnify">&nbsp;</i>Job History...</div>';
+				// html += '<div class="button right secondary" onClick="$P().goJobHistory()"><i class="mdi mdi-magnify">&nbsp;</i>Job History...</div>';
 				html += '<div class="clear"></div>';
 			html += '</div>';
 			html += '<div class="box_content table">';
@@ -931,7 +931,7 @@ Page.Servers = class Servers extends Page.ServerUtils {
 		// quickmon charts
 		html += '<div class="box charts" id="d_vs_quickmon" style="display:none">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyQuickMonitorFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyQuickMonitorFilter(this)"></div>';
 				html += this.getChartSizeSelector('chart_size_quick');
 				html += 'Quick Look &mdash; Last Minute';
 			html += '</div>';
@@ -968,7 +968,7 @@ Page.Servers = class Servers extends Page.ServerUtils {
 		// monitors
 		html += '<div class="box charts" id="d_vs_monitors">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyMonitorFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyMonitorFilter(this)"></div>';
 				html += this.getChartSizeSelector();
 				html += 'Server Monitors &mdash; ' + (online ? 'Last Hour' : 'Last Known State');
 			html += '</div>';
@@ -980,7 +980,7 @@ Page.Servers = class Servers extends Page.ServerUtils {
 		// processes
 		html += '<div class="box" id="d_vs_procs">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_procs" onInput="$P().applyTableFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_procs" onInput="$P().applyTableFilter(this)"></div>';
 				html += 'Active Processes';
 			html += '</div>';
 			html += '<div class="box_content table">';
@@ -991,7 +991,7 @@ Page.Servers = class Servers extends Page.ServerUtils {
 		// connections
 		html += '<div class="box" id="d_vs_conns">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_conns" onInput="$P().applyTableFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_conns" onInput="$P().applyTableFilter(this)"></div>';
 				html += 'Network Connections';
 			html += '</div>';
 			html += '<div class="box_content table">';
@@ -1002,7 +1002,7 @@ Page.Servers = class Servers extends Page.ServerUtils {
 		// network interfaces
 		html += '<div class="box" id="d_vs_ifaces">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_ifaces" onInput="$P().applyTableFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_ifaces" onInput="$P().applyTableFilter(this)"></div>';
 				html += 'Network Interfaces';
 			html += '</div>';
 			html += '<div class="box_content table">';
@@ -1013,7 +1013,7 @@ Page.Servers = class Servers extends Page.ServerUtils {
 		// mounts
 		html += '<div class="box" id="d_vs_fs">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_fs" onInput="$P().applyTableFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_fs" onInput="$P().applyTableFilter(this)"></div>';
 				html += 'Filesystems';
 			html += '</div>';
 			html += '<div class="box_content table">';

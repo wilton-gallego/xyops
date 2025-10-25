@@ -140,7 +140,7 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		
 		// buttons at bottom
 		html += '<div class="box_buttons" style="padding:0">';
-			html += '<div class="button primary" onMouseUp="$P().navSearch()"><i class="mdi mdi-magnify">&nbsp;</i>Search</div>';
+			html += '<div class="button primary" onClick="$P().navSearch()"><i class="mdi mdi-magnify">&nbsp;</i>Search</div>';
 			// html += '<div class="clear"></div>';
 		html += '</div>'; // box_buttons
 		
@@ -357,7 +357,7 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		html += '<div class="box">';
 			html += '<div class="box_title">';
 				html += 'Snapshot Summary';
-				html += '<div class="button right danger phone_collapse" onMouseUp="$P().showDeleteSnapshotDialog()"><i class="mdi mdi-trash-can-outline">&nbsp;</i><span>Delete...</span></div>';
+				html += '<div class="button right danger phone_collapse" onClick="$P().showDeleteSnapshotDialog()"><i class="mdi mdi-trash-can-outline">&nbsp;</i><span>Delete...</span></div>';
 				html += '<div class="clear"></div>';
 			html += '</div>'; // title
 			
@@ -454,7 +454,7 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		// quickmon charts
 		html += '<div class="box charts" id="d_vs_quickmon" style="display:none">';
 			html += '<div class="box_title">';
-			html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyQuickMonitorFilter(this)"></div>';
+			html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyQuickMonitorFilter(this)"></div>';
 			html += this.getChartSizeSelector('chart_size_quick');
 				html += 'Quick Look &mdash; Snapshot Minute';
 			html += '</div>';
@@ -491,7 +491,7 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		// monitors
 		html += '<div class="box charts" id="d_vs_monitors">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyMonitorFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyMonitorFilter(this)"></div>';
 				html += this.getChartSizeSelector();
 				html += 'Server Monitors &mdash; Snapshot Hour';
 			html += '</div>';
@@ -503,7 +503,7 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		// processes
 		html += '<div class="box" id="d_vs_procs">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_procs" onInput="$P().applyTableFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_procs" onInput="$P().applyTableFilter(this)"></div>';
 				html += 'Active Processes';
 			html += '</div>';
 			html += '<div class="box_content table">';
@@ -514,7 +514,7 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		// connections
 		html += '<div class="box" id="d_vs_conns">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_conns" onInput="$P().applyTableFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_conns" onInput="$P().applyTableFilter(this)"></div>';
 				html += 'Network Connections';
 			html += '</div>';
 			html += '<div class="box_content table">';
@@ -525,7 +525,7 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		// network interfaces
 		html += '<div class="box" id="d_vs_ifaces">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_ifaces" onInput="$P().applyTableFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_ifaces" onInput="$P().applyTableFilter(this)"></div>';
 				html += 'Network Interfaces';
 			html += '</div>';
 			html += '<div class="box_content table">';
@@ -536,7 +536,7 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		// mounts
 		html += '<div class="box" id="d_vs_fs">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_fs" onInput="$P().applyTableFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_fs" onInput="$P().applyTableFilter(this)"></div>';
 				html += 'Filesystems';
 			html += '</div>';
 			html += '<div class="box_content table">';
@@ -799,9 +799,9 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 			html += '<div class="box_title">';
 				html += 'Group Snapshot Summary';
 				
-				html += '<div class="button right danger" onMouseUp="$P().showDeleteSnapshotDialog()"><i class="mdi mdi-trash-can-outline">&nbsp;</i>Delete...</div>';
-				// html += '<div class="button secondary right" onMouseUp="$P().do_edit_from_view()"><i class="mdi mdi-file-edit-outline">&nbsp;</i>Edit Event...</div>';
-				// html += '<div class="button right" onMouseUp="$P().do_run_from_view()"><i class="mdi mdi-run-fast">&nbsp;</i>Run Now</div>';
+				html += '<div class="button right danger" onClick="$P().showDeleteSnapshotDialog()"><i class="mdi mdi-trash-can-outline">&nbsp;</i>Delete...</div>';
+				// html += '<div class="button secondary right" onClick="$P().do_edit_from_view()"><i class="mdi mdi-file-edit-outline">&nbsp;</i>Edit Event...</div>';
+				// html += '<div class="button right" onClick="$P().do_run_from_view()"><i class="mdi mdi-run-fast">&nbsp;</i>Run Now</div>';
 				html += '<div class="clear"></div>';
 			html += '</div>'; // title
 			
@@ -901,7 +901,7 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		// quickmon charts
 		html += '<div class="box charts" id="d_vg_quickmon" style="display:none">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyQuickMonitorFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyQuickMonitorFilter(this)"></div>';
 				html += this.getChartSizeSelector('chart_size_quick');
 				html += 'Quick Look &mdash; Snapshot Minute <span class="s_grp_filtered"></span>';
 			html += '</div>';
@@ -935,7 +935,7 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		// monitors
 		html += '<div class="box charts" id="d_vg_monitors">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyMonitorFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyMonitorFilter(this)"></div>';
 				html += this.getChartSizeSelector();
 				html += 'Group Monitors &mdash; Snapshot Hour <span class="s_grp_filtered"></span>';
 			html += '</div>';
@@ -947,7 +947,7 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		// processes
 		html += '<div class="box" id="d_vg_procs">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_procs" onInput="$P().applyTableFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_procs" onInput="$P().applyTableFilter(this)"></div>';
 				html += 'Group Processes &mdash; Snapshot <span class="s_grp_filtered"></span>';
 			html += '</div>';
 			html += '<div class="box_content table">';
@@ -958,7 +958,7 @@ Page.Snapshots = class Snapshots extends Page.ServerUtils {
 		// connections
 		html += '<div class="box" id="d_vg_conns">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_conns" onInput="$P().applyTableFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" data-id="t_snap_conns" onInput="$P().applyTableFilter(this)"></div>';
 				html += 'Group Connections &mdash; Snapshot <span class="s_grp_filtered"></span>';
 			html += '</div>';
 			html += '<div class="box_content table">';

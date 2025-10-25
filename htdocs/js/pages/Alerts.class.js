@@ -134,7 +134,7 @@ Page.Alerts = class Alerts extends Page.PageUtils {
 		
 		// buttons at bottom
 		html += '<div class="box_buttons" style="padding:0">';
-			html += '<div class="button primary" onMouseUp="$P().navSearch()"><i class="mdi mdi-magnify">&nbsp;</i>Search</div>';
+			html += '<div class="button primary" onClick="$P().navSearch()"><i class="mdi mdi-magnify">&nbsp;</i>Search</div>';
 			// html += '<div class="clear"></div>';
 		html += '</div>'; // box_buttons
 		

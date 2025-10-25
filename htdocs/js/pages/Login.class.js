@@ -74,11 +74,11 @@ Page.Login = class Login extends Page.Base {
 			
 			html += '<div class="dialog_buttons">';
 				// if (config.free_accounts) {
-				// 	html += '<div class="button" onMouseUp="$P().navCreateAccount()">Create Account...</div>';
+				// 	html += '<div class="button" onClick="$P().navCreateAccount()">Create Account...</div>';
 				// }
-				html += '<div class="button mobile_hide" onMouseUp="$P().cancelCreate()">Cancel</div>';
-				html += '<div class="button" onMouseUp="$P().navPasswordRecovery()">Forgot Password...</div>';
-				html += '<div class="button primary" onMouseUp="$P().doLogin()"><i class="mdi mdi-key">&nbsp;</i>Login</div>';
+				html += '<div class="button mobile_hide" onClick="$P().cancelCreate()">Cancel</div>';
+				html += '<div class="button" onClick="$P().navPasswordRecovery()">Forgot Password...</div>';
+				html += '<div class="button primary" onClick="$P().doLogin()"><i class="mdi mdi-key">&nbsp;</i>Login</div>';
 			html += '</div>';
 		html += '</div>';
 		
@@ -217,8 +217,8 @@ Page.Login = class Login extends Page.Base {
 			html += '</div>';
 			
 			html += '<div class="dialog_buttons">';
-				html += '<div class="button" onMouseUp="$P().cancelCreate()">Cancel</div>';
-				html += '<div class="button primary" onMouseUp="$P().doCreateAccount()"><i class="mdi mdi-account-plus">&nbsp;</i>Create</div>';
+				html += '<div class="button" onClick="$P().cancelCreate()">Cancel</div>';
+				html += '<div class="button primary" onClick="$P().doCreateAccount()"><i class="mdi mdi-account-plus">&nbsp;</i>Create</div>';
 			html += '</div>';
 		html += '</div>';
 		
@@ -335,8 +335,8 @@ Page.Login = class Login extends Page.Base {
 			html += '</div>';
 			
 			html += '<div class="dialog_buttons">';
-				html += '<div class="button" onMouseUp="$P().cancelRecover()">Cancel</div>';
-				html += '<div class="button primary" onMouseUp="$P().doSendRecoveryEmail()"><i class="mdi mdi-email-outline">&nbsp;</i>Send Email</div>';
+				html += '<div class="button" onClick="$P().cancelRecover()">Cancel</div>';
+				html += '<div class="button primary" onClick="$P().doSendRecoveryEmail()"><i class="mdi mdi-email-outline">&nbsp;</i>Send Email</div>';
 			html += '</div>';
 		html += '</div>';
 		
@@ -427,8 +427,8 @@ Page.Login = class Login extends Page.Base {
 			html += '</div>';
 			
 			html += '<div class="dialog_buttons">';
-				html += '<div class="button" onMouseUp="$P().cancelCreate()">Cancel</div>';
-				html += '<div class="button primary" onMouseUp="$P().doResetPassword()"><i class="mdi mdi-key">&nbsp;</i>Reset Password</div>';
+				html += '<div class="button" onClick="$P().cancelCreate()">Cancel</div>';
+				html += '<div class="button primary" onClick="$P().doResetPassword()"><i class="mdi mdi-key">&nbsp;</i>Reset Password</div>';
 			html += '</div>';
 		html += '</div>';
 		

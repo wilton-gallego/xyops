@@ -136,9 +136,9 @@ Page.GroupHist = class GroupHist extends Page.ServerUtils {
 				html += 'Group Summary &mdash; ' + this.histTitle;
 				
 				// if (!online) html += '<div class="box_title_note">As of ' + this.getShortDateTimeText(snapshot.date) + '</div>';
-				// html += '<div class="button right danger" onMouseUp="$P().showDeleteSnapshotDialog()"><i class="mdi mdi-trash-can-outline">&nbsp;</i>Delete...</div>';
-				// html += '<div class="button secondary right" onMouseUp="$P().do_edit_from_view()"><i class="mdi mdi-file-edit-outline">&nbsp;</i>Edit Event...</div>';
-				// html += '<div class="button right" onMouseUp="$P().do_run_from_view()"><i class="mdi mdi-run-fast">&nbsp;</i>Run Now</div>';
+				// html += '<div class="button right danger" onClick="$P().showDeleteSnapshotDialog()"><i class="mdi mdi-trash-can-outline">&nbsp;</i>Delete...</div>';
+				// html += '<div class="button secondary right" onClick="$P().do_edit_from_view()"><i class="mdi mdi-file-edit-outline">&nbsp;</i>Edit Event...</div>';
+				// html += '<div class="button right" onClick="$P().do_run_from_view()"><i class="mdi mdi-run-fast">&nbsp;</i>Run Now</div>';
 				html += '<div class="clear"></div>';
 			html += '</div>'; // title
 			
@@ -218,7 +218,7 @@ Page.GroupHist = class GroupHist extends Page.ServerUtils {
 		// monitors
 		html += '<div class="box charts" id="d_vg_monitors">';
 			html += '<div class="box_title">';
-				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyMonitorFilter(this)"></div>';
+				html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(this).next().focus()">&nbsp;</i><input type="text" placeholder="Filter" value="" onInput="$P().applyMonitorFilter(this)"></div>';
 				html += this.getChartSizeSelector();
 				html += 'Group Monitors &mdash; ' + this.histTitle + ' <span class="s_grp_filtered"></span>';
 			html += '</div>';
@@ -231,7 +231,7 @@ Page.GroupHist = class GroupHist extends Page.ServerUtils {
 		html += '<div class="box" id="d_vs_alerts" style="">';
 			html += '<div class="box_title">';
 				html += 'Group Alerts &mdash; ' + this.histTitle;
-				// html += '<div class="button right secondary" onMouseUp="$P().goAlertHistory()"><i class="mdi mdi-magnify">&nbsp;</i>Alert History...</div>';
+				// html += '<div class="button right secondary" onClick="$P().goAlertHistory()"><i class="mdi mdi-magnify">&nbsp;</i>Alert History...</div>';
 				// html += '<div class="clear"></div>';
 			html += '</div>';
 			html += '<div class="box_content table">';

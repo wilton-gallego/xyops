@@ -212,8 +212,8 @@ Page.ServerUtils = class ServerUtils extends Page.PageUtils {
 		html += '</div>'; // wrapper
 		
 		var buttons_html = "";
-		// buttons_html += '<div class="button" onMouseUp="$P().copy_unit_results('+idx+')">Copy to Clipboard</div>';
-		buttons_html += '<div class="button primary" onMouseUp="Dialog.confirm_click(true)"><i class="mdi mdi-close-circle-outline">&nbsp;</i>Close</div>';
+		// buttons_html += '<div class="button" onClick="$P().copy_unit_results('+idx+')">Copy to Clipboard</div>';
+		buttons_html += '<div class="button primary" onClick="Dialog.confirm_click(true)"><i class="mdi mdi-close-circle-outline">&nbsp;</i>Close</div>';
 		
 		Dialog.showSimpleDialog('Process Details', html, buttons_html);
 		
@@ -757,7 +757,7 @@ Page.ServerUtils = class ServerUtils extends Page.PageUtils {
 				classes.push('active');
 				icon = ' <i class="mdi mdi-menu-' + ((opts.sort_dir == 1) ? 'up' : 'down') + '"></i>';
 			}
-			html += '<div class="' + classes.join(' ') + '" data-id="' + opts.id + '" data-col="' + col_id + '" onMouseUp="$P().toggleTableSort(this)">' + col_label + icon + '</div>';
+			html += '<div class="' + classes.join(' ') + '" data-id="' + opts.id + '" data-col="' + col_id + '" onClick="$P().toggleTableSort(this)">' + col_label + icon + '</div>';
 		});
 		
 		html += '</ul>';
@@ -1617,7 +1617,7 @@ Page.ServerUtils = class ServerUtils extends Page.PageUtils {
 		html += '<div class="box_title">';
 			// html += '<div class="header_search_widget"><i class="mdi mdi-magnify">&nbsp;</i><input type="text" size="15" placeholder="Search"/></div>';
 			
-			html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onMouseUp="$(\'#fe_vg_search\').focus()">&nbsp;</i><input type="text" id="fe_vg_search" placeholder="Filter" value="' + encode_attrib_entities(args.search ?? '') + '" onInput="$P().applyServerTableFiltersDebounce()"/></div>';
+			html += '<div class="box_title_widget" style="overflow:visible; margin-left:0;"><i class="mdi mdi-magnify" onClick="$(\'#fe_vg_search\').focus()">&nbsp;</i><input type="text" id="fe_vg_search" placeholder="Filter" value="' + encode_attrib_entities(args.search ?? '') + '" onInput="$P().applyServerTableFiltersDebounce()"/></div>';
 			
 			html += '<div class="box_title_widget" style="overflow:visible; min-width:120px; max-width:200px; font-size:13px;">' + this.getFormMenuSingle({
 				id: 'fe_vg_filter',

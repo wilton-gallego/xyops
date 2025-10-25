@@ -51,7 +51,7 @@ Page.ActivityLog = class ActivityLog extends Page.PageUtils {
 			
 			// search box
 			html += '<div class="search_box">';
-				html += '<i class="mdi mdi-magnify" onMouseUp="$(\'#fe_sa_query\').focus()">&nbsp;</i>'; // TODO: fix search help url below:
+				html += '<i class="mdi mdi-magnify" onClick="$(\'#fe_sa_query\').focus()">&nbsp;</i>'; // TODO: fix search help url below:
 				html += '<div class="search_help"><a href="https://github.com/pixlcore/xyops#search" target="_blank">Search Help<i class="mdi mdi-open-in-new"></i></a></div>';
 				html += '<input type="text" id="fe_sa_query" maxlength="128" placeholder="Search Query..." value="' + escape_text_field_value(args.query || '') + '">';
 			html += '</div>';
@@ -134,7 +134,7 @@ Page.ActivityLog = class ActivityLog extends Page.PageUtils {
 		html += '<div class="box_buttons" style="padding:0">';
 			html += '<div id="btn_search_opts" class="button" onClick="$P().toggleSearchOpts()"><i>&nbsp;</i><span>Options<span></div>';
 			html += '<div id="btn_sa_reset" class="button" style="display:none" onClick="$P().resetFilters()"><i class="mdi mdi-undo-variant">&nbsp;</i>Reset</div>';
-			html += '<div class="button primary" onMouseUp="$P().navSearch()"><i class="mdi mdi-magnify">&nbsp;</i>Search</div>';
+			html += '<div class="button primary" onClick="$P().navSearch()"><i class="mdi mdi-magnify">&nbsp;</i>Search</div>';
 		html += '</div>'; // box_buttons
 		
 		html += '</div>'; // box_content
