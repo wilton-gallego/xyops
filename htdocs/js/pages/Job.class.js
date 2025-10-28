@@ -1140,6 +1140,8 @@ Page.Job = class Job extends Page.PageUtils {
 					// one or more jobs active for node
 					$elem.find('> .wf_active_bar > .wf_active_widget.wf_jobs').show().html( `<i class="mdi mdi-run-fast"></i><span>${commify(num_jobs)}</span>` );
 					$elem.toggleClass('wf_active', true);
+					$elem.toggleClass('wf_completed', false );
+					$elem.toggleClass('wf_error', false );
 				}
 				else {
 					// no active jobs, hide bar widget
