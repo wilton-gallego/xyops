@@ -805,10 +805,6 @@ An array of network connections (TCP/UDP) and additional metadata that are assoc
 
 An array of timeline events that occurred during the job's execution.  This data is used to plot the CPU/Mem/Disk/Net graphs for the job.
 
-## Job.flags
-
-An internal object used to track CPU/Mem thresholds.
-
 ## Job.table
 
 User writable property for providing a table of data.  Should be specified as an object with `title`, `rows`, `cols` and `caption` properties.  The `title` and `caption` may be omitted.
