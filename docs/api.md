@@ -60,7 +60,7 @@ Example error response:
 
 ## Alerts
 
-See [Monitoring](monitoring.md) for details on the xyOps monitoring and alert system.
+See [Monitoring](monitors.md) for details on the xyOps monitoring and alert system.
 
 ### get_alerts
 
@@ -2156,23 +2156,335 @@ In addition to the [Standard Response Format](#standard-response-format), this w
 
 ### get_monitors
 
+```
+GET /api/app/get_monitors/v1
+```
+
+Fetch all monitor definitions. No input parameters are required. No specific privilege is required beyond a valid user session or API Key.
+
+In addition to the [Standard Response Format](#standard-response-format), this will include a `rows` array containing all monitors, and a `list` object containing list metadata (e.g. `length` for total rows without pagination).
+
+Example response:
+
+```json
+{
+    "code": 0,
+    "rows": [
+        {
+            "id": "cpu_usage",
+            "title": "CPU Usage %",
+            "source": "cpu.currentLoad",
+            "data_type": "float",
+            "suffix": "%",
+            "groups": [],
+            "display": true,
+            "min_vert_scale": 100,
+            "sort_order": 1,
+            "username": "admin",
+            "modified": 1754365754,
+            "created": 1754365754,
+            "revision": 1
+        }
+        
+    ],
+    "list": { "length": 1 }
+}
+```
+
+See [Monitor](data-structures.md#monitor) for details on monitor properties.
+
 ### get_monitor
+
+```
+GET /api/app/get_monitor/v1
+```
+
+Fetch a single monitor definition by ID. No specific privilege is required beyond a valid user session or API Key. HTTP POST with JSON is also accepted.
+
+Parameters:
+
+| Property Name | Type | Description |
+|---------------|------|-------------|
+| `id` | String | **(Required)** The alphanumeric ID of the monitor to fetch. |
+
+Example response:
+
+```json
+{
+    "code": 0,
+    "monitor": {
+        "id": "cpu_usage",
+        "title": "CPU Usage %",
+        "source": "cpu.currentLoad",
+        "data_type": "float",
+        "suffix": "%",
+        "groups": [],
+        "display": true,
+        "min_vert_scale": 100,
+        "sort_order": 1,
+        "username": "admin",
+        "modified": 1754365754,
+        "created": 1754365754,
+        "revision": 1
+    }
+}
+```
+
+In addition to the [Standard Response Format](#standard-response-format), this will include a `monitor` object containing the requested monitor.
+
+See [Monitor](data-structures.md#monitor) for details on monitor properties.
 
 ### create_monitor
 
+```
+POST /api/app/create_monitor/v1
+```
+
+Create a new monitor. Requires the [create_monitors](privileges.md#create_monitors) privilege and a valid user session or API Key. Send as HTTP POST with JSON. See [Monitor](data-structures.md#monitor) for property details. The `id` may be omitted and will be auto-generated; `username`, `created`, `modified`, `revision`, and `sort_order` are set by the server.
+
+Validation and behavior:
+
+- The `source` expression is validated; syntax errors are rejected.
+- If `data_match` is provided, it must compile as a valid regular expression.
+- `sort_order` is automatically assigned at the end of the current list.
+
+Example request:
+
+```json
+{
+    "title": "CPU Usage %",
+    "source": "cpu.currentLoad",
+    "data_type": "float",
+    "suffix": "%",
+    "display": true,
+    "min_vert_scale": 100,
+    "groups": []
+}
+```
+
+Example response:
+
+```json
+{
+    "code": 0,
+    "monitor": { /* full monitor object including auto-generated fields */ }
+}
+```
+
+In addition to the [Standard Response Format](#standard-response-format), this will include a `monitor` object containing the newly created monitor.
+
 ### update_monitor
+
+```
+POST /api/app/update_monitor/v1
+```
+
+Update an existing monitor by ID. Requires the [edit_monitors](privileges.md#edit_monitors) privilege and a valid user session or API Key. Send as HTTP POST with JSON. The request is shallow-merged into the existing monitor, so you can provide a sparse set of properties to update. The server updates `modified` and increments `revision` automatically.
+
+Parameters:
+
+| Property Name | Type | Description |
+|---------------|------|-------------|
+| `id` | String | **(Required)** The monitor ID to update. |
+| other fields | Various | Any updatable [Monitor](data-structures.md#monitor) fields (e.g. `title`, `source`, `data_type`, `suffix`, `display`, `min_vert_scale`, `groups`, `icon`, `notes`). |
+
+Validation and behavior:
+
+- If `source` is included, it is validated; syntax errors are rejected.
+- If `data_match` is included, it must compile as a valid regular expression.
+
+Example response:
+
+```json
+{ "code": 0 }
+```
 
 ### test_monitor
 
+```
+POST /api/app/test_monitor/v1
+```
+
+Test a monitor configuration (expression and optional `data_match`) against a specific server’s current data. Requires the [edit_monitors](privileges.md#edit_monitors) privilege and a valid user session or API Key. Send as HTTP POST with JSON.
+
+Parameters:
+
+| Property Name | Type | Description |
+|---------------|------|-------------|
+| `server` | String | **(Required)** The [Server.id](data-structures.md#server-id) to test against. |
+| `source` | String | **(Required)** The [Monitor.source](data-structures.md#monitor-source) expression to evaluate. |
+| `data_type` | String | **(Required)** One of `integer`, `float`, `bytes`, `seconds`, or `milliseconds`. |
+| `data_match` | String | Optional JavaScript regular expression string to extract a value from text. |
+
+Example request:
+
+```json
+{
+    "server": "s12345abcde",
+    "source": "cpu.currentLoad",
+    "data_type": "float"
+}
+```
+
+Example responses:
+
+```json
+{ "code": 0, "value": 37.5 }
+```
+
+```json
+{ "code": 0, "fail": true }
+```
+
+In addition to the [Standard Response Format](#standard-response-format), this will include either a `value` property containing the computed numeric result, or `fail: true` if the expression could not be evaluated.
+
 ### delete_monitor
+
+```
+POST /api/app/delete_monitor/v1
+```
+
+Delete an existing monitor by ID. Requires the [delete_monitors](privileges.md#delete_monitors) privilege and a valid user session or API Key.
+
+Parameters:
+
+| Property Name | Type | Description |
+|---------------|------|-------------|
+| `id` | String | **(Required)** The monitor ID to delete. |
+
+Example response:
+
+```json
+{ "code": 0 }
+```
+
+Deletions are permanent and cannot be undone.
 
 ### multi_update_monitor
 
+```
+POST /api/app/multi_update_monitor/v1
+```
+
+Update multiple monitors in a single call. This endpoint is intended for updating `sort_order` only (e.g., after drag-and-drop reordering in the UI). Requires the [edit_monitors](privileges.md#edit_monitors) privilege and a valid user session or API Key.
+
+Parameters:
+
+| Property Name | Type | Description |
+|---------------|------|-------------|
+| `items` | Array<Object> | **(Required)** Array of objects, each with an `id` and the new `sort_order`. |
+
+Example request:
+
+```json
+{
+    "items": [
+        { "id": "cpu_usage", "sort_order": 0 },
+        { "id": "disk_io",   "sort_order": 1 }
+    ]
+}
+```
+
+Example response:
+
+```json
+{ "code": 0 }
+```
+
+Notes:
+
+- Only `sort_order` is updated by this endpoint.
+- `modified` and `revision` are not updated by design for multi-updates of sort order.
+
 ### get_quickmon_data
+
+```
+GET /api/app/get_quickmon_data/v1
+```
+
+Fetch the current [QuickMonData](data-structures.md#quickmondata) snapshots for servers (last 60 seconds). No specific privilege is required beyond a valid user session or API Key. Useful for dashboards.
+
+Parameters:
+
+| Property Name | Type | Description |
+|---------------|------|-------------|
+| `server` | String | Optional. Limit results to a single [Server.id](data-structures.md#server-id). |
+| `group` | String | Optional. Limit results to servers in a specific [Group.id](data-structures.md#group-id). |
+
+Example response:
+
+```json
+{
+    "code": 0,
+    "servers": {
+        "s12345abcde": [ /* QuickMon entries */ ]
+    }
+}
+```
+
+In addition to the [Standard Response Format](#standard-response-format), this will include a `servers` object keyed by server ID, each value being an array of QuickMon entries.
+
+See [QuickMon](monitors.md#quickmon) for more details on these types of real-time monitors.
 
 ### get_latest_monitor_data
 
+```
+GET /api/app/get_latest_monitor_data/v1
+```
+
+Fetch the latest timeline entries for a specific system on a server, along with the server’s current data snapshot. Requires a valid user session or API Key.
+
+Parameters:
+
+| Property Name | Type | Description |
+|---------------|------|-------------|
+| `server` | String | **(Required)** The [Server.id](data-structures.md#server-id). |
+| `sys` | String | **(Required)** The timeline system ID to query (e.g., `hourly`, `daily`, `monthly` or `yearly`). |
+| `limit` | Number | **(Required)** The number of timeline entries to return. |
+
+Example response:
+
+```json
+{
+    "code": 0,
+    "rows": [ /* timeline entries */ ],
+    "data": { /* server host data snapshot */ }
+}
+```
+
+In addition to the [Standard Response Format](#standard-response-format), this will include a `rows` array containing [ServerTimelineData](data-structures.md#servertimelinedata) entries, and a `data` object containing the server’s current [ServerMonitorData](data-structures.md#servermonitordata).
+
+See [Monitors](monitors.md) for more details on the monitoring subsystem.
+
 ### get_historical_monitor_data
+
+```
+GET /api/app/get_historical_monitor_data/v1
+```
+
+Fetch historical timeline entries for a specific server. Requires a valid user session or API Key.
+
+Parameters:
+
+| Property Name | Type | Description |
+|---------------|------|-------------|
+| `server` | String | **(Required)** The [Server.id](data-structures.md#server-id). |
+| `sys` | String | **(Required)** The timeline system ID to query (e.g., `hourly`, `daily`, `monthly` or `yearly`). |
+| `date` | Number | **(Required)** Unix timestamp (seconds) specifying the start of the range of data to fetch. |
+| `limit` | Number | **(Required)** The number of timeline entries to return. |
+
+Example response:
+
+```json
+{
+    "code": 0,
+    "rows": [ /* timeline entries */ ]
+}
+```
+
+In addition to the [Standard Response Format](#standard-response-format), this will include a `rows` array containing the historical [ServerTimelineData](data-structures.md#servertimelinedata) entries.
+
+See [Monitors](monitors.md) for more details on the monitoring subsystem.
 
 
 
