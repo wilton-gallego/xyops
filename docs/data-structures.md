@@ -137,6 +137,10 @@ A brief description of the API Key and its purpose.
 
 A boolean flag indicating if the API Key is active or disabled.
 
+## APIKey.expires
+
+An optional expiration date for the API Key, in Unix seconds.  After this date/time comes to pass the API Key can no longer be used.
+
 ## APIKey.username
 
 The user or API Key who created the API Key.
@@ -2610,6 +2614,100 @@ An array of [Job.id](#job-id)s representing active jobs in the group at the time
 ## GroupSnapshot.quickmons
 
 An array of [QuickmonData](#quickmondata) samples for the group, with indices matching up with [GroupSnapshot.servers](#groupsnapshot-servers).
+
+# Master
+
+xyOps keep track of all online master (backup) servers in the cluster, using the following in-memory data structure (displayed as JSON):
+
+```json
+{
+	"id": "joemax.lan",
+	"online": true,
+	"master": true,
+	"date": 1762816958,
+	"version": "1.0",
+	"ping": 0,
+	"stats": { 
+		"mem": 134217728, 
+		"load": 0.02
+	}
+}
+```
+
+## Master.id
+
+This is the master server's internal ID, which is usually it's hostname.
+
+## Master.online
+
+A boolean indicating whether the server is online (connected) or not.
+
+## Master.master
+
+A boolean indicating whether the server is the current master primary or not.
+
+## Master.date
+
+A timestamp in Unix seconds representing when the server came online.
+
+## Master.version
+
+Currently unused, will always be set to "1.0".  For future use.
+
+## Master.ping
+
+The last ping time (in milliseconds) between the current master and the server (Websocket RTT).
+
+## Master.stats
+
+This object will contain basic stats about the server, including `mem` (current memory usage of the xyOps process), and `load` (minute load average).
+
+# State
+
+xyOps keeps state data in a `global/state` storage record.  This is so it can survive restarts, and survive master failover to a backup server.  It is used to store things like the scheduler master switch, event state (time cursors), and server/group watches (snapshots).
+
+## State.scheduler
+
+The `scheduler` object contains properties specific to the job scheduler subsystem.  Namely an `enabled` boolean, which will be `true` if the scheduler is active and running jobs, or `false` if it is paused.
+
+## State.events
+
+The `events` object holds state information about all events, namely their cursor for [Catch-Up](events.md#catch-up) mode, and information about previously completed jobs.  Here are the properties stored per event, each in `events.EVENTID.`:
+
+| Property Name | Type | Description |
+|---------------|------|-------------|
+| `cursor` | Number | For [Catch-Up](events.md#catch-up) events, this contains the event's current timestamp, which is used to run all missed jobs during an outage window. |
+| `last_code` | Mixed | The [Job.code](#job-code) from the last completed job, if any. |
+| `last_job` | String | The [Job.id](#job-id) of the last completed job, if any. |
+| `total_elapsed` | Number | The total job elapsed time across all completed jobs (used to compute average). |
+| `total_count` | Number | Total completed jobs on record.  The `total_elapsed` is divided by this number to get an average job elapsed time for the event. |
+
+## State.watches
+
+xyOps keeps track of server and group watches (automatic monitoring snapshots) in this object.  The data layout is as follows:
+
+- Server watches are stored in `watches.servers.SERVERID`.
+- Group watches are stored in `watches.groups.GROUPID`.
+
+The property values are Unix seconds, set to when the watch should end.  Example in JSON format:
+
+```json
+{
+	"watches": {
+		"servers": {
+			"smgqzr4dtgw": 1762050600,
+			"jmgs89hkdrv": 1962050600
+		},
+		"groups": {
+			"gmhl194nsw8": 1862050600
+		}
+	}
+}
+```
+
+## State.next_ticket_num
+
+This property holds the next available [Ticket.num](#ticket-num), which is applied and incremented when a new ticket is created.
 
 # Sub-Objects
 
