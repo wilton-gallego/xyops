@@ -87,7 +87,7 @@ xyOps will always be open-licensed, and always OSI-approved. No rug pulls.
 
 # License
 
-xyOps™ is licensed under the **BSD-3-Clause** license, and it always will be.
+xyOps™ is licensed under the **BSD-3-Clause** license.
 
 See [LICENSE.md](LICENSE.md) for full license text.
 
