@@ -1,0 +1,334 @@
+# Triggers
+
+Triggers in xyOps define when and how an event (or workflow) is allowed to run jobs. You compose one or more triggers on an event to describe automatic schedules, one‑time launches, manual control, blackout windows, and optional behaviors like catch‑up, delays, and sub‑minute precision. The scheduler evaluates triggers once per minute (with optional second‑level precision), launches matching jobs, and enforces any options.
+
+This document explains how triggers work, how they combine, and details each trigger type with parameters and examples.
+
+## Overview
+
+- Each trigger is a small definition object with two core fields: `enabled` and `type`. Extra fields depend on the type.
+- An event may have multiple triggers. Some types produce launches (schedule, interval, single, plugin). Others augment or constrain scheduling (manual, catchup, range, blackout, delay, precision).
+- The scheduler runs on the master once per minute. For schedule/interval/plugin triggers, it computes matching minutes (and optional seconds) and launches jobs accordingly.
+- Timezones are supported for schedule/plugin triggers via a `timezone` field. Range/blackout/interval times are "absolute" and thus timezone‑agnostic.
+
+Example minimal trigger (JSON format):
+
+```json
+{
+  "type": "schedule",
+  "enabled": true,
+  "minutes": [0]
+}
+```
+
+This would run exactly once hourly, on the `0` minute.  It is equivalent to `0 * * * *` in cron syntax.
+
+## User Interface
+
+- Triggers can be added while creating or editing events.  They're listed in a table just above the event limits, with an "Add Trigger" button.
+- For workflows, triggers are added as nodes on the graph, which are then connected to other nodes to setup potentially different entrypoints per trigger.
+
+## Trigger Object
+
+All trigger objects include these common properties:
+
+| Property | Type | Description |
+|---------|------|-------------|
+| `enabled` | Boolean | Enable (`true`) or disable (`false`) the trigger. Disabled triggers are ignored. |
+| `type` | String | Which trigger behavior to apply. See Trigger Types below. |
+
+Additional properties are required based on the trigger type.
+
+## Composition Rules
+
+Some combinations are restricted to keep scheduling unambiguous. These rules are enforced by the API and UI:
+
+- Uniqueness (enabled): Only one of each per event: `manual`, `catchup`, `range`, `precision`, `delay`.
+- Mutual exclusions (enabled):
+  - `interval` and `precision` are mutually exclusive.
+  - `interval` and `delay` are mutually exclusive.
+  - `precision` and `delay` are mutually exclusive.
+- Launching triggers: Only `manual`, `schedule`, `interval`, `single`, and `plugin` produce launches. Others act as modifiers or constraints.
+- Range triggers are modifiers that only allow launches between a start and end date/time.
+- Blackout triggers are the inverse of ranges; they disallow launches between a start and end date/time.
+- You may add multiple ranges and blackouts.
+
+## Trigger Types
+
+The following trigger types are available.
+
+### Manual Run
+
+Allow the event to be launched on demand by users (UI) and API keys (API). Does not produce automatic runs.
+
+Parameters: None
+
+Notes:
+
+- If an event does not have an enabled `manual` trigger, attempts to run it via the API/UI are rejected (unless test paths are used).
+
+Example:
+
+```json
+{
+  "type": "manual",
+  "enabled": true
+}
+```
+
+### Schedule
+
+Define a repeating schedule similar to [Unix Cron](https://en.wikipedia.org/wiki/Cron) using arrays of years, months, days, weekdays, hours, and minutes. Omitted fields mean “all” in that category. Evaluation occurs in the selected timezone (or the server default if omitted).
+
+Parameters:
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `years` | Array<Number> | Optional | One or more years in YYYY format. |
+| `months` | Array<Number> | Optional | Months 1–12 (Jan=1 … Dec=12). |
+| `days` | Array<Number> | Optional | Month days 1–31, or reverse month days −1 to −7 (−1 = last day, −2 = second‑to‑last, etc.). |
+| `weekdays` | Array<Number> | Optional | Weekdays 0–6 (Sun=0 … Sat=6). |
+| `hours` | Array<Number> | Optional | Hours 0–23 (24‑hour clock). |
+| `minutes` | Array<Number> | Optional | Minutes 0–59. |
+| `timezone` | String | Optional | IANA timezone for evaluating the schedule (defaults to server timezone). |
+
+Notes:
+
+- You may specify both `days` and `weekdays`. All criteria must match.
+- If any list is empty or omitted, it is treated as “all” (a.k.a `*` in cron parlance).
+- Reverse month days allow “last day of month” style expressions.
+
+Example: Twice daily at 4:30 AM and 4:30 PM in `America/New_York`:
+
+```json
+{
+  "type": "schedule",
+  "enabled": true,
+  "hours": [4, 16],
+  "minutes": [30],
+  "timezone": "America/New_York"
+}
+```
+
+Example: Last day of every month at 23:55:
+
+```json
+{
+  "type": "schedule",
+  "enabled": true,
+  "days": [-1],
+  "hours": [23],
+  "minutes": [55]
+}
+```
+
+### Interval
+
+Run the event on a fixed interval starting from a specific epoch. Timezone‑agnostic and can launch multiple jobs within the current minute at second offsets.
+
+Parameters:
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | Number | Yes | Start time as Unix timestamp (seconds). First launch occurs on or after this time aligned to the interval. |
+| `duration` | Number | Yes | Interval length in seconds. Must be > 0. |
+
+Notes:
+
+- The scheduler computes all hits within the current minute and launches at the exact second(s).
+- Mutually exclusive with `precision` and `delay`.
+
+Example: Every 90 seconds starting at a specific time:
+
+```json
+{
+  "type": "interval",
+  "enabled": true,
+  "start": 1754580000,
+  "duration": 90
+}
+```
+
+### Single Shot
+
+Launch exactly once at the specified absolute timestamp.
+
+Parameters:
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `epoch` | Number | Yes | Exact Unix timestamp (seconds) when to run. |
+
+Example:
+
+```json
+{
+  "type": "single",
+  "enabled": true,
+  "epoch": 1754631600
+}
+```
+
+### Catch‑Up
+
+When present and enabled, ensures that every scheduled job runs, even after outages. The scheduler maintains a per‑event cursor and “replays” missed minutes sequentially until caught up.
+
+Parameters: None
+
+Notes:
+
+- Applies to schedule/interval triggers on the same event.
+- On each scheduler tick, the event’s cursor advances one minute at a time, evaluating schedules for each minute until present time.
+- Long outages can produce a backlog of late jobs; ensure your event and infrastructure can handle catch‑up bursts.
+- Time Machine: In the UI you can set a custom cursor timestamp to re‑run a historical window (set cursor in the past) or skip a backlog (set cursor near “now”).
+
+Example:
+
+```json
+{
+  "type": "catchup",
+  "enabled": true
+}
+```
+
+### Range
+
+Restrict scheduling to a date/time window. Prevents launches before `start` and after `end` (unless time is inside another range). Endpoints are inclusive.
+
+Parameters:
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | Number | Optional | Earliest allowed time (Unix seconds). |
+| `end` | Number | Optional | Latest allowed time (Unix seconds). |
+
+Notes:
+
+- Ranges may be open or closed.  Meaning, you can specify only `start`, only `end`, or both. If both are set, `start` must be ≤ `end`.
+- Applies to automatic triggers (schedule/interval/plugin/single). Does not affect manual runs.
+
+Example: Only run between March 1 and May 31 (inclusive):
+
+```json
+{
+  "type": "range",
+  "enabled": true,
+  "start": 1740787200,
+  "end": 1748649600
+}
+```
+
+### Blackout
+
+Prevent any automatic launches during a specific date/time window. Endpoints are inclusive.
+
+Parameters:
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | Number | Yes | Start of blackout (Unix seconds). |
+| `end` | Number | Yes | End of blackout (Unix seconds). Must be ≥ `start`. |
+
+Notes:
+
+- Useful for maintenance windows or holidays.
+- Applies to automatic triggers (schedule/interval/plugin/single). Does not affect manual runs.
+
+Example:
+
+```json
+{
+  "type": "blackout",
+  "enabled": true,
+  "start": 1754694000,
+  "end": 1754780400
+}
+```
+
+### Delay
+
+Add a starting delay to all scheduler‑launched jobs for the event. Does not affect manual/API runs. Mutually exclusive with `interval` and `precision`.
+
+Parameters:
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `duration` | Number | Yes | Delay in seconds added to the scheduled start time. Must be ≥ 1. |
+
+Example (delay all launches by 2 minutes):
+
+```json
+{
+  "type": "delay",
+  "enabled": true,
+  "duration": 120
+}
+```
+
+### Precision
+
+Launch within the scheduled minute at specific second offsets. Augments other automatic triggers to achieve sub‑minute starts. Mutually exclusive with `interval` and `delay`.
+
+Parameters:
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `seconds` | Array<Number> | Yes | One or more second offsets within 0–59. |
+
+Notes:
+
+- Applies to scheduled minutes (and to interval minutes when compatible). Multiple jobs may be launched in a single minute at the listed seconds.
+- Does not affect manual/API runs.
+
+Example (launch at :05, :20, :35, :50 within each matched minute):
+
+```json
+{
+  "type": "precision",
+  "enabled": true,
+  "seconds": [5, 20, 35, 50]
+}
+```
+
+### Plugin
+
+Use a custom Scheduler Plugin to decide whether to launch on each minute for this event. The plugin runs with configured parameters and returns a launch/no‑launch decision per minute.
+
+Parameters:
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plugin_id` | String | Yes | ID of a configured Plugin of type `scheduler`. |
+| `params` | Object | Optional | Plugin‑defined configuration key/values. |
+| `timezone` | String | Optional | Timezone context provided to the plugin (defaults to server timezone). |
+
+Notes:
+
+- At a high level, xyOps invokes the plugin once per minute with context, and launches jobs if the plugin indicates so. Plugins can also request a per‑launch delay and may provide input data/files for the job.  See [Plugins](plugins.md) for details.
+
+Example:
+
+```json
+{
+  "type": "plugin",
+  "enabled": true,
+  "plugin_id": "queue_gate",
+  "params": { "queue": "nightly", "threshold": 100 },
+  "timezone": "UTC"
+}
+```
+
+## Notes on Workflows
+
+Workflows use the same event trigger system. When a scheduled workflow launches, the scheduler records which trigger initiated the start so the workflow can reference it internally.
+
+## Validation
+
+When you save or run an event, xyOps validates triggers:
+
+- Types and required parameters must be present and well‑formed.
+- Ranges: `start` ≤ `end` where applicable. Blackout requires both.
+- Schedule lists must contain numbers in valid ranges; `days` may include −1…−7 to represent reverse month days.
+- Enabled uniqueness and mutual exclusion rules are enforced (see Composition Rules).
+
+For complete data structure details, see [Trigger](data-structures.md#trigger) and [Trigger Types](data-structures.md#trigger-types).
