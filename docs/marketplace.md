@@ -196,9 +196,7 @@ On the Plugin submission page, you will be asked to provide the following:
 - An optional list of environment variables needed by the Plugin.
 	- If provided, the user will be prompted to create a [Secret Vault](secrets.md) to store them at install time. 
 
-Note that all Plugin submissions are human-reviewed by hand.  Please be prepared to wait several days before your Plugin is approved.
-
-If your Plugin is denied, a xyOps team member will explain why, and help you to resubmit with the necessary changes to get approved.
+Note that all Plugin submissions are human-reviewed.  Please be prepared to wait several days before your Plugin is approved.  If your Plugin is denied, a xyOps team member will explain why, and help you to resubmit with the necessary changes to get approved.
 
 ## Self Distribution
 
@@ -209,6 +207,6 @@ It is recommended that you either:
 - Configure your web server to include a `Content-Disposition: attachment` header, so browsers download the file when clicked, or...
 - Gzip-compress the file first, and host the `.json.gz` version.
 
-To import a self-distributed Plugin, the user simply has to navigate to the Plugin List by clicking the "**Plugins**" link in the xyOps sidebar, and then click the "**Import File...**" button, or drag n' drop the downloaded file onto the browser window.  They will then be prompted to import your Plugin, at which point it can immediately be used in events and workflows.
+To import a self-distributed Plugin into xyOps, the user simply has to navigate to the Plugin List by clicking the "**Plugins**" link in the sidebar, and then click the "**Import File...**" button, or drag & drop the downloaded file onto the browser window.  They will then be prompted to import the Plugin, at which point it can immediately be used in events and workflows.
 
-Note that it is up to the user to install the necessary prerequisites such as `npx`, `uvx`, etc.  These do come preinstalled on the official xyOps docker container, so if the user installed xyOps via Docker, no additional software should need to be installed.
+Note that it is up to the user to install the necessary prerequisites such as `npx`, `uvx`, etc.  These do come preinstalled on the official xyOps Docker container, so if the user installed xyOps via Docker, no additional software should need to be installed.
