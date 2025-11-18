@@ -156,5 +156,5 @@ See [Channels API](api.md#channels) for more API details.
 - Actions: [Actions](actions.md)
 - Data structures: [Channel](data.md#channel)
 - Privileges: [Privileges](privileges.md)
-- Web Hooks: [Web Hooks](web-hooks.md)
+- Web Hooks: [Web Hooks](webhooks.md)
 - Events: [Events](events.md)

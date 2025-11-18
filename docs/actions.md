@@ -149,7 +149,7 @@ Example (alert cleared):
 }
 ```
 
-See [Web Hooks](web-hooks.md) for more details on web hooks.
+See [Web Hooks](webhooks.md) for more details on web hooks.
 
 ### Run Event
 
