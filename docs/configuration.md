@@ -715,27 +715,51 @@ Sets cookie path, secure policy, httpOnly, and sameSite. Controls session cookie
 
 ## SSO
 
+This section configures Single Sign‑On using trusted headers. See the [SSO guide](sso.md) for setup details and examples.
+
 ### enabled
+
+This boolean enables SSO and disables local username/password login (default: `false`).
 
 ### whitelist
 
+This array of IPs/CIDRs limits which client addresses may send trusted headers (default allows localhost, private and link‑local ranges).
+
 ### header_map
+
+This object maps incoming trusted headers to xyOps user fields (`username`, `full_name`, `email`, `groups`).
 
 ### cleanup_username
 
+This boolean cleans up the username when derived from an email (strip illegal chars, lowercase, use local‑part) (default: `true`).
+
 ### cleanup_full_name
+
+This boolean derives a display name from an email (use local‑part, replace dots with spaces, title‑case) (default: `true`).
 
 ### group_role_map
 
+This object maps IdP group names to xyOps role IDs to auto‑assign roles on login (default: `{}`).
+
 ### group_privilege_map
+
+This object maps IdP group names to privilege keys to auto‑assign privileges on login (default: `{}`).
 
 ### replace_roles
 
+This boolean replaces all existing user roles with those from `group_role_map` on each login (default: `false`).
+
 ### replace_privileges
+
+This boolean replaces all existing user privileges with those from `group_privilege_map` on each login (default: `false`).
 
 ### admin_bootstrap
 
+This string temporarily grants full admin to the exact matching username to bootstrap initial setup; remove after configuring groups (default: empty).
+
 ### logout_url
+
+This string is the URL to redirect to after xyOps clears its session, so your auth proxy/IdP can complete logout (e.g., `/oauth2/sign_out?rd=...`).
 
 
 
