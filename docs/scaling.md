@@ -1,33 +1,83 @@
-# Overview
+# Scaling xyOps
 
-Using xyOps on live production?  Got lots of servers?  Please read these best practices for scaling your deployment.
+Running xyOps in live production with lots of servers and/or lots of running jobs? Please read these best practices for scaling your deployment. This guide complements Self‑Hosting — start there first: see [Self‑Hosting](hosting.md).
 
 ## Upgrade Hardware
 
-More CPU cores, more RAM, helps with lots of servers and/or lots of running jobs.
+- CPU cores: xyOps is multi‑process and highly concurrent. More cores help the scheduler, web server, storage I/O, and log compression run smoothly under load.
+- RAM: Add headroom for the Node.js heap, in‑process caches, storage engine caches, and OS page cache. RAM directly improves cache hit rates and reduces disk/remote I/O.
+- Storage: Prefer fast SSD/NVMe for local Filesystem/SQLite and log archives. Ensure enough IOPS for parallel job logs, snapshots, and uploads.
+- Network: For large fleets, ensure good NIC throughput and low latency between masters and workers. If using external storage (S3, Redis, MinIO), place masters close to it.
+- OS limits: Increase file descriptor and process limits for busy nodes (e.g. `ulimit -n`, systemd Limits). Ensure swap is configured conservatively to avoid heap thrash.
 
 ## Increase Node.js Memory
 
-NODE_MAX_MEMORY environment variable is honored (default 4 GB).
+xyOps honors the `NODE_MAX_MEMORY` environment variable to set Node’s old‑space heap size (default 4096 MB).
+
+- Example: `export NODE_MAX_MEMORY=8192` before starting xyOps (or `-e NODE_MAX_MEMORY=8192` for Docker).
+- Leave headroom for the OS, filesystem cache, and any external daemons. On an instance with 16 GB RAM, an 8–12 GB heap is typical depending on other workloads.
+- Monitor RSS vs. heap usage over time and adjust conservatively to avoid swapping.
 
 ## Increase Storage RAM Cache
 
-Depends on storage engine used, but most likely `Storage.SQLite.cache.maxBytes` and `Storage.SQLite.cache.maxItems`
+xyOps uses [pixl-server-storage](https://github.com/jhuckaby/pixl-server-storage) and most engines support an in‑memory cache for JSON records. Larger caches reduce round‑trips to disk or network backends.
+
+- Defaults: The sample config enables caches with `maxBytes` ≈ 100 MB and `maxItems` ≈ 100k for Filesystem and SQLite.
+- Recommendation: For large production installs, consider increasing 5–10× if you have RAM available, and then tune based on hit ratio and latency.
+- Where to set:
+  - SQLite: `Storage.SQLite.cache.enabled`, `Storage.SQLite.cache.maxBytes`, `Storage.SQLite.cache.maxItems`.
+  - Filesystem: `Storage.Filesystem.cache.enabled`, `...maxBytes`, `...maxItems`.
+  - S3: `Storage.S3.cache.enabled`, `...maxBytes`, `...maxItems` (useful to reduce S3 GETs).
+- See [Storage Engines](https://github.com/jhuckaby/pixl-server-storage#engines) for engine‑specific details and considerations (e.g., what is cached, eviction policy, binary vs JSON behavior).
 
 ## Disable QuickMon
 
-Disable config property: `satellite.config.quickmon_enabled`
+QuickMon sends lightweight metrics every second from all satellites. At large scale, per‑second telemetry can add up. To reduce ingestion and WebSocket traffic, disable it:
 
-This will prevent all servers from sending monitoring data every second (and only send every minute).
+- Set `satellite.config.quickmon_enabled` to `false` in your master config. The setting is distributed to all servers automatically when they connect.
+- Minute‑level monitoring remains enabled via `satellite.config.monitoring_enabled`.
 
-## Multi-Master Setups
+## Multi‑Master Setups
 
-use external shared storage!
+Multi‑master requires external shared storage so all masters see the same state. See [Multi‑Master with Nginx](hosting.md#multi-master-with-nginx).
+
+- Use an external storage backend: [S3](https://github.com/jhuckaby/pixl-server-storage#amazon-s3), [MinIO](https://github.com/jhuckaby/pixl-server-storage#s3-compatible-services), [NFS](https://github.com/jhuckaby/pixl-server-storage#local-filesystem), [Redis](https://github.com/jhuckaby/pixl-server-storage#redis), or a combination. S3 works but has higher latency; MinIO (self‑hosted S3) performs better on‑prem.
+- [Hybrid](https://github.com/jhuckaby/pixl-server-storage#hybrid) engine: You can mix engines for documents vs. files. A common pattern is a fast key/value store for JSON documents, and an object store for binaries:
+  - Example: `Hybrid.docEngine = Redis` (JSON/doc store) and `Hybrid.binaryEngine = S3` (files and large artifacts).
+  - Configure each sub‑engine alongside [Hybrid](https://github.com/jhuckaby/pixl-server-storage#hybrid). Ensure Redis persistence (RDB/AOF) is enabled for durability.
+- If you choose a shared filesystem (NFS) for [Filesystem](https://github.com/jhuckaby/pixl-server-storage#local-filesystem), ensure low latency, adequate throughput, and robust locking semantics.
+- [SQLite](https://github.com/jhuckaby/pixl-server-storage#sqlite) is great for single‑master, but for multi‑master you must switch to a shared backend.
+
+**Tip**: Keep masters in the same region/AZ as your storage to minimize cross‑zone latency. For HTTP ingress, front masters with Nginx that tracks the active primary.
 
 ## Automated Critical Backups
 
-See [Self-Hosting: Daily Backups](hosting.md#daily-backups) for instructions on setting up nightly backups of critical data.
+- Use the nightly API export for critical data as described in [Self‑Hosting: Daily Backups](hosting.md#daily-backups). Schedule via cron and store off‑host.
+- SQLite engine: It can perform its own daily DB file backups during maintenance. Configure in `Storage.SQLite.backups` (defaults keep the most recent 7). Note backups lock the DB briefly while copying.
 
 ## Security Checklist
 
-https://github.com/jhuckaby/pixl-server-web#allow_hosts
+Harden your web entry point and xyOps config before going live:
+
+- Restrict inbound IPs using [WebServer.whitelist](https://github.com/jhuckaby/pixl-server-web#whitelist) (supports CIDR). Only allow your corporate ranges and load balancers.
+- Limit valid Host headers/SNI via [WebServer.allow_hosts](https://github.com/jhuckaby/pixl-server-web#allow_hosts) to your production domains (e.g. `xyops.yourcompany.com`).
+- HTTPS: Enable [WebServer.https](https://github.com/jhuckaby/pixl-server-web#https), set cert/key paths, and consider [WebServer.https_force](https://github.com/jhuckaby/pixl-server-web#https_force) so HTTP redirects to HTTPS. If terminating TLS upstream, configure [WebServer.https_header_detect](https://github.com/jhuckaby/pixl-server-web#https_header_detect).
+- Upload limits: Reduce [WebServer.max_upload_size](https://github.com/jhuckaby/pixl-server-web#max_upload_size) from the default 1 GB to your expected maximums (also adjust per‑feature limits in `client.*_upload_settings`).
+- Connection limits: Tune [WebServer.max_connections](https://github.com/jhuckaby/pixl-server-web#max_connections) and [WebServer.max_concurrent_requests](https://github.com/jhuckaby/pixl-server-web#max_concurrent_requests) to match instance capacity. Optionally set [WebServer.max_queue_length](https://github.com/jhuckaby/pixl-server-web#max_queue_length) and [WebServer.max_queue_active](https://github.com/jhuckaby/pixl-server-web#max_queue_active) to cap overload.
+- Timeouts: Consider [WebServer.socket_prelim_timeout](https://github.com/jhuckaby/pixl-server-web#socket_prelim_timeout), [WebServer.timeout](https://github.com/jhuckaby/pixl-server-web#timeout), [WebServer.request_timeout](https://github.com/jhuckaby/pixl-server-web#request_timeout), and [WebServer.keep_alive_timeout](https://github.com/jhuckaby/pixl-server-web#keep_alive_timeout) to mitigate slow‑loris patterns and bound request durations.
+- Bind address: If running behind a proxy, set [WebServer.bind_address](https://github.com/jhuckaby/pixl-server-web#bind_address) appropriately and configure [WebServer.public_ip_offset](https://github.com/jhuckaby/pixl-server-web#public_ip_offset) to select the correct client IP from proxy headers.
+- Headers/CSP: Use [WebServer.uri_response_headers](https://github.com/jhuckaby/pixl-server-web#uri_response_headers) to enforce CSP, HSTS, and other security headers for HTML routes. 
+- Access control: Use [WebServer.default_acl](https://github.com/jhuckaby/pixl-server-web#default_acl) for private handlers and verify API keys/SSO policies. Lock down admin endpoints behind SSO where applicable.
+
+## Additional Tuning Ideas
+
+- Job throughput: Increase [max_jobs_per_min](config.md#max_jobs_per_min) prudently and monitor worker CPU/RAM. Align with your per‑category limits and workflow constraints.
+- Data retention: Cap history sizes to prevent unbounded growth via the [db_maint](config.md#db_maint) `*.max_rows` properties (jobs, alerts, snapshots, activity, servers). Adjust to fit your storage budget.
+- Search concurrency: If you run frequent file searches, consider increasing [search_file_threads](config.md#search_file_threads) carefully (I/O bound; test first).
+- Logging: Disable verbose request or storage event logs in production unless actively debugging (`WebServer.log_requests`, `Storage.log_event_types`).
+
+## References
+
+- [xyOps Self‑Hosting Guide](hosting.md)
+- [Storage engines and Hybrid](https://github.com/jhuckaby/pixl-server-storage#engines)
+- [Web server documentation](https://github.com/jhuckaby/pixl-server-web)
