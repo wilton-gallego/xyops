@@ -105,10 +105,10 @@ Page.System = class System extends Page.Base {
 		html += '</div>';
 		
 		// shutdown server
-		html += '<div class="maint_unit">';
-			html += '<div class="button danger" onClick="$P().shutdown_master()"><i class="mdi mdi-power">&nbsp;</i>Shutdown Server...</div>';
-			html += '<div class="caption">Shutdown the current master server (secondary will take over if applicable).  <a href="#">Learn More</a></div>';
-		html += '</div>';
+		// html += '<div class="maint_unit">';
+		// 	html += '<div class="button danger" onClick="$P().shutdown_master()"><i class="mdi mdi-power">&nbsp;</i>Shutdown Server...</div>';
+		// 	html += '<div class="caption">Shutdown the current master server (secondary will take over if applicable).  <a href="#">Learn More</a></div>';
+		// html += '</div>';
 		
 		// restart server
 		// html += '<div class="maint_unit">';
@@ -126,6 +126,12 @@ Page.System = class System extends Page.Base {
 		html += '<div class="maint_unit">';
 			html += '<div class="button danger" onClick="$P().do_upgrade_masters()"><i class="mdi mdi-database-arrow-up-outline">&nbsp;</i>Upgrade Masters...</div>';
 			html += '<div class="caption">Upgrade or downgrade xyOps on your master servers to any selected version.  <a href="#">Learn More</a></div>';
+		html += '</div>';
+		
+		// rotate secret key
+		html += '<div class="maint_unit">';
+			html += '<div class="button danger" onClick="$P().do_rotate_secret_key()"><i class="mdi mdi-key-wireless">&nbsp;</i>Rotate Secret Key...</div>';
+			html += '<div class="caption">Generate a new secret key and safely re-encrypt all secrets, servers and masters.  <a href="#Docs/hosting/key-rotation">Learn More</a></div>';
 		html += '</div>';
 		
 		html += '</div>'; // maint_grid
@@ -348,23 +354,6 @@ Page.System = class System extends Page.Base {
 		} );
 		
 		this.div.find('#d_sys_sockets > .box_content').removeClass('loading').html(html);
-	}
-	
-	prompt_import_data_OLD() {
-		// prompt user with instructions and warnings
-		var self = this;
-		var html = inline_marked("Use this feature to import bulk data into xyOps by uploading a file from your local machine.  The file should have been generated from a previous export.\n\n**Warning:** This operation is destructive, and will delete all data in the way!  Also, this will abort all running jobs, flush all queued jobs, and the scheduler will automatically be paused.");
-		
-		Dialog.confirmDanger( 'Import Data', html, ['database-import', 'Choose File...'], function(result) {
-			if (!result) return;
-			var $file = $('<input type="file" style="display:none">');
-			$file.appendTo('body');
-			$file.on('change', function() {
-				if (this.files && this.files.length) self.do_import_data({ file1: this.files[0] });
-				$file.remove();
-			});
-			$file.get(0).click();
-		} ); // confirm
 	}
 	
 	prompt_import_data() {
@@ -826,6 +815,45 @@ Page.System = class System extends Page.Base {
 			// change menu items and fire onChange event for redraw
 			$('#fe_sys_multi_release').html( render_menu_options( items, items[0].id ) ).trigger('change');
 		} ); // api.get
+	}
+	
+	do_rotate_secret_key() {
+		// show dialog to confirm secret key rotation, and collect an admin password
+		var self = this;
+		var html = '';
+		
+		html += `<div class="dialog_intro">Use this to rotate the master secret key.  xyOps will automatically generate a new, cryptographically secure one for you, install it, and re-encrypt all secrets, re-authenticate all servers, and update all master peers securely.  <b>Please make sure that all your servers are online before proceeding.</b>  Also, the scheduler will be paused, and all active jobs aborted.</div>`;
+		html += '<div class="dialog_box_content maximize" style="max-height:75vh; overflow-x:hidden; overflow-y:auto;">';
+		
+		html += this.getFormRow({
+			label: 'Confirm Password:',
+			content: this.getFormText({
+				type: 'password',
+				id: 'fe_sys_user_password',
+				spellcheck: 'false',
+				autocomplete: 'current-password',
+				value: ''
+			}),
+			suffix: app.get_password_toggle_html(),
+			caption: "Enter your current account password to confirm the action."
+		});
+		
+		html += '</div>';
+		Dialog.confirmDanger( "Rotate Secret Key", html, ['key-wireless', "Rotate Now"], function(result) {
+			if (!result) return;
+			app.clearError();
+			
+			var password = $('#fe_sys_user_password').val();
+			if (!password.length) return app.badField('#fe_sys_user_password', "Please enter your account password.");
+			Dialog.hide();
+			
+			// start the job
+			app.api.post( 'app/admin_rotate_secret_key', { password }, function(resp) {
+				app.showMessage('success', "The key rotation job has started in the background.");
+			}); // api.post
+		}); // confirm
+		
+		Dialog.autoResize();
 	}
 	
 	do_master_cmd(cmds) {
