@@ -2521,7 +2521,7 @@ Page.Tickets = class Tickets extends Page.PageUtils {
 			
 			html += '<div class="editor_toolbar_divider"></div>';
 			
-			html += '<div class="editor_toolbar_button" id="btn_scroll_lock" title="Scroll Lock" onClick="$P().toggleScrollLock()"><i class="mdi mdi-arrow-vertical-lock"></i></div>';
+			// html += '<div class="editor_toolbar_button" id="btn_scroll_lock" title="Scroll Lock" onClick="$P().toggleScrollLock()"><i class="mdi mdi-arrow-vertical-lock"></i></div>';
 			
 			// html += '<div class="editor_toolbar_divider"></div>';
 			
