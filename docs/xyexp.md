@@ -49,6 +49,7 @@ In addition to the standard JEXL operators, the following custom functions are a
 | `pct` | `pct(0.5, 1.0) == "50%"` | Returns a human-friendly percentage given a value and a maximum. |
 | `integer` | `integer("1abc") == "1"` | Attempts to coerce an integer out of a string. |
 | `float` | `float(1.33333333) == "1.33"` | Shortens a float to a maximum of 2 digits after the decimal. |
+| `encode` | `encode("a b") == "a%20b` | Calls [encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent) to encode a string. |
 | `stringify` | `stringify(obj) == "{...}"` | Calls [JSON.stringify](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify) to serialize an object into a string. |
 
 ## See Also
