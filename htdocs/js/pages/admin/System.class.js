@@ -66,66 +66,66 @@ Page.System = class System extends Page.Base {
 		html += '</div>'; // box
 		
 		// maint buttons
-		html += '<div class="maint_grid">'; // TODO: update help links below:
+		html += '<div class="maint_grid">';
 		
 		// import data
 		html += '<div class="maint_unit">';
 			html += '<div class="button danger" onClick="$P().prompt_import_data()"><i class="mdi mdi-database-import-outline">&nbsp;</i>Import Data...</div>';
-			html += '<div class="caption">Import data from a local archive file on disk.  <a href="#">Learn More</a></div>';
+			html += '<div class="caption">Import data from a local archive file on disk.</div>';
 		html += '</div>';
 		
 		// export data
 		html += '<div class="maint_unit">';
 			html += '<div class="button secondary" onClick="$P().do_export_data()"><i class="mdi mdi-database-export-outline">&nbsp;</i>Export Data...</div>';
-			html += '<div class="caption">Export a custom selection of data and download a compressed archive to disk.  <a href="#">Learn More</a></div>';
+			html += '<div class="caption">Export a custom selection of data and download a compressed archive to disk.</div>';
 		html += '</div>';
 		
 		// delete data
 		html += '<div class="maint_unit">';
 			html += '<div class="button danger" onClick="$P().do_delete_data()"><i class="mdi mdi-trash-can-outline">&nbsp;</i>Delete Data...</div>';
-			html += '<div class="caption">Permanently delete selected data.  Consider backing it up first!  <a href="#">Learn More</a></div>';
+			html += '<div class="caption">Permanently delete selected data.  Consider backing it up first!</div>';
 		html += '</div>';
 		
 		// nightly maint
 		html += '<div class="maint_unit">';
 			html += '<div class="button secondary" onClick="$P().do_run_maint()"><i class="mdi mdi-database-clock-outline">&nbsp;</i>Run Maintenance...</div>';
-			html += '<div class="caption">Run the nightly database maintenance process manually.  <a href="#">Learn More</a></div>';
+			html += '<div class="caption">Run the nightly database maintenance process manually.</div>';
 		html += '</div>';
 		
 		// vacuum sqlite
 		html += '<div class="maint_unit">';
 			html += '<div class="button secondary" onClick="$P().do_optimize_db()"><i class="mdi mdi-database-refresh-outline">&nbsp;</i>Optimize Database...</div>';
-			html += '<div class="caption">Run database optimization procedure to reduce disk storage.  <a href="#">Learn More</a></div>';
+			html += '<div class="caption">Run database optimization procedure to reduce disk storage.</div>';
 		html += '</div>';
 		
 		// reset stats
 		html += '<div class="maint_unit">';
 			html += '<div class="button danger" onClick="$P().do_reset_stats()"><i class="mdi mdi-skip-previous-circle-outline">&nbsp;</i>Reset Daily Stats...</div>';
-			html += '<div class="caption">Reset the daily statistic counters displayed on the dashboard.  <a href="#">Learn More</a></div>';
+			html += '<div class="caption">Reset the daily statistic counters displayed on the dashboard.</div>';
 		html += '</div>';
 		
 		// shutdown server
 		// html += '<div class="maint_unit">';
 		// 	html += '<div class="button danger" onClick="$P().shutdown_master()"><i class="mdi mdi-power">&nbsp;</i>Shutdown Server...</div>';
-		// 	html += '<div class="caption">Shutdown the current master server (secondary will take over if applicable).  <a href="#">Learn More</a></div>';
+		// 	html += '<div class="caption">Shutdown the current master server (secondary will take over if applicable).</div>';
 		// html += '</div>';
 		
 		// restart server
 		// html += '<div class="maint_unit">';
 		// 	html += '<div class="button danger" onClick="$P().restart_master()"><i class="mdi mdi-restart">&nbsp;</i>Restart Server...</div>';
-		// 	html += '<div class="caption">Restart the current master server (secondary will take over).  <a href="#">Learn More</a></div>';
+		// 	html += '<div class="caption">Restart the current master server (secondary will take over).</div>';
 		// html += '</div>';
 		
 		// upgrade satellite
 		html += '<div class="maint_unit">';
 			html += '<div class="button danger" onClick="$P().do_upgrade_satellite()"><i class="mdi mdi-cloud-upload-outline">&nbsp;</i>Upgrade Workers...</div>';
-			html += '<div class="caption">Upgrade or downgrade the xyOps Satellite software across your fleet of worker servers.  <a href="#">Learn More</a></div>';
+			html += '<div class="caption">Upgrade or downgrade the xyOps Satellite software across your fleet of worker servers.</div>';
 		html += '</div>';
 		
 		// upgrade masters
 		html += '<div class="maint_unit">';
 			html += '<div class="button danger" onClick="$P().do_upgrade_masters()"><i class="mdi mdi-database-arrow-up-outline">&nbsp;</i>Upgrade Masters...</div>';
-			html += '<div class="caption">Upgrade or downgrade xyOps on your master servers to any selected version.  <a href="#">Learn More</a></div>';
+			html += '<div class="caption">Upgrade or downgrade xyOps on your master servers to any selected version.</div>';
 		html += '</div>';
 		
 		// rotate secret key

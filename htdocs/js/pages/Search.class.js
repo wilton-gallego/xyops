@@ -54,7 +54,7 @@ Page.Search = class Search extends Page.PageUtils {
 			html += '<div class="search_box">';
 				html += '<i class="mdi mdi-magnify" onClick="$(\'#fe_s_match\').focus()">&nbsp;</i>';
 				// html += '<div class="search_help"><a href="https://github.com/pixlcore/xyops#search" target="_blank">Search Help<i class="mdi mdi-open-in-new"></i></a></div>';
-				html += '<input type="text" id="fe_s_match" maxlength="128" placeholder="Search Job Files..." value="' + escape_text_field_value(args.match || '') + '">';
+				html += '<input type="text" id="fe_s_match" maxlength="128" placeholder="Search Job Output and Files..." value="' + escape_text_field_value(args.match || '') + '">';
 				// html += '<div class="search_widget"><i class="mdi mdi-checkbox-marked">&nbsp;</i>RegExp</div>';
 				// html += '<div class="search_widget"><i class="mdi mdi-checkbox-marked">&nbsp;</i>Case</div>';
 				html += '<div id="d_search_opt_case" class="search_widget ' + (args.case ? 'selected' : '') + '" title="Case Sensitive" onClick="$P().toggleSearchOption(this)"><i class="mdi mdi-format-letter-case"></i></div>';

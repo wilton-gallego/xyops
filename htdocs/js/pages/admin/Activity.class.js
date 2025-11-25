@@ -51,8 +51,8 @@ Page.ActivityLog = class ActivityLog extends Page.PageUtils {
 			
 			// search box
 			html += '<div class="search_box">';
-				html += '<i class="mdi mdi-magnify" onClick="$(\'#fe_sa_query\').focus()">&nbsp;</i>'; // TODO: fix search help url below:
-				html += '<div class="search_help"><a href="https://github.com/pixlcore/xyops#search" target="_blank">Search Help<i class="mdi mdi-open-in-new"></i></a></div>';
+				html += '<i class="mdi mdi-magnify" onClick="$(\'#fe_sa_query\').focus()">&nbsp;</i>';
+				// html += '<div class="search_help"><a href="https://github.com/pixlcore/xyops#search" target="_blank">Search Help<i class="mdi mdi-open-in-new"></i></a></div>';
 				html += '<input type="text" id="fe_sa_query" maxlength="128" placeholder="Search Query..." value="' + escape_text_field_value(args.query || '') + '">';
 			html += '</div>';
 			

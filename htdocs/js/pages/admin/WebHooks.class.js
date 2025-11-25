@@ -505,7 +505,7 @@ Page.WebHooks = class WebHooks extends Page.PageUtils {
 				spellcheck: 'false',
 				value: web_hook.body
 			}) + '</div>',
-			caption: 'For endpoints that require it, compose the request body here.  You can use `{{macros}}` to insert dynamic content from the web hook data.  [Learn More](#Docs/webhooks/body)'
+			caption: 'For endpoints that require it, compose the request body here.  You can use `{{macros}}` to insert dynamic content from the web hook data.  [Learn More](#Docs/webhooks/request-templating)'
 		});
 		
 		// timeout

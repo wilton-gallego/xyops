@@ -451,7 +451,7 @@ Page.Monitors = class Monitors extends Page.PageUtils {
 				value: monitor.source
 			}),
 			suffix: `<div class="form_suffix_icon mdi mdi-database-search-outline" title="${config.ui.tooltips.server_data_explorer}" onClick="$P().openServerDataExplorer(this)"></div>`,
-			caption: 'Enter an expression for evaluating the data source using dot path notation (e.g. `stats.network.conns`).  For help, click the search icon above to open the Server Data Explorer, or [view the documentation](#Docs/monitoring/expressions).'
+			caption: 'Enter an expression for evaluating the data source using dot path notation (e.g. `stats.network.conns`).  For help, click the search icon above to open the Server Data Explorer, or [view the documentation](#Docs/monitors/expressions).'
 		});
 		
 		// data match
@@ -463,7 +463,7 @@ Page.Monitors = class Monitors extends Page.PageUtils {
 				spellcheck: 'false',
 				value: monitor.data_match
 			}),
-			caption: 'Optionally enter a regular expression to grab the desired data value out of a string.  Surround the match with parenthesis to isolate it.  This is mainly for custom commands.  [Learn More](#Docs/monitoring/data-match)'
+			caption: 'Optionally enter a regular expression to grab the desired data value out of a string.  Surround the match with parenthesis to isolate it.  This is mainly for custom commands.  [Learn More](#Docs/monitors/data-match)'
 		});
 		
 		// data type
