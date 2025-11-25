@@ -434,7 +434,7 @@ Page.PageUtils = class PageUtils extends Page.Base {
 	copyExportToAPITool() {
 		// copy the export data over to the API tool
 		var opts = this._temp_export;
-		// TODO: this
+		// FUTURE: this
 		Dialog.hide();
 		Nav.go('APITool?import=1');
 	}
