@@ -340,6 +340,42 @@ Note that you should **not** add a `host` property into the [satellite.config](c
 
 When both `hosts` and `host` exist in the config file, `host` takes precedence.
 
+# Proxy Servers
+
+To send all outbound requests through a proxy (for e.g. web hooks), simply set one or more of the [de-facto standard environment variables](https://curl.se/docs/manpage.html#ENVIRONMENT) used for this purpose:
+
+```
+HTTPS_PROXY
+HTTP_PROXY
+ALL_PROXY
+NO_PROXY
+```
+
+xyOps will detect these environment variables and automatically configure proxy routing for all outbound requests.  The environment variable names may be upper or lower-case.  The proxy format should be a fully-qualified URL with port number.  To set a single proxy server for handling both HTTP and HTTPS requests, the simplest way is to just set `ALL_PROXY` (usually specified via a plain HTTP URL with port).  Example:
+
+```
+ALL_PROXY=http://company-proxy-server.com:8080
+```
+
+Use the `NO_PROXY` environment variable to specify a comma-separated domain whitelist.  Requests to any of the domains on this list will bypass the proxy and be sent directly.  Example:
+
+```
+NO_PROXY=direct.example.com
+```
+
+Please note that for proxying HTTPS (SSL) requests, unless you have pre-configured your machines to trust your proxy's local SSL cert, you will have to set the "SSL Cert Bypass" option in your web hooks.
+
+The types of proxies supported are:
+
+| Protocol | Example |
+|----------|---------|
+| `http` | `http://proxy-server-over-tcp.com:3128` |
+| `https` | `https://proxy-server-over-tls.com:3129` |
+| `socks` | `socks://username:password@some-socks-proxy.com:9050` |
+| `socks5` | `socks5://username:password@some-socks-proxy.com:9050` |
+| `socks4` | `socks4://some-socks-proxy.com:9050` |
+| `pac-*` | `pac+http://www.example.com/proxy.pac` |
+
 # Air-Gapped Mode
 
 xyOps supports air-gapped installs, which prevent it from making unauthorized outbound connections beyond a specified IP range.  You can configure which IP ranges it is allowed to connect to, via whitelist and/or blacklist.  The usual setup is to allow local LAN requests so servers can communicate with each other in your infra.
