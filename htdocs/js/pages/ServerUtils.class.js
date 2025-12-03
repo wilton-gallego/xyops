@@ -1286,14 +1286,14 @@ Page.ServerUtils = class ServerUtils extends Page.PageUtils {
 			label: 'Command:',
 			content: this.getFormTextarea({
 				id: 'fe_as_install_code',
-				rows: 5,
+				rows: 6,
 				class: 'monospace',
 				readonly: 'readonly',
 				autocomplete: 'off',
 				maxlength: 8192,
 				value: ""
 			}),
-			caption: 'For Linux and macOS, paste this into a Terminal.  For Windows, hit <code>Win+R</code> and paste it right into the "Run" dialog.'
+			caption: 'For Docker, Linux and macOS, paste this into a Terminal.  For Windows, hit <code>Win+R</code> and paste it right into the "Run" dialog.'
 		});
 		
 		html += '</div>';
@@ -1322,7 +1322,11 @@ Page.ServerUtils = class ServerUtils extends Page.PageUtils {
 		var platform = $('#fe_as_platform').val();
 		app.setPref('fe_as_platform', platform);
 		
-		var code = substitute( config.ui.satellite_install_commands[platform], this.serverInstallArgs );
+		var args = Object.assign( {}, this.serverInstallArgs, {
+			unique: 'd' + Date.now().toString(36)
+		} );
+		
+		var code = substitute( config.ui.satellite_install_commands[platform], args );
 		$('#fe_as_install_code').val( code );
 	}
 	
