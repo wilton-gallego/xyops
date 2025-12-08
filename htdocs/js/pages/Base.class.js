@@ -2929,7 +2929,6 @@ Page.Base = class Base extends Page {
 			
 			if (find_object(all_objs, { id: obj.id })) {
 				do_replace = true;
-				// md += "\n" + `**WARNING:** That ${opts.name} already exists.  If you proceed, it will be replaced with the uploaded version.` + "\n";
 				md += "\n" + `> [!WARNING]\n> This ${opts.name} already exists.  If you proceed, it will be replaced with the uploaded version.` + "\n";
 				title = '<span style="color:var(--red)">' + title + '</span>';
 			}
@@ -2958,7 +2957,7 @@ Page.Base = class Base extends Page {
 				Dialog.hide();
 				
 				var api_name = do_replace ? 'app/update' : 'app/create';
-				api_name += '_' + json.type;
+				api_name += '_' + item.type;
 				
 				Dialog.showProgress( 1.0, "Importing " + opts.name + "..." );
 				
