@@ -884,7 +884,7 @@
 		"draft_restored": "Your previous unsaved edits were restored.  Click the 'Cancel' button to discard them.",
 		"wf_new_save": "The new workflow was created successfully.",
 		"wf_edit_save": "The workflow was saved successfully.",
-		"secret_decrypted": "The secret was successfully decrypted for editing."
+		"secret_decrypted": "The secret vault was successfully decrypted for editing."
 	},
 	
 	"menu_bits": {

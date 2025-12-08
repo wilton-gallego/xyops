@@ -31,8 +31,8 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 	
 	gosub_list(args) {
 		// show secret list
-		app.setWindowTitle( "Secrets Management" );
-		app.setHeaderTitle( '<i class="mdi mdi-shield-lock">&nbsp;</i>Secrets Management' );
+		app.setWindowTitle( "Secret Management" );
+		app.setHeaderTitle( '<i class="mdi mdi-shield-lock">&nbsp;</i>Secret Management' );
 		
 		// this.loading();
 		// app.api.post( 'app/get_secrets', copy_object(args), this.receive_secrets.bind(this) );
@@ -54,19 +54,21 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 		this.secrets = resp.rows;
 		
 		// NOTE: Don't change these columns without also changing the responsive css column collapse rules in style.css
-		var cols = ['<i class="mdi mdi-checkbox-marked-outline"></i>', 'Secret Title', 'Secret ID', 'Author', 'Created', 'Actions'];
+		var cols = ['<i class="mdi mdi-checkbox-marked-outline"></i>', 'Vault Title', 'Vault ID', 'Author', 'Created', 'Actions'];
 		
 		html += '<div class="box">';
 		html += '<div class="box_title">';
-			html += 'Secrets';
+			html += 'Secret Vaults';
 		html += '</div>';
 		html += '<div class="box_content table">';
 		
 		var grid_opts = {
 			rows: this.secrets,
 			cols: cols,
-			data_type: 'secret',
-			grid_template_columns: 'min-content' + ' auto'.repeat( cols.length - 1 )
+			data_type: 'vault',
+			class: 'data_grid secret_grid',
+			grid_template_columns: 'min-content' + ' auto'.repeat( cols.length - 1 ),
+			empty_msg: 'No secret vaults found.'
 		};
 		
 		html += this.getBasicGrid( grid_opts, function(item, idx) {
@@ -95,7 +97,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 		html += '<div class="box_buttons">';
 			// html += '<div class="button phone_collapse" onClick="$P().doFileImportPrompt()"><i class="mdi mdi-cloud-upload-outline">&nbsp;</i><span>Import File...</span></div>';
 			html += '<div class="button secondary phone_collapse" onClick="$P().go_history()"><i class="mdi mdi-history">&nbsp;</i><span>Revision History...</span></div>';
-			html += '<div class="button default" onClick="$P().edit_secret(-1)"><i class="mdi mdi-plus-circle-outline">&nbsp;</i><span>New Secret...</span></div>';
+			html += '<div class="button default" onClick="$P().edit_secret(-1)"><i class="mdi mdi-plus-circle-outline">&nbsp;</i><span>New Vault...</span></div>';
 		html += '</div>'; // box_buttons
 		
 		html += '</div>'; // box
@@ -164,16 +166,16 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 	gosub_new(args) {
 		// create new secret
 		var html = '';
-		app.setWindowTitle( "New Secret" );
+		app.setWindowTitle( "New Secret Vault" );
 		
 		app.setHeaderNav([
 			{ icon: 'shield-lock', loc: '#Secrets?sub=list', title: 'Secrets' },
-			{ icon: 'shield-lock-outline', title: "New Secret" }
+			{ icon: 'shield-lock-outline', title: "New Secret Vault" }
 		]);
 		
 		html += '<div class="box">';
 		html += '<div class="box_title">';
-			html += 'New Secret';
+			html += 'New Secret Vault';
 			html += '<div class="box_subtitle"><a href="#Secrets?sub=list">&laquo; Back to Secret List</a></div>';
 		html += '</div>';
 		html += '<div class="box_content">';
@@ -201,7 +203,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 		html += '<div class="box_buttons">';
 			html += '<div class="button phone_collapse" onClick="$P().cancel_secret_edit()"><i class="mdi mdi-close-circle-outline">&nbsp;</i><span>Cancel</span></div>';
 			// html += '<div class="button secondary phone_collapse" onClick="$P().do_export()"><i class="mdi mdi-cloud-download-outline">&nbsp;</i><span>Export...</span></div>';
-			html += '<div class="button primary" onClick="$P().do_new_secret()"><i class="mdi mdi-floppy">&nbsp;</i><span>Create Secret</span></div>';
+			html += '<div class="button primary" onClick="$P().do_new_secret()"><i class="mdi mdi-floppy">&nbsp;</i><span>Create Vault</span></div>';
 		html += '</div>'; // box_buttons
 		
 		html += '</div>'; // box
@@ -228,7 +230,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 		
 		this.secret = secret;
 		
-		Dialog.showProgress( 1.0, "Creating Secret..." );
+		Dialog.showProgress( 1.0, "Creating Secret Vault..." );
 		app.api.post( 'app/create_secret', { ...secret }, this.new_secret_finish.bind(this) );
 	}
 	
@@ -239,7 +241,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 		if (!this.active) return; // sanity
 		
 		Nav.go('Secrets?sub=list');
-		app.showMessage('success', "The new secret was created successfully.");
+		app.showMessage('success', "The new secret vault was created successfully.");
 	}
 	
 	gosub_edit(args) {
@@ -258,7 +260,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 		
 		if (!this.active) return; // sanity
 		
-		app.setWindowTitle( "Editing Secret \"" + (this.secret.title) + "\"" );
+		app.setWindowTitle( "Editing Secret Vault \"" + (this.secret.title) + "\"" );
 		
 		app.setHeaderNav([
 			{ icon: 'shield-lock', loc: '#Secrets?sub=list', title: 'Secrets' },
@@ -267,7 +269,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 		
 		html += '<div class="box">';
 		html += '<div class="box_title">';
-			html += 'Edit Secret Details';
+			html += 'Edit Secret Vault';
 			html += '<div class="box_subtitle"><a href="#Secrets?sub=list">&laquo; Back to Secret List</a></div>';
 		html += '</div>';
 		html += '<div class="box_content">';
@@ -309,7 +311,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 		
 		this.secret = secret;
 		
-		Dialog.showProgress( 1.0, "Saving Secret..." );
+		Dialog.showProgress( 1.0, "Saving Secret Vault..." );
 		app.api.post( 'app/update_secret', { ...secret }, this.save_secret_finish.bind(this) );
 	}
 	
@@ -325,16 +327,16 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 		
 		// Nav.go( 'Secrets?sub=list' );
 		this.triggerSaveComplete();
-		app.showMessage('success', "The secret was saved successfully.");
+		app.showMessage('success', "The secret vault was saved successfully.");
 	}
 	
 	show_delete_secret_dialog() {
 		// show dialog confirming secret delete action
 		var self = this;
 		
-		Dialog.confirmDanger( 'Delete Secret', "Are you sure you want to <b>permanently delete</b> the secret &ldquo;" + this.secret.title + "&rdquo;?  There is no way to undo this action.", ['trash-can', 'Delete'], function(result) {
+		Dialog.confirmDanger( 'Delete Secret Vault', "Are you sure you want to <b>permanently delete</b> the secret vault &ldquo;" + this.secret.title + "&rdquo;?  There is no way to undo this action.", ['trash-can', 'Delete'], function(result) {
 			if (result) {
-				Dialog.showProgress( 1.0, "Deleting Secret..." );
+				Dialog.showProgress( 1.0, "Deleting Secret Vault..." );
 				app.api.post( 'app/delete_secret', self.secret, self.delete_secret_finish.bind(self) );
 			}
 		} );
@@ -347,7 +349,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 		if (!this.active) return; // sanity
 		
 		Nav.go('Secrets?sub=list', 'force');
-		app.showMessage('success', "The secret &ldquo;" + this.secret.title + "&rdquo; was deleted successfully.");
+		app.showMessage('success', "The secret vault &ldquo;" + this.secret.title + "&rdquo; was deleted successfully.");
 	}
 	
 	get_secret_edit_html() {
@@ -358,7 +360,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 		if (secret.id) {
 			// secret id
 			html += this.getFormRow({
-				label: 'Secret ID:',
+				label: 'Secret Vault ID:',
 				content: this.getFormText({
 					id: 'fe_se_id',
 					class: 'monospace',
@@ -367,19 +369,19 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 					value: secret.id
 				}),
 				suffix: this.getFormIDCopier(),
-				caption: 'This is a unique ID for the secret, used by the API.  It cannot be changed.'
+				caption: 'This is a unique ID for the secret vault, used by the API.  It cannot be changed.'
 			});
 		}
 		
 		// title
 		html += this.getFormRow({
-			label: 'Secret Title:',
+			label: 'Secret Vault Title:',
 			content: this.getFormText({
 				id: 'fe_se_title',
 				spellcheck: 'false',
 				value: secret.title
 			}),
-			caption: 'Enter the title of the secret, for display purposes.'
+			caption: 'Enter the title of the secret vault, for display purposes.'
 		});
 		
 		// enabled
@@ -390,7 +392,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 				label: 'Secret Enabled',
 				checked: secret.enabled
 			}),
-			caption: 'Check this box to enable access to the secret.'
+			caption: 'Check this box to enable access to the secret vault.'
 		});
 		
 		// icon
@@ -404,7 +406,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 				value: secret.icon || '',
 				// 'data-shrinkwrap': 1
 			}),
-			caption: 'Optionally choose an icon for the secret.'
+			caption: 'Optionally choose an icon for the secret vault.'
 		});
 		
 		// events
@@ -420,7 +422,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 				'data-hold': 1,
 				'data-select-all': 1
 			}),
-			caption: 'Allow one or more events access to the secret.  Each event job will automatically receive the secret as environment variables when launched.'
+			caption: 'Allow one or more events access to the secret vault.  Each event job will automatically receive the secret as environment variables when launched.'
 		});
 		
 		// categories
@@ -436,7 +438,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 				'data-hold': 1,
 				'data-select-all': 1
 			}),
-			caption: 'Allow one or more categories access to the secret.  All events assigned to the selected categories will receive the secret when launched.'
+			caption: 'Allow one or more categories access to the secret vault.  All events assigned to the selected categories will receive the secret when launched.'
 		});
 		
 		// plugins
@@ -452,7 +454,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 				'data-hold': 1,
 				'data-select-all': 1
 			}),
-			caption: 'Allow one or more plugins access to the secret.  Plugins will automatically receive the secret as environment variables when launched.'
+			caption: 'Allow one or more plugins access to the secret vault.  Plugins will automatically receive the secret as environment variables when launched.'
 		});
 		
 		// web hooks
@@ -468,7 +470,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 				'data-hold': 1,
 				'data-select-all': 1
 			}),
-			caption: 'Allow one or more web hooks access to the secret.  Web hooks can expand secrets using the `{{ secrets.VAR_NAME }}` syntax.'
+			caption: 'Allow one or more web hooks access to the secret vault.  Web hooks can expand secrets using the `{{ secrets.VAR_NAME }}` syntax.'
 		});
 		
 		// data
@@ -486,7 +488,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 				rows: 5,
 				value: secret.notes
 			}),
-			caption: 'Optionally enter notes for the secret, for your own internal use.'
+			caption: 'Optionally enter notes for the secret vault, for your own internal use.'
 		});
 		
 		return html;
@@ -560,10 +562,10 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 		var self = this;
 		if (!this.secret.id) return; // sanity
 		
-		Dialog.confirmDanger( 'Decrypt Secret', "Are you sure you want to decrypt the secret for editing?  This will log a secret access event in the system activity log, tagged with your username.", ['shield-key-outline', 'Decrypt'], function(result) {
+		Dialog.confirmDanger( 'Decrypt Secret Vault', "Are you sure you want to decrypt the secret vault for editing?  This will log a secret access event in the system activity log, tagged with your username.", ['shield-key-outline', 'Decrypt'], function(result) {
 			if (!result) return;
 			app.clearError();
-			Dialog.showProgress( 1.0, "Decrypting Secret..." );
+			Dialog.showProgress( 1.0, "Decrypting Secret Vault..." );
 			
 			app.api.post( 'app/decrypt_secret', { id: self.secret.id }, function(resp) {
 				Dialog.hideProgress();
@@ -673,7 +675,7 @@ Page.Secrets = class Secrets extends Page.PageUtils {
 		if (this.fields) secret.fields = this.fields; // edit mode
 		
 		if (!secret.title.length) {
-			return app.badField('#fe_se_title', "Please enter a title for the secret.");
+			return app.badField('#fe_se_title', "Please enter a title for the secret vault.");
 		}
 		
 		return secret;
