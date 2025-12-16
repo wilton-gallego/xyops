@@ -4996,7 +4996,7 @@ Notes:
 POST /api/app/admin_delete_data/v1
 ```
 
-Permanently delete selected data in bulk. Admin only. Runs as an internal job and compiles a report with counts and any errors/warnings.
+Permanently delete selected data in bulk. Admin only. Runs as an internal job in the background, and compiles a report with counts and any errors/warnings.  If the delete request was sent in by a user, the report is sent via email to the user's email address.
 
 Parameters:
 
@@ -5013,12 +5013,14 @@ Example request:
 Example response:
 
 ```json
-{ "code": 0 }
+{ "code": 0, "id": "imj97z8isl3bqvas" }
 ```
+
+In addition to the [Standard Response Format](#standard-response-format), this includes an `id` property, which is an internal job ID (the bulk deletion happens asynchronously in the background).  To track the progress of the job, poll the [get_internal_jobs](#get_internal_jobs) API.
 
 Notes:
 
-- Consider stopping or pausing jobs before deletion. The scheduler is not automatically paused for deletions.
+- The scheduler is automatically paused for deletions.
 - Some types perform deep cleanup first (e.g., `users` removes avatars and security logs; bucket delete types remove data and files before the `global/buckets` list is altered).
 
 ### admin_logout_all
