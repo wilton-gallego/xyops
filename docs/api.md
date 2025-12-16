@@ -4728,6 +4728,39 @@ Example response:
 
 All updates are audited in the activity log as `state_update` transactions.
 
+### get_internal_jobs
+
+```
+GET /api/app/get_internal_jobs/v1
+```
+
+Get all currently running internal jobs.  Admin only.
+
+No input parameters.
+
+Example response:
+
+```json
+{
+	"code": 0,
+	"rows": [
+		{
+			"title": "Test job that does nothing",
+			"username": "admin",
+			"type": "maint",
+			"id": "imj961vgn1eech2w",
+			"started": 1765924835.207,
+			"progress": 0.5
+		}
+	],
+	"list": {
+		"length": 1
+	}
+}
+```
+
+In addition to the [Standard Response Format](#standard-response-format), this includes a `jobs` object with a property for each running internal job.  The sub-objects will contain information about each running internal job, including but not limited to: `id` (unique alphanumeric ID for the job), `progress` (0.0 to 1.0), `type` (maintenance, database, etc.), `title`, `username`, `started` (epoch), and also job-specific properties.
+
 ### test_internal_job
 
 ```
@@ -4736,7 +4769,7 @@ POST /api/app/test_internal_job/v1
 
 Create a dummy internal job that runs for ~60 seconds and reports progress. Admin only. This is intended to test the Internal System Jobs UI and notification mechanisms.
 
-No input parameters.
+This API accepts a single `duration` parameter, which can be set to a custom amount of seconds.
 
 Example response:
 
