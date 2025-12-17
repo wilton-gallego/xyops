@@ -4849,8 +4849,10 @@ No input parameters. Returns immediately while maintenance continues in the back
 Example response:
 
 ```json
-{ "code": 0 }
+{ "code": 0, "id": "imj97z8isl3bqvas" }
 ```
+
+In addition to the [Standard Response Format](#standard-response-format), this includes an `id` property, which is an internal job ID (the maintenance runs asynchronously in the background).  To track the progress of the job, poll the [get_internal_jobs](#get_internal_jobs) API.
 
 ### admin_run_optimization
 
@@ -4865,8 +4867,10 @@ No input parameters. On success, optimization runs as an internal job and a deta
 Example response:
 
 ```json
-{ "code": 0 }
+{ "code": 0, "id": "imj97z8isl3bqvas" }
 ```
+
+In addition to the [Standard Response Format](#standard-response-format), this includes an `id` property, which is an internal job ID (the optimization runs asynchronously in the background).  To track the progress of the job, poll the [get_internal_jobs](#get_internal_jobs) API.
 
 ### admin_reset_daily_stats
 
