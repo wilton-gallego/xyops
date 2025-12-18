@@ -1475,6 +1475,16 @@ Page.Job = class Job extends Page.PageUtils {
 		// we're only interested in actions that actually fired (and aren't hidden)
 		var actions = this.actions = (job.actions || []).filter( function(action) { return !!(action.date && !action.hidden); } );
 		
+		// for workflows, some actions may be 'orphaned' and not attached to any sub-job
+		if (workflow && workflow.state && workflow.nodes) {
+			find_objects( workflow.nodes, { type: 'action' } ).forEach( function(node) {
+				var state = workflow.state[node.id];
+				if (!state || !state.date) return;
+				state.source = 'workflow';
+				actions.push( state );
+			} );
+		}
+		
 		// decorate actions with idx, for linking
 		actions.forEach( function(action, idx) { action.idx = idx; } );
 		
