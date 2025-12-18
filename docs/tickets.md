@@ -104,11 +104,106 @@ Any user with the [edit_tickets](privileges.md#edit_tickets) privilege can add c
 - **Overdue notices**: After due date has passed, daily overdue emails are sent to assignees only.
 
 
-## Searching and Presets
+## Searching
 
-The Tickets page includes a search interface with query filters (text, type, status, assignees, tags, date ranges) and sorting. You can save frequent searches as presets in the UI (e.g., "My Inbox", "Overdue Tickets", "Severity 1"). Presets appear in the sidebar for quick access.
+To perform a ticket search, click on ticket search preset links in the sidebar, e.g. "**All Tickets**".  Then, enter one or more words into the search field, and hit enter (or click the **Search** button).  By default the ticket subject and body text are searched.  Searches are not case-sensitive.  If you enter multiple words, they all must be found in the ticket for it to be included in the search results.  However, the words don't necessarily have to appear in order.  For example, consider this search query:
 
-Programmatic searches are available via [search_tickets](api.md#search_tickets) (supports pagination and compact responses).
+```
+zip targeting
+```
+
+This would find any tickets that contained both words (`zip` and `targeting`), but they do not have to appear next to together.  They each can be anywhere in the ticket.  If you want to match an exact phrase, surround it with "double-quotes", like this:
+
+```
+"zip targeting"
+```
+
+This would only show messages that contained the *exact phrase* in quotes, i.e. the two words in sequence.
+
+### Negative Matches
+
+You can augment a search so that it *excludes* certain words or phrases.  To do this, prefix the negative words or phrases with a hyphen (`-`).  Example:
+
+```
+"zip targeting" -birds -cats -frogs
+```
+
+This would find messages that contain the exact phrase "zip targeting", but **not** the words `birds`, `cats` or `frogs`.  Note that negative words can only take away from an existing search result, so you need to start with some positive (normal matching) words.
+
+### OR Matches
+
+To find messages that contain any of a set of words (known as an "OR" match), separate them by pipe (`|`) characters.  Example:
+
+```
+campaign | memory | performance
+```
+
+This would find tickets that contain **any** of the specified words.  Note that you cannot combine an OR and an AND search in the same search query, so it's either one or the other (unless you use [PxQL](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#pxql-queries)).
+
+### Search Options
+
+You can search more than just the ticket text.  Click the "**Options**" button to reveal several drop-down menus to narrow your search, using criteria such as type, assignee, tags, date range, and more.  You can also use a GitHub-style syntax to customize your search inside the query text box, by specifying one or more field IDs followed by a colon.  Here is an example:
+
+```
+subject:yum status:open created:>=2020-01-01
+```
+
+This would search for all open tickets that contain the word "yum" specifically in their subject line, and were created in or after the year 2020.  Here is a list of all the fields you can use to narrow your search:
+
+| Field ID | Description |
+|----------|-------------|
+| `subject` | Search the ticket subject line, e.g. `subject:yum`. |
+| `body` | Search the ticket body text (which also includes the subject), e.g. `body:memory usage` (this is the default search field if none are specified). |
+| `changes` | Search the ticket changes (i.e. comments and field changes), e.g. `changes:rolled`. |
+| `status` | Search the ticket status field, e.g. `status:open` or `status:closed`. |
+| `username` | Search the ticket author, e.g. `username:admin`. |
+| `assignees` | Search the ticket assignees, e.g. `assignees:admin`. |
+| `cc` | Search the ticket carbon-copy list, e.g. `cc:admin`. |
+| `type` | Search the ticket type ID, e.g. `type:issue`. |
+| `category` | Search the ticket category, e.g. `category:prod`. |
+| `tags` | Search the ticket tags, e.g. `tags:important`. |
+| `created` | Search the ticket creation date, e.g. `created:>2020-02-01`.  This is a date field which supports ranges.  See [Simple Queries](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#simple-queries) for details. |
+| `due` | Search the ticket due date, e.g. `due:<today`.  This is a date field which supports ranges.  See [Simple Queries](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#simple-queries) for details. |
+| `num` | Search the ticket number, e.g. `num:>5000`.  This is an integer number field which supports ranges.  See [Simple Queries](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#simple-queries) for details. |
+
+If you specify multiple fields, they are matched using logical AND.  You can, however, specify multiple values inside each field using a pipe (|) character for an inner logical OR match.  Example:
+
+```
+status:open|closed tags:important
+```
+
+If you need more complex queries, consider using [PxQL](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#pxql-queries) syntax, which is fully supported.
+
+### Search Examples
+
+Here are a few search query examples you might find useful:
+
+| Name | Query |
+|------|-------|
+| All tickets | `*` |
+| All issues | `type:issue` |
+| All non-important | `num:>0 tags:-important` |
+| All overdue tickets | `status:open due:<today` |
+| Created in date range | `created:2021/02/01..2021/03/01` |
+| Open for N days | `status:open created:<2021/02/01` |
+| Open and important | `status:open tags:important` |
+| Ticket number range | `num:>=5000 num:<6000` |
+| Search only subjects | `subject:zip targeting` |
+| Search only comments | `changes:thank you` |
+
+### Search Presets
+
+Once you have your search working how you want it, you can "save" it to your account as a search preset.  Saved presets will appear in the sidebar under "**Ticket Searches**", so you can get back to them with one single click, and see updated results.
+
+To save a search query, click on the "**Save Preset**" button, and give it a name.  This is then saved to your user account, so it will still be there if you log out, and log back in later, or on a different device.
+
+To edit a search preset, click on the preset from the sidebar, make any changes you want, then click the "**Edit Preset**" button, then the "**Save Changes**" button.  To delete a search preset, click on it from the sidebar, then click the "**Delete Preset**" button.
+
+### Search API
+
+Programmatic searches are available via the [search_tickets](api.md#search_tickets) API (supports pagination and compact responses).
+
+
 
 
 ## Tips and Patterns

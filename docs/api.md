@@ -2919,6 +2919,8 @@ Parameters:
 | `sort_dir` | Number | Optional. Sort direction: `1` for ascending or `-1` for descending. Defaults to `-1`. |
 | `verbose` | Boolean | Optional. If `true`, include verbose job fields (`actions`, `activity`, `input`, `files`, etc.). Defaults to `false` (i.e. these are pruned). |
 
+For formatting the `query` you can use a GitHub-style [simple query format](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#simple-queries), or the more advanced [PxQL format](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#pxql-queries).  See the [Jobs Database Table](db.dm#jobs) schema for the available columns you can search.
+
 Example response:
 
 ```json
@@ -2960,6 +2962,8 @@ Parameters:
 | `sort_by` | String | Optional. Field to sort by. Defaults to `_id`. |
 | `sort_dir` | Number | Optional. Sort direction: `1` for ascending or `-1` for descending. Defaults to `-1`. |
 
+For formatting the `query` you can use a GitHub-style [simple query format](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#simple-queries), or the more advanced [PxQL format](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#pxql-queries).  See the [Servers Database Table](db.dm#servers) schema for the available columns you can search.
+
 Example response:
 
 ```json
@@ -2971,35 +2975,6 @@ Example response:
 ```
 
 In addition to the [Standard Response Format](#standard-response-format), this will include a `rows` array containing [Server](data.md#server) records, and a `list` object containing list metadata.
-
-### get_server_summaries
-
-```
-GET /api/app/get_server_summaries/v1
-```
-
-Fetch field summaries across all indexed servers (e.g., OS and CPU distributions). Requires a valid user session or API Key.
-
-No input parameters.
-
-Example response:
-
-```json
-{
-    "code": 0,
-    "summaries": {
-        "os_platform": { /* value → count map */ },
-        "os_distro": { /* value → count map */ },
-        "os_release": { /* value → count map */ },
-        "os_arch": { /* value → count map */ },
-        "cpu_virt": { /* value → count map */ },
-        "cpu_brand": { /* value → count map */ },
-        "cpu_cores": { /* value → count map */ }
-    }
-}
-```
-
-In addition to the [Standard Response Format](#standard-response-format), this will include a `summaries` object keyed by field ID, each containing a value-to-count map for that field.
 
 ### search_alerts
 
@@ -3018,6 +2993,8 @@ Parameters:
 | `limit` | Number | Optional. Number of rows to return. Defaults to `1`. |
 | `sort_by` | String | Optional. Field to sort by. Defaults to `_id`. |
 | `sort_dir` | Number | Optional. Sort direction: `1` for ascending or `-1` for descending. Defaults to `-1`. |
+
+For formatting the `query` you can use a GitHub-style [simple query format](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#simple-queries), or the more advanced [PxQL format](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#pxql-queries).  See the [Alerts Database Table](db.dm#alerts) schema for the available columns you can search.
 
 Example response:
 
@@ -3050,6 +3027,8 @@ Parameters:
 | `sort_dir` | Number | Optional. Sort direction: `1` for ascending or `-1` for descending. Defaults to `-1`. |
 | `verbose` | Boolean | Optional. If `true`, include heavy nested fields (e.g., `data.processes`, `data.mounts`, group keys). Defaults to `false` (these are pruned). |
 
+For formatting the `query` you can use a GitHub-style [simple query format](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#simple-queries), or the more advanced [PxQL format](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#pxql-queries).  See the [Snapshots Database Table](db.dm#snapshots) schema for the available columns you can search.
+
 Example response:
 
 ```json
@@ -3074,12 +3053,16 @@ Parameters:
 
 | Property Name | Type | Description |
 |---------------|------|-------------|
-| `query` | String | **(Required)** [Unbase-style search query](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#simple-queries). |
+| `query` | String | Optional. [Unbase-style search query](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#simple-queries). Defaults to `*`. |
 | `offset` | Number | Optional. Zero-based row offset for pagination. Defaults to `0`. |
 | `limit` | Number | Optional. Number of rows to return. Defaults to `1`. |
 | `sort_by` | String | Optional. Field to sort by. Defaults to `_id`. |
 | `sort_dir` | Number | Optional. Sort direction: `1` for ascending or `-1` for descending. Defaults to `-1`. |
 | `compact` | Boolean | Optional. If `true` (or `1`), omit `body` and replace `changes` with its count for lighter payloads. |
+
+For formatting the `query` you can use a GitHub-style [simple query format](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#simple-queries), or the more advanced [PxQL format](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#pxql-queries).  See the [Tickets Database Table](db.dm#tickets) schema for the available columns you can search.
+
+See [Tickets → Searching](tickets.md#searching) for search query examples.
 
 Example response (compact):
 
@@ -3112,6 +3095,8 @@ Parameters:
 | `limit` | Number | Optional. Number of rows to return. Defaults to `1`. |
 | `sort_by` | String | Optional. Field to sort by. Defaults to `_id`. |
 | `sort_dir` | Number | Optional. Sort direction: `1` for ascending or `-1` for descending. Defaults to `-1`. |
+
+For formatting the `query` you can use a GitHub-style [simple query format](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#simple-queries), or the more advanced [PxQL format](https://github.com/jhuckaby/pixl-server-storage/blob/master/docs/Indexer.md#pxql-queries).  See the [Activity Database Table](db.dm#activity) schema for the available columns you can search.
 
 Example response:
 
@@ -3448,6 +3433,35 @@ Example response:
 ## Servers
 
 Server APIs can list active servers, fetch a server, update server metadata, delete a server, watch for changes, and trigger snapshots. Server data powers monitoring dashboards and routing. Editing or destructive operations require admin privileges; read operations require a valid session or API Key.
+
+### get_server_summaries
+
+```
+GET /api/app/get_server_summaries/v1
+```
+
+Fetch field summaries across all indexed servers (e.g., OS and CPU distributions). Requires a valid user session or API Key.
+
+No input parameters.
+
+Example response:
+
+```json
+{
+    "code": 0,
+    "summaries": {
+        "os_platform": { /* value → count map */ },
+        "os_distro": { /* value → count map */ },
+        "os_release": { /* value → count map */ },
+        "os_arch": { /* value → count map */ },
+        "cpu_virt": { /* value → count map */ },
+        "cpu_brand": { /* value → count map */ },
+        "cpu_cores": { /* value → count map */ }
+    }
+}
+```
+
+In addition to the [Standard Response Format](#standard-response-format), this will include a `summaries` object keyed by field ID, each containing a value-to-count map for that field.
 
 ### get_active_servers
 
