@@ -1,6 +1,41 @@
 const assert = require('node:assert/strict');
 const Tools = require('pixl-tools');
 
+// helper: sleep
+async function sleep(ms) {
+	await new Promise(res => setTimeout(res, ms));
+}
+
+// helper: poll internal alerts until at least one is present
+async function waitForActiveAlerts(ctx, opts = {}) {
+	const timeout = opts.timeout || 20000;
+	const interval = opts.interval || 250;
+	const start = performance.now();
+	
+	while (performance.now() - start < timeout) {
+		if (Tools.numKeys(ctx.xy.activeAlerts)) return;
+		await sleep(interval);
+	}
+	
+	throw new Error('Timed out waiting for active alerts');
+}
+
+// helper: wait for db query to return at least one row
+async function waitForAlertsDatabase(ctx, opts = {}) {
+	const timeout = opts.timeout || 20000;
+	const interval = opts.interval || 250;
+	const start = performance.now();
+	
+	while (performance.now() - start < timeout) {
+		let { data } = await ctx.request.json(ctx.api_url + '/app/search_alerts/v1', { query: opts.query, offset: 0, limit: 1 });
+		if (data.code !== 0) throw new Error('search_alerts failed');
+		if (data.rows.length > 0) return data.rows;
+		await sleep(interval);
+	}
+	
+	throw new Error('Timed out waiting for alert db to show rows');
+}
+
 exports.tests = [
 	
 	async function test_api_get_alerts(test) {
@@ -164,6 +199,74 @@ exports.tests = [
 		} );
 		assert.ok( !!data.code, "expected error for missing alert" );
 		delete this.alert_id;
+	},
+	
+	async function test_api_create_alert_for_firing(test) {
+		// create new alert that will always fire
+		let { data } = await this.request.json( this.api_url + '/app/create_alert/v1', {
+			"title": "Server Has Memory (LOL)",
+			"expression": "memory.total > 0",
+			"message": "Server has non-zero total memory: {{bytes(memory.total)}}",
+			"groups": [],
+			"email": "",
+			"web_hook": "",
+			"monitor_id": "",
+			"enabled": true,
+			"samples": 1,
+			"notes": ""
+		});
+		assert.ok( data.code === 0, "successful api response" );
+		assert.ok( data.alert, "expected alert in response" );
+		assert.ok( data.alert.id, "expected alert.id in response" );
+		
+		// save our new alert id for later
+		this.alert_id = data.alert.id;
+	},
+	
+	async function test_alert_fire(test) {
+		// trigger an alert to fire (here be dragons)
+		
+		// first, clear out our server's last_time_code, so it doesn't block the duplicate monitoring submission
+		let server = this.xy.servers['satunit1'];
+		assert.ok( !!server, "Found our server object" );
+		server.last_time_code = 0;
+		
+		// next, clear out the server hourly timeline, again so we don't get dupe-blocked
+		var timeline_key = 'timeline/' + server.id + '/hourly';
+		await new Promise(res => {
+			this.xy.storage.listDelete( timeline_key, false, res );
+		});
+		
+		// next, trigger our mock satellite to send in a minute monitoring data packet
+		this.satellite.runMonitors({});
+		
+		// wait for alert to show up in memory
+		await waitForActiveAlerts(this);
+		
+		assert.ok( Tools.numKeys(this.xy.activeAlerts) == 1, "only one alert is expected" );
+		
+		let alert = Object.values(this.xy.activeAlerts)[0];
+		assert.ok( alert.alert == this.alert_id, "expected alert id" );
+		
+		// "exp": "memory.total > 0",
+		assert.ok( !!alert.exp.match(/memory\.total/), "expected expression pattern in alert" );
+		
+		// "message": "Server has non-zero total memory: 906.2 MB",
+		assert.ok( !!alert.message.match(/total\s+memory\:\s+(\d+)/), "expected message pattern in alert" );
+		
+		// now wait for alert to show up in db (async)
+		let rows = await waitForAlertsDatabase(this, { query: '*' });
+		
+		assert.ok( rows.length > 0, "expected rows to be non-empty" );
+		let db_alert = rows[0];
+		
+		assert.ok( db_alert.alert == this.alert_id, "expected alert id" );
+		
+		// "exp": "memory.total > 0",
+		assert.ok( !!db_alert.exp.match(/memory\.total/), "expected expression pattern in alert" );
+		
+		// "message": "Server has non-zero total memory: 906.2 MB",
+		assert.ok( !!db_alert.message.match(/total\s+memory\:\s+(\d+)/), "expected message pattern in alert" );
 	}
 	
 ];
