@@ -2887,13 +2887,13 @@ Each trigger has a `type` property which describes its behavior.  The different 
 |---------|-------|-------------|
 | `manual` | **Manual Run** | Allow the event to be executed manually (in the UI or API). |
 | `schedule` | **Schedule** | Set a repeating schedule to run the event (hourly, daily, etc.).  See [Schedule Rules](#schedule-rules) below. |
-| `interval` | **Interval** | Run the event on a repeating interval, given a starting date/time. |
+| `interval` | **Interval** | Run the event on a repeating interval, given a starting date/time.  See [Intervals](#intervals) below. |
 | `single` | **Single Shot** | Set a single future exact date/time to run.  Requires an additional `epoch` property, set to the [Unix timestamp](https://en.wikipedia.org/wiki/Unix_time) at which to run. |
 | `catchup` | **Catch-Up** | Ensure that *every* scheduled job runs, even if it has to run late. |
 | `range` | **Range** | Set a starting and/or ending date for a repeating event.  Requires additional `start` and/or `end` properties, set to [Unix timestamps](https://en.wikipedia.org/wiki/Unix_time). |
 | `blackout` | **Blackout** | Set a blackout date/time range when the event *cannot* run.  Requires additional `start` and `end` properties, set to [Unix timestamps](https://en.wikipedia.org/wiki/Unix_time). |
 | `delay` | **Delay** | Set an optional starting delay for all scheduled jobs.  Requires an additional `duration` property, set to the number of seconds to delay each job by. |
-| `precision` | **Precision** | Set an optional list of exact seconds to fire jobs within the current scheduled minute. |
+| `precision` | **Precision** | Set an optional array of exact `seconds` to fire jobs within the current scheduled minute. |
 | `plugin` | **Plugin** | Custom scheduler Plugin (user-defined).  Requires an additional `plugin_id` property, as well as a `params` object, for Plugin-defined configuration. |
 
 ##### Schedule Rules
@@ -2902,7 +2902,7 @@ The `schedule` type describes a repeating event (when and how frequent it should
 
 For example, an event with this trigger object would run once per hour, on the hour:
 
-```js
+```json
 {
 	"type": "schedule",
 	"enabled": true,
@@ -2914,7 +2914,7 @@ It essentially means every year, every month, every day, every hour, but only on
 
 For another example, this would run twice daily, at 4:30 AM and 4:30 PM:
 
-```js
+```json
 {
 	"type": "schedule",
 	"enabled": true,
@@ -2925,7 +2925,7 @@ For another example, this would run twice daily, at 4:30 AM and 4:30 PM:
 
 For a more complex example, this would run only in year 2023, from March to May, on the 1st and 15th of the month (but only if also weekdays), at 6AM to 10AM, and on the :15 and :45 of those hours:
 
-```js
+```json
 {
 	"type": "schedule",
 	"enabled": true,
@@ -2949,6 +2949,27 @@ Here is a list of all the `schedule` type trigger object properties and their de
 | `hours` | 0 - 23 | One or more hours in 24-hour time, from 0 to 23. |
 | `minutes` | 0 - 59 | One or more minutes, from 0 to 59. |
 | `timezone` | n/a | Optional timezone to evaluate the schedule entry in.  Defaults to the conductor server timezone. |
+
+##### Intervals
+
+The interval trigger type requires a `start` (epoch seconds) and a `duration` (the interval in seconds).  Example:
+
+```json
+{
+	"type": "interval",
+	"enabled": true,
+	"start": 1766111340,
+	"duration": 90
+}
+```
+
+That example `start` time is 2025/12/18 18:29:00 Pacific, so it would run the event on that exact timestamp, and then again every 90 seconds afterwards.  Examples:
+
+- 2025/12/18 18:29:00 Pacific
+- 2025/12/18 18:30:30 Pacific
+- 2025/12/18 18:32:00 Pacific
+- 2025/12/18 18:33:30 Pacific
+- ...and so on.
 
 ### Workflow
 
