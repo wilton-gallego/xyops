@@ -189,6 +189,19 @@ body.dark .button.delete {
 	animation-fill-mode: forwards;
 }
 
+.button.selected {
+	/* top: -1px; */
+	color: var(--theme-color);
+	/* background-color: var(--box-background-color); */
+	border: 1px solid var(--theme-color-half) !important;
+	/* box-shadow: 0px 2px 1px var(--shadow-color); */
+	opacity: 1.0;
+}
+.button.selected:hover {
+	top: 0px;
+	cursor: default;
+}
+
 #d_logo_overlay {
 	position: absolute;
 	top: 0;
@@ -1145,6 +1158,9 @@ div.td_big {
 }
 .data_grid > ul.grid_row.error > div {
 	background: color-mix(in srgb, var(--red) 20%, transparent) !important;
+}
+.data_grid > ul.grid_row.highlight > div {
+	background: color-mix(in srgb, var(--theme-color-highlight) 20%, transparent) !important;
 }
 
 .data_grid > ul.grid_row.suspended > div {
