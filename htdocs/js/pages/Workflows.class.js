@@ -2224,38 +2224,30 @@ Page.Workflows = class Workflows extends Page.Events {
 		// body
 		html += this.getFormRow({
 			id: 'd_wfd_body',
-			label: 'Note Content:',
 			content: this.getFormTextarea({
 				id: 'fe_wfd_body',
 				rows: 1,
 				value: node.data.body || '',
 				style: 'display:none'
-			}) + `<div class="button small secondary" onClick="$P().edit_wfd_body()"><i class="mdi mdi-note-edit-outline">&nbsp;</i>Edit Note Content...</div>`,
-			caption: 'Enter the note body text using [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/) syntax.'
+			}) + `<div class="button small secondary" onClick="$P().edit_wfd_body()"><i class="mdi mdi-note-edit-outline">&nbsp;</i>${config.ui.buttons.wfd_edit_note_content}</div>`
 		});
 		
 		// wide
 		html += this.getFormRow({
 			id: 'd_wfd_wide',
-			label: 'Size:',
 			content: this.getFormCheckbox({
 				id: 'fe_wfd_wide',
-				label: 'Double-Wide',
 				checked: node.data.wide
-			}),
-			caption: 'Optionally give the note extra horizontal space.'
+			})
 		});
 		
 		// show
 		html += this.getFormRow({
 			id: 'd_wfd_show',
-			label: 'Visibility:',
 			content: this.getFormCheckbox({
 				id: 'fe_wfd_show',
-				label: 'Show During Job Runs',
 				checked: node.data.show
-			}),
-			caption: 'Optionally show the note during workflow job runs.'
+			})
 		});
 		
 		html += '</div>';
