@@ -1912,6 +1912,16 @@ body.dark .CodeMirror-selected, body.dark .CodeMirror-focused .CodeMirror-select
 
 .cm-mustache { color: var(--cyan); font-weight: bold; text-decoration: underline; }
 
+.cm-error-line {
+	background-color: color-mix(in srgb, var(--red) 30%, transparent);
+}
+
+.CodeMirror-gutters {
+	/* background: transparent !important; */
+	background: rgba(120, 130, 140, 0.1) !important;
+	border: none !important;
+}
+
 /* .CodeMirror-wrap {
 	box-shadow: 0px 0px 1px var(--label-color);
 } */
