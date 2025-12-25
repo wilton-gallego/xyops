@@ -157,10 +157,10 @@ Page.Events = class Events extends Page.PageUtils {
 							options: [
 								['', 'Any Trigger'], 
 								{ id: 'manual', title: 'Manual', icon: 'run-fast' },
+								{ id: 'magic', title: 'Magic Link', icon: 'link-variant' },
 								{ id: 'schedule', title: 'Schedule', icon: 'update' },
 								{ id: 'single', title: "Single Shot", icon: 'alarm-check' },
 								{ id: 'interval', title: "Interval", icon: 'timer-sand' },
-								// { id: 'continuous', title: "Continuous", icon: 'all-inclusive' },
 								{ id: 'catchup', title: "Catch-Up", icon: 'calendar-refresh-outline' },
 								{ id: 'range', title: "Range", icon: 'calendar-range-outline' },
 								{ id: 'blackout', title: "Blackout", icon: 'circle' },
@@ -931,7 +931,7 @@ Page.Events = class Events extends Page.PageUtils {
 		// get trigger details in compact table (read-only)
 		var self = this;
 		var html = '';
-		var cols = ['Type', 'Description'];
+		var cols = ['Description', 'Type'];
 		
 		html += '<div class="box_unit_title">Triggers</div>';
 		
@@ -951,8 +951,8 @@ Page.Events = class Events extends Page.PageUtils {
 			var { nice_icon, nice_type, nice_desc } = self.getTriggerDisplayArgs(item);
 			
 			var tds = [
+				'<div class="nowrap ellip">' + nice_desc + '</div>',
 				'<div class="td_big nowrap">' + nice_icon + nice_type + '</div>',
-				'<div class="nowrap ellip">' + nice_desc + '</div>'
 			];
 			
 			if (!item.enabled) tds.className = 'disabled';
@@ -2585,12 +2585,13 @@ Page.Events = class Events extends Page.PageUtils {
 		// custom sort for display
 		return [].concat(
 			this.event.triggers.filter( function(row) { return row.type == 'manual'; } ),
+			this.event.triggers.filter( function(row) { return row.type == 'magic'; } ),
 			this.event.triggers.filter( function(row) { return row.type == 'schedule'; } ),
 			this.event.triggers.filter( function(row) { return row.type == 'single'; } ),
 			this.event.triggers.filter( function(row) { return row.type == 'interval'; } ),
 			this.event.triggers.filter( function(row) { return row.type == 'continuous'; } ),
 			this.event.triggers.filter( function(row) { return row.type == 'plugin'; } ),
-			this.event.triggers.filter( function(row) { return !(row.type || '').match(/^(schedule|continuous|interval|single|manual|plugin)$/); } )
+			this.event.triggers.filter( function(row) { return !(row.type || '').match(/^(schedule|continuous|interval|single|manual|magic|plugin)$/); } )
 		);
 	}
 	
@@ -2598,7 +2599,7 @@ Page.Events = class Events extends Page.PageUtils {
 		// get html for trigger table
 		var self = this;
 		var html = '';
-		var cols = ['<i class="mdi mdi-checkbox-marked-outline"></i>', 'Type', 'Description', 'Actions'];
+		var cols = ['<i class="mdi mdi-checkbox-marked-outline"></i>', 'Description', 'Type', 'Actions'];
 		var add_link = '<div class="button small secondary" onClick="$P().editTrigger(-1)"><i class="mdi mdi-plus-circle-outline">&nbsp;</i>New Trigger...</div>';
 		
 		if (!this.event.triggers.length) return add_link;
@@ -2629,8 +2630,8 @@ Page.Events = class Events extends Page.PageUtils {
 					checked: item.enabled,
 					onChange: '$P().toggleTriggerEnabled(this,' + idx + ')'
 				}) + '</div>',
-				'<div class="td_big nowrap">' + '<button class="link" onClick="$P().editTrigger('+idx+')">' + nice_icon + nice_type + '</button></div>',
-				'<div class="ellip">' + nice_desc + '</div>',
+				'<div class="td_big nowrap">' + '<button class="link" onClick="$P().editTrigger('+idx+')">' + nice_desc.replace(/\&nbsp\;/g, '') + '</button></div>',
+				'<div class="ellip nowrap">' + nice_icon + nice_type + '</div>',
 				'<span class="nowrap">' + actions.join(' | ') + '</span>'
 			];
 			
@@ -2875,6 +2876,52 @@ Page.Events = class Events extends Page.PageUtils {
 			content: 'When manual mode is enabled, users and API keys with applicable privileges can run the event on demand.'
 		});
 		
+		// magic link
+		html += this.getFormRow({
+			id: 'd_et_magic_desc',
+			label: 'Description:',
+			content: 'Magic Link allows you to run the event by simply requesting a special unique URL.  You can also host a landing page to collect user input parameters for the job.'
+		});
+		if (trigger.token) {
+			// existing token, just pass the hash through
+			html += this.getFormRow({
+				id: 'd_et_magic_token',
+				label: 'Magic Links:',
+				content: this.getFormText({
+					id: 'fe_et_magic_token',
+					value: trigger.token,
+					style: 'display:none'
+				}) + `(Links cannot be retrieved)`,
+				caption: 'The magic links were provided to you at trigger creation time, and they can no longer be retrieved (this is by design).  If you have lost the links, delete and recreate the magic link trigger.'
+			});
+		}
+		else {
+			// new token, create plain key for copying
+			html += this.getFormRow({
+				id: 'd_et_magic_token',
+				label: 'Magic Links:',
+				content: this.getFormText({
+					id: 'fe_et_magic_token',
+					value: get_unique_id(64),
+					style: 'display:none',
+					'data-plainkey': '1'
+				}) + `<div class="button small secondary" onClick="$P().copyMagicLink()"><i class="mdi mdi-link-variant-plus">&nbsp;</i>Copy Direct Link</div>` + 
+					`<div class="button small secondary" style="margin-left:15px;" onClick="$P().copyMagicPage()"><i class="mdi mdi-link-variant-plus">&nbsp;</i>Copy Landing Page Link</div>`,
+				caption: 'Click the buttons above to copy the magic links to your clipboard.  The direct link will run the job immediately upon request, whereas the landing page will present the user a form to input event parameters and files before running.  These links are **only provided once** so make sure to grab them now!'
+			});
+		}
+		html += this.getFormRow({
+			id: 'd_et_magic_body',
+			label: 'Landing Page:',
+			content: this.getFormTextarea({
+				id: 'fe_et_magic_body',
+				rows: 1,
+				value: trigger.body || '',
+				style: 'display:none'
+			}) + `<div class="button small secondary" onClick="$P().editMagicBody()"><i class="mdi mdi-text-box-edit-outline">&nbsp;</i>Edit Page Content...</div>`,
+			caption: 'Optionally provide custom content for the landing page, using [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).'
+		});
+		
 		// catch-up
 		html += this.getFormRow({
 			id: 'd_et_catchup_desc',
@@ -3111,7 +3158,7 @@ Page.Events = class Events extends Page.PageUtils {
 					trigger.duration = parseInt( $('#fe_et_interval').val() );
 					if (!trigger.duration) return app.badField('#fe_et_interval_val', "Please enter or select a non-zero interval time.");
 					
-					trigger.start = self.parseDateTZ( $('#fe_et_range_start').val(), self.getUserTimezone() ) || 0;
+					trigger.start = self.parseDateTZ( $('#fe_et_range_start').val(), self.getUserTimezone() ) || app.epoch;
 					if (!trigger.start) return app.badField('#fe_et_range_start', "Please enter a valid date/time when the interval should start.");
 					
 					if ((idx == -1) && trigger.enabled && find_object(self.event.triggers, { type: 'precision', enabled: true })) {
@@ -3133,6 +3180,14 @@ Page.Events = class Events extends Page.PageUtils {
 					if ((idx == -1) && trigger.enabled && find_object(self.event.triggers, { type: 'manual', enabled: true })) {
 						return app.doError("Sorry, you can only have one manual rule defined per event.");
 					}
+				break;
+				
+				case 'magic':
+					// magic link
+					if ($('#fe_et_magic_token').data('plainkey')) trigger.key = $('#fe_et_magic_token').val();
+					else trigger.token = $('#fe_et_magic_token').val();
+					
+					trigger.body = $('#fe_et_magic_body').val();
 				break;
 				
 				case 'catchup':
@@ -3288,6 +3343,12 @@ Page.Events = class Events extends Page.PageUtils {
 					$('#d_et_manual_desc').show();
 				break;
 				
+				case 'magic':
+					$('#d_et_magic_desc').show();
+					$('#d_et_magic_token').show();
+					$('#d_et_magic_body').show();
+				break;
+				
 				case 'catchup':
 					$('#d_et_catchup_desc').show();
 					$('#d_et_time_machine').show();
@@ -3357,6 +3418,30 @@ Page.Events = class Events extends Page.PageUtils {
 		// set time machine date/time to now
 		$('#fe_et_time_machine').val( this.formatDateISO( time_now(), this.getUserTimezone() ) );
 		this.triggerEditChange();
+	}
+	
+	copyMagicLink() {
+		// copy magic link (direct job run)
+		copyToClipboard( config.base_app_url + '/api/app/magic/v1/' + $('#fe_et_magic_token').val() );
+		app.showMessage('info', "The magic link was copied to your clipboard.");
+	}
+	
+	copyMagicPage() {
+		// copy link to magic landing page
+		copyToClipboard( config.base_app_url + '/api/app/form/v1/' + $('#fe_et_magic_token').val() );
+		app.showMessage('info', "The landing page link was copied to your clipboard.");
+	}
+	
+	editMagicBody() {
+		// edit magic link landing page body markdown
+		this.editCodeAuto({
+			title: "Edit Landing Page Content", 
+			code: $('#fe_et_magic_body').val(), 
+			format: 'gfm',
+			callback: function(new_value) {
+				$('#fe_et_magic_body').val( new_value );
+			}
+		});
 	}
 	
 	deleteTrigger(idx) {
