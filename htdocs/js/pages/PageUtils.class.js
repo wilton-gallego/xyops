@@ -4702,6 +4702,11 @@ Page.PageUtils = class PageUtils extends Page.Base {
 			} ); // api.post
 		}); // Dialog.confirm
 		
+		Dialog.onDragDrop = function(files) {
+			// files dropped on dialog
+			ZeroUpload.upload( files, {}, {} );
+		};
+		
 		Dialog.onHide = function() {
 			// cleanup
 			// FUTURE: If self.dialogFiles still exists here, delete in background (user canceled job)
@@ -4717,7 +4722,7 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		var self = this;
 		var html = '';
 		var settings = config.job_upload_settings;
-		var btn = '<div class="button small secondary" onClick="$P().uploadDialogFiles()"><i class="mdi mdi-cloud-upload-outline">&nbsp;</i>Upload Files...</div>';
+		var btn = '<div class="button small" onClick="$P().uploadDialogFiles()"><i class="mdi mdi-cloud-upload-outline">&nbsp;</i>Upload Files...</div>';
 		
 		this.dialogFiles = [];
 		
@@ -4760,13 +4765,13 @@ Page.PageUtils = class PageUtils extends Page.Base {
 			// update local copy
 			self.dialogFiles = self.dialogFiles.concat( data.files );
 			
-			var num_files = data.files.length;
+			var num_files = self.dialogFiles.length;
 			var total_size = 0;
 			
-			data.files.forEach( function(file) { total_size += file.size; } );
+			self.dialogFiles.forEach( function(file) { total_size += file.size; } );
 			
 			$('#d_dialog_uploader').html(
-				'<div class="button small secondary absorb" onClick="$P().uploadDialogFiles()">' + 
+				'<div class="button small loaded absorb" onClick="$P().uploadDialogFiles()">' + 
 					'<i class="mdi mdi-check-circle-outline">&nbsp;</i>' + commify(num_files) + ' ' + pluralize('file', num_files) + ' uploaded (' + get_text_from_bytes(total_size) + ')' + 
 				'</div>'
 			);

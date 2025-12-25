@@ -175,13 +175,13 @@ Page.Magic = class Magic extends Page.PageUtils {
 		}
 		
 		if (!this.files.length) {
-			this.div.find('#d_upload_btn').html( '<div class="button small secondary" onClick="$P().selectFiles()"><i class="mdi mdi-cloud-upload-outline">&nbsp;</i>Select Files...</div>' );
+			this.div.find('#d_upload_btn').html( '<div class="button small" onClick="$P().selectFiles()"><i class="mdi mdi-cloud-upload-outline">&nbsp;</i>Select Files...</div>' );
 			this.div.find('#btn_start > span').html('Start Job');
 			return;
 		}
 		
 		this.div.find('#d_upload_btn').html(
-			'<div class="button small secondary absorb" onClick="$P().selectFiles()">' + 
+			'<div class="button small loaded absorb" onClick="$P().selectFiles()">' + 
 				'<i class="mdi mdi-check-circle-outline">&nbsp;</i>' + commify(num_files) + ' ' + pluralize('file', num_files) + ' selected (' + get_text_from_bytes(total_size) + ')' + 
 			'</div>'
 		);

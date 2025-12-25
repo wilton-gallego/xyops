@@ -592,9 +592,12 @@ app.extend({
 				e.preventDefault();
 				e.stopPropagation();
 				
-				// allow CodeEditor to intercept drops first
+				// allow CodeEditor or Dialog to intercept drops first
 				if (CodeEditor.active && CodeEditor.onDragDrop) {
 					CodeEditor.onDragDrop( files );
+				}
+				else if (Dialog.active && Dialog.onDragDrop) {
+					Dialog.onDragDrop( files );
 				}
 				else if (app.page_manager && app.page_manager.current_page_id) {
 					// followed by the current page itself

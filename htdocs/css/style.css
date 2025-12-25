@@ -223,6 +223,16 @@ body.dark .button.delete {
 	cursor: default;
 }
 
+.button.loaded {
+	color: var(--theme-color);
+	border: 1px solid var(--theme-color-half);
+	opacity: 1.0;
+}
+.button.loaded:hover {
+	color: var(--theme-color-highlight);
+	border: 1px solid var(--theme-color);
+}
+
 #d_logo_overlay {
 	position: absolute;
 	top: 0;

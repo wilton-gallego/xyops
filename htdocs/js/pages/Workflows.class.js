@@ -1409,6 +1409,11 @@ Page.Workflows = class Workflows extends Page.Events {
 		
 		SingleSelect.init( $('#fe_ete_scope') );
 		
+		Dialog.onDragDrop = function(files) {
+			// files dropped on dialog
+			ZeroUpload.upload( files, {}, {} );
+		};
+		
 		Dialog.onHide = function() {
 			// cleanup
 			// FUTURE: If self.dialogFiles still exists here, delete in background (user canceled job)

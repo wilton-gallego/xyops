@@ -2114,6 +2114,11 @@ Page.Events = class Events extends Page.PageUtils {
 			Dialog.hide();
 		}); // Dialog.confirm
 		
+		Dialog.onDragDrop = function(files) {
+			// files dropped on dialog
+			ZeroUpload.upload( files, {}, {} );
+		};
+		
 		Dialog.onHide = function() {
 			// cleanup
 			// FUTURE: If self.dialogFiles still exists here, delete in background (user canceled job)
