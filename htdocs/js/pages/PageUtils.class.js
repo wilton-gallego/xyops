@@ -4515,6 +4515,13 @@ Page.PageUtils = class PageUtils extends Page.Base {
 				short_desc = "Manual Run";
 			break;
 			
+			case 'magic':
+				nice_icon = '<i class="mdi mdi-gesture-tap-button"></i>';
+				nice_type = 'On-Demand';
+				nice_desc = '<i class="mdi mdi-link-variant">&nbsp;</i>Magic Link';
+				short_desc = "Magic Link";
+			break;
+			
 			case 'catchup':
 				nice_icon = '<i class="mdi mdi-cog-outline"></i>';
 				nice_type = alt_type = 'Option';
@@ -4759,7 +4766,7 @@ Page.PageUtils = class PageUtils extends Page.Base {
 			data.files.forEach( function(file) { total_size += file.size; } );
 			
 			$('#d_dialog_uploader').html(
-				'<div class="button small secondary" onClick="$P().uploadDialogFiles()">' + 
+				'<div class="button small secondary absorb" onClick="$P().uploadDialogFiles()">' + 
 					'<i class="mdi mdi-check-circle-outline">&nbsp;</i>' + commify(num_files) + ' ' + pluralize('file', num_files) + ' uploaded (' + get_text_from_bytes(total_size) + ')' + 
 				'</div>'
 			);
