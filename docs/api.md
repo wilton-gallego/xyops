@@ -5421,3 +5421,42 @@ Example response:
   }
 }
 ```
+
+### config
+
+```
+GET /api/app/config/v1
+```
+
+This API is used to "bootstrap" the xyOps UI.  It returns an initial set of data as the page first loads.  It also triggers the front-end UI code to initialize and render the page.
+
+The response is a custom JavaScript function call that cannot be changed:
+
+```js
+app.receiveConfig({ code: 0, /* other data */ });
+```
+
+The data passed into the `app.receiveConfig` function will contain the following properties:
+
+| Property Name | Type | Description |
+|---------------|------|-------------|
+| `code` | Number | Zero for success, any other value for error. |
+| `version` | String | The current version of xyOps running on the conductor server. |
+| `epoch` | Number | The current Unix date/time on the conductor server. |
+| `port` | Number | The web server port currently being used by the UI. |
+| `config` | Object | The [client](config.md#client) configuration object, with various other bits merged in. |
+| `masters` | Array | An array of [Conductor](data.md#conductor) objects, one for each conductor server in the cluster. |
+
+### form_config
+
+```
+GET /api/app/form_config/v1/TOKEN
+```
+
+A special version of the [config](#config) API, made specifically for [Magic Link Triggers](triggers.md#magic-link), namely the landing page (see [form](#form)).  This API contains special instructions to load the magic landing page instead of the main xyOps UI, and it omits many of the verbose properties present in the [config](#config) API.
+
+The response is a custom JavaScript function call that cannot be changed:
+
+```js
+app.receiveConfig({ code: 0, /* other data */ });
+```
