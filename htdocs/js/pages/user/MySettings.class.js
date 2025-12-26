@@ -53,7 +53,7 @@ Page.MySettings = class MySettings extends Page.Base {
 				title: 'Select Language',
 				options: langs,
 				value: user.language || '',
-				onChange: '$P().update_date_time_preview()'
+				onChange: '$P().update_date_time_preview(true)'
 			}),
 			caption: 'Select your desired language for localizing dates and times.'
 		});
@@ -70,7 +70,7 @@ Page.MySettings = class MySettings extends Page.Base {
 				title: 'Select Region',
 				options: regs,
 				value: user.region || '',
-				onChange: '$P().update_date_time_preview()'
+				onChange: '$P().update_date_time_preview(true)'
 			}),
 			caption: 'Select your desired region for localizing dates and times.'
 		});
@@ -87,7 +87,7 @@ Page.MySettings = class MySettings extends Page.Base {
 				title: 'Select Timezone',
 				options: zones,
 				value: user.timezone || '',
-				onChange: '$P().update_date_time_preview()'
+				onChange: '$P().update_date_time_preview(true)'
 			}),
 			caption: 'Select your desired timezone for date and time display.'
 		});
@@ -104,7 +104,7 @@ Page.MySettings = class MySettings extends Page.Base {
 				title: 'Select Format',
 				options: nums,
 				value: user.num_format || '',
-				onChange: '$P().update_date_time_preview()'
+				onChange: '$P().update_date_time_preview(true)'
 			}),
 			caption: 'Select your desired numbering format for displaying digits in dates and times.'
 		});
@@ -117,7 +117,7 @@ Page.MySettings = class MySettings extends Page.Base {
 				title: 'Select Hour Cycle',
 				options: app.config.intl.hourCycles,
 				value: user.hour_cycle || '',
-				onChange: '$P().update_date_time_preview()'
+				onChange: '$P().update_date_time_preview(true)'
 			}),
 			caption: 'Select your desired hour cycle format for displaying hours of the day.'
 		});
@@ -466,7 +466,7 @@ Page.MySettings = class MySettings extends Page.Base {
 		app.updateAccessibility();
 	}
 	
-	update_date_time_preview() {
+	update_date_time_preview(do_save) {
 		// update date/time preview
 		var json = this.get_settings_form_json();
 		var ropts = Intl.DateTimeFormat().resolvedOptions();
@@ -490,7 +490,7 @@ Page.MySettings = class MySettings extends Page.Base {
 		};
 		
 		this.div.find('#d_ms_dt_preview').html( (new Date()).toLocaleString( opts.locale, opts ) );
-		this.saveChanges();
+		if (do_save) this.saveChanges();
 	}
 	
 	/* "global": {
