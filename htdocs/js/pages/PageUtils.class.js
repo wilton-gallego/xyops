@@ -395,10 +395,18 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		var title = 'Export ' + opts.name;
 		var html = '';
 		
+		// make copy so we can prune unnecessary props
+		opts.data = deep_copy_object(opts.data);
+		delete opts.data.created;
+		delete opts.data.modified;
+		delete opts.data.revision;
+		delete opts.data.sort_order;
+		delete opts.data.username;
+		
 		this._temp_export = opts;
 		
 		var md = '';
-		md += `Please select how you would like to export the ${opts.name}'s JSON data.` + "\n";
+		md += `Please choose how you would like to export the ${opts.name}'s JSON data.` + "\n";
 		md += "\n```json\n" + JSON.stringify(opts.data, null, "\t") + "\n```\n";
 		
 		html += '<div class="code_viewer scroll_shadows">';
@@ -490,6 +498,211 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		});
 		
 		$file[0].click();
+	}
+	
+	doPrepImportFile(file) {
+		// start importing a file from a upload or drop
+		var self = this;
+		var reader = new FileReader();
+		
+		var hasEnabledTriggers = function(event) {
+			return (event.triggers || []).find( function(trigger) {
+				if (!trigger.enabled) return false;
+				return !!trigger.type.match(/^(schedule|interval|single|plugin)$/);
+			} );
+		};
+		
+		var doImportSingle = function(json) {
+			// prompt user to confirm importing a single item
+			var item = json.items[0];
+			
+			var opts = config.ui.data_types[ item.type ];
+			if (!opts) return app.doError("Unknown Data Type: " + item.type);
+			
+			// security note: this check is only for client-side UX -- API access is checked on the server as well
+			// but it's better to bail out here vs. get into a "partial success" situation.
+			if (!app.hasPrivilege( 'create_' + opts.list )) return app.doError(`You do not have the necessary privileges required to import this file.`);
+			
+			var all_objs = app[ opts.list ];
+			
+			// cleanup
+			var obj = item.data;
+			delete obj.created;
+			delete obj.modified;
+			delete obj.revision;
+			delete obj.sort_order;
+			obj.username = app.username;
+			
+			var title = 'Import ' + opts.name;
+			var do_replace = false;
+			var prefix = opts.name.match(/^[aeiou]/i) ? 'an' : 'a';
+			
+			var md = '';
+			md += `You are about to import ${prefix} ${opts.name} from an uploaded file.  Please confirm the data is from a trusted source, and is what you expect:` + "\n";
+			
+			if (find_object(all_objs, { id: obj.id })) {
+				do_replace = true;
+				md += "\n" + `> [!WARNING]\n> This ${opts.name} already exists in the xyOps database.  If you proceed, it will be **replaced** with the uploaded version.` + "\n";
+			}
+			if (hasEnabledTriggers(obj)) {
+				md += "\n" + `> [!IMPORTANT]\n> The ${opts.name} you are importing has **active triggers**.  If you proceed, it may **automatically run** sometime in the future.` + "\n";
+			}
+			
+			md += "\n```json\n" + JSON.stringify(obj, null, "\t") + "\n```\n";
+			
+			var html = '';
+			html += '<div class="code_viewer scroll_shadows">';
+			html += '<div class="markdown-body">';
+			
+			html += marked.parse(md, config.ui.marked_config);
+			
+			html += '</div>'; // markdown-body
+			html += '</div>'; // code_viewer
+			
+			var buttons_html = "";
+			buttons_html += '<div class="button mobile_collapse" onClick="Dialog.hide()"><i class="mdi mdi-close-circle-outline">&nbsp;</i><span>Cancel</span></div>';
+			buttons_html += '<div class="button delete" onClick="Dialog.confirm_click(true)"><i class="mdi mdi-cloud-upload-outline">&nbsp;</i>Confirm Import</div>';
+			
+			Dialog.showSimpleDialog('<span class="danger">' + title + '</span>', html, buttons_html);
+			
+			// special mode for key capture
+			Dialog.active = 'editor';
+			Dialog.confirm_callback = function(result) { 
+				if (!result) return;
+				Dialog.hide();
+				
+				var api_name = do_replace ? 'app/update' : 'app/create';
+				api_name += '_' + item.type;
+				
+				Dialog.showProgress( 1.0, "Importing " + opts.name + "..." );
+				
+				app.api.post( api_name, obj, function(resp) {
+					Dialog.hideProgress();
+					app.cacheBust = hires_time_now();
+					app.showMessage('success', `The ${opts.name} was imported successfully.`);
+					Nav.go( opts.page );
+				} ); // api.post
+			};
+			
+			self.highlightCodeBlocks('#dialog .markdown-body');
+		}; // doImportSingle
+		
+		var doImportMultiple = function(json) {
+			// prompt user to confirm importing multiple items
+			var items = json.items;
+			var title = 'Import Multiple Items';
+			var do_replace = false;
+			var schedule_warning = false;
+			
+			var md = '';
+			md += `You are about to import multiple items from an uploaded file:\n\n`;
+			
+			if (!items.every( function(item) {
+				var opts = config.ui.data_types[ item.type ];
+				
+				// note: doError returns null, so they bail out of every() loop here
+				if (!opts) return app.doError("Unknown Data Type: " + item.type);
+				if (!app.hasPrivilege( 'create_' + opts.list )) return app.doError(`You do not have the necessary privileges required to import this file.`);
+				
+				// cleanup
+				var obj = item.data;
+				delete obj.created;
+				delete obj.modified;
+				delete obj.revision;
+				delete obj.sort_order;
+				obj.username = app.username;
+				
+				if ((item.type == 'event') && (obj.type == 'workflow')) md += `- **Workflow**: "${obj.title}"`;
+				else md += `- **${toTitleCase(opts.name)}**: "${obj.title}"`;
+				
+				var all_objs = app[ opts.list ];
+				if (find_object(all_objs, { id: obj.id })) {
+					md += ` *(Replace)*`;
+					do_replace = true;
+					item.replace = true;
+				}
+				if (hasEnabledTriggers(obj)) schedule_warning = true;
+				
+				md += "\n";
+				
+				return true;
+			} )) return;
+			
+			if (do_replace) {
+				md += "\n" + `> [!WARNING]\n> One or more items already exist in the xyOps database.  If you proceed, they will be **replaced** with the uploaded versions.` + "\n";
+			}
+			if (schedule_warning) {
+				md += "\n" + `> [!IMPORTANT]\n> One or more events or workflows have **active triggers**.  If you proceed, they may **automatically run** sometime in the future.` + "\n";
+			}
+			
+			md += `\nPlease confirm the data is from a trusted source, and is what you expect:` + "\n";
+			
+			md += "\n```json\n" + JSON.stringify(items, null, "\t") + "\n```\n";
+			
+			var html = '';
+			html += '<div class="code_viewer scroll_shadows">';
+			html += '<div class="markdown-body">';
+			
+			html += marked.parse(md, config.ui.marked_config);
+			
+			html += '</div>'; // markdown-body
+			html += '</div>'; // code_viewer
+			
+			var buttons_html = "";
+			buttons_html += '<div class="button mobile_collapse" onClick="Dialog.hide()"><i class="mdi mdi-close-circle-outline">&nbsp;</i><span>Cancel</span></div>';
+			buttons_html += '<div class="button delete" onClick="Dialog.confirm_click(true)"><i class="mdi mdi-cloud-upload-outline">&nbsp;</i>Confirm Import</div>';
+			
+			Dialog.showSimpleDialog('<span class="danger">' + title + '</span>', html, buttons_html);
+			
+			// special mode for key capture
+			Dialog.active = 'editor';
+			Dialog.confirm_callback = function(result) { 
+				if (!result) return;
+				Dialog.hide();
+				Dialog.showProgress( 1.0, "Importing " + items.length + " items..." );
+				
+				// first item dictates where user lands after import completes
+				var opts = config.ui.data_types[ items[0].type ];
+				
+				var finish = function() {
+					// import completed
+					Dialog.hideProgress();
+					app.cacheBust = hires_time_now();
+					app.showMessage('success', `All items were imported successfully.`);
+					Nav.go( opts.page );
+				};
+				
+				var importNextItem = function() {
+					// pop 1 item, import it, and recurse until done
+					var item = items.pop();
+					if (!item) return finish();
+					
+					var api_name = item.replace ? 'app/update' : 'app/create';
+					api_name += '_' + item.type;
+					
+					app.api.post( api_name, item.data, importNextItem );
+				}; // importNextItem
+				
+				importNextItem();
+			}; // confirm_callback
+			
+			self.highlightCodeBlocks('#dialog .markdown-body');
+		}; // doImportMultiple
+		
+		reader.onload = function(e) {
+			var json = null;
+			try { json = JSON.parse(e.target.result); } 
+			catch (err) { return app.doError("Failed to parse JSON in uploaded file: " + err); }
+			
+			if (!json.version || (json.version !== '1.0') || !json.type || (json.type !== 'xypdf') || !json.items || !json.items[0]) {
+				return app.doError("Unknown Format: Uploaded file is not an xyOps Portable Data Object.");
+			}
+			
+			if (json.items.length > 1) doImportMultiple(json);
+			else doImportSingle(json);
+		}; // onload
+		
+		reader.readAsText(file);
 	}
 	
 	// Chart Size Selector
