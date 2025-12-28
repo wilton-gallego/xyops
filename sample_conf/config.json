@@ -361,9 +361,6 @@
 		"Filesystem": {
 			"base_dir": "data",
 			"key_namespaces": 1,
-			"raw_file_paths": 1,
-			"no_fsync": 1,
-			
 			"cache": {
 				"enabled": true,
 				"maxItems": 100000,
