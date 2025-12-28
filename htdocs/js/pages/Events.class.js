@@ -3377,7 +3377,7 @@ Page.Events = class Events extends Page.PageUtils {
 					trigger.duration = parseInt( $('#fe_et_interval').val() );
 					if (!trigger.duration) return app.badField('#fe_et_interval_val', "Please enter or select a non-zero interval time.");
 					
-					trigger.start = self.parseDateTZ( $('#fe_et_range_start').val(), self.getUserTimezone() ) || app.epoch;
+					trigger.start = self.parseDateTZ( $('#fe_et_range_start').val(), self.getUserTimezone() ) || normalize_time(app.epoch, { sec:1 });
 					if (!trigger.start) return app.badField('#fe_et_range_start', "Please enter a valid date/time when the interval should start.");
 					
 					if ((idx == -1) && trigger.enabled && find_object(self.event.triggers, { type: 'precision', enabled: true })) {
