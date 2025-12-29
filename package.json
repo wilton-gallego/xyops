@@ -2,7 +2,7 @@
 	"name": "xyops",
 	"version": "0.9.0",
 	"private": true,
-	"description": "A complete task scheduler and server monitoring system.",
+	"description": "A complete workflow automation and server monitoring system.",
 	"author": "Joseph Huckaby <jhuckaby@pixlcore.com>",
 	"homepage": "https://github.com/pixlcore/xyops",
 	"license": "BSD-3-Clause",
