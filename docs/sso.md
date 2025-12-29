@@ -43,7 +43,7 @@ services:
       OAUTH2_PROXY_SET_AUTHORIZATION_HEADER: "true" # forwards Bearer in Authorization if present
       OAUTH2_PROXY_PASS_ACCESS_TOKEN: "true" # forward access token if present
       OAUTH2_PROXY_SKIP_PROVIDER_BUTTON: "true" # skip splash screen
-	  OAUTH2_PROXY_SKIP_AUTH_ROUTES: "^/(api|files|health|images|js|css|fonts|sounds|codemirror|manifest.webmanifest)(/|$)" # skip auth for static files
+      OAUTH2_PROXY_SKIP_AUTH_ROUTES: "^/(api|files|health|images|js|css|fonts|sounds|codemirror|manifest.webmanifest)(/|$)" # skip auth for static files
 
   echo-server:
     image: ealen/echo-server
@@ -298,8 +298,8 @@ services:
     image: quay.io/oauth2-proxy/oauth2-proxy:latest
     ports: ["443:4180"] # port 443 on the outside
     environment:
-	  OAUTH2_PROXY_TLS_CERT_FILE: "/etc/tls.crt" # your cert file
-	  OAUTH2_PROXY_TLS_KEY_FILE: "/etc/tls.key" # your cert file
+      OAUTH2_PROXY_TLS_CERT_FILE: "/etc/tls.crt" # your cert file
+      OAUTH2_PROXY_TLS_KEY_FILE: "/etc/tls.key" # your cert file
       OAUTH2_PROXY_PROVIDER: "oidc"
       OAUTH2_PROXY_OIDC_ISSUER_URL: "https://_YOUR_OIDC_ISSUER_URL_/"
       OAUTH2_PROXY_CLIENT_ID: "_YOUR_CLIENT_ID_"
@@ -315,20 +315,20 @@ services:
       OAUTH2_PROXY_SET_AUTHORIZATION_HEADER: "true"
       OAUTH2_PROXY_PASS_ACCESS_TOKEN: "true"
       OAUTH2_PROXY_SKIP_PROVIDER_BUTTON: "true"
-	  OAUTH2_PROXY_WHITELIST_DOMAINS: ".yourcompany.com" # add your domains
-	  OAUTH2_PROXY_SKIP_AUTH_ROUTES: "^/(api|health|images|js|css|fonts|sounds|codemirror|manifest.webmanifest)(/|$)"
+      OAUTH2_PROXY_WHITELIST_DOMAINS: ".yourcompany.com" # add your domains
+      OAUTH2_PROXY_SKIP_AUTH_ROUTES: "^/(api|health|images|js|css|fonts|sounds|codemirror|manifest.webmanifest)(/|$)"
     volumes:
       - "./tls.crt:/etc/tls.crt:ro"
       - "./tls.key:/etc/tls.key:ro"
 
   xyops1:
     image: ghcr.io/pixlcore/xyops:latest
-	environment:
-	  XYOPS_hostname: "xyops.yourcompany.com"
+    environment:
+      XYOPS_hostname: "xyops.yourcompany.com"
       TZ: America/Los_Angeles
     volumes:
       - "./config.json:/opt/xyops/conf/config.json:ro"
-	  - "./sso.json:/opt/xyops/conf/sso.json:ro"
+      - "./sso.json:/opt/xyops/conf/sso.json:ro"
 ```
 
 A few things to note here:
@@ -413,7 +413,7 @@ services:
       OAUTH2_PROXY_SET_XAUTHREQUEST: "true"
       OAUTH2_PROXY_PASS_ACCESS_TOKEN: "true"
       OAUTH2_PROXY_SKIP_PROVIDER_BUTTON: "true"
-	  OAUTH2_PROXY_WHITELIST_DOMAINS: ".yourcompany.com" # add your domains
+      OAUTH2_PROXY_WHITELIST_DOMAINS: ".yourcompany.com" # add your domains
 ```
 
 Let's talk about the Nginx setup first.  We are pulling in our own Docker image here ([xyops-nginx-sso](https://github.com/pixlcore/xyops-nginx-sso)).  This is a wrapper around the official Nginx docker image, but it includes our [xyOps Health Check](https://github.com/pixlcore/xyops-healthcheck) daemon.  The health check monitors which conductor server is currently primary, and dynamically reconfigures Nginx on-the-fly as needed (so Nginx always routes to the current primary server only).  The image also comes with a fully preconfigured Nginx, which will call to OAuth2-Proxy via the [auth_request](http://nginx.org/en/docs/http/ngx_http_auth_request_module.html) mechanism.  To use this image you will need to provide:
@@ -441,10 +441,10 @@ services:
       TZ: America/Los_Angeles
     volumes:
       - "./config.json:/opt/xyops/conf/config.json:ro"
-	  - "./sso.json:/opt/xyops/conf/sso.json:ro"
-	ports:
-	  - "5522:5522"
-	  - "5523:5523"
+      - "./sso.json:/opt/xyops/conf/sso.json:ro"
+    ports:
+      - "5522:5522"
+      - "5523:5523"
 ```
 
 A few things to note here:

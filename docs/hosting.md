@@ -214,16 +214,16 @@ Here it is as a docker compose file:
 ```yaml
 services:
   nginx:
-	image: ghcr.io/pixlcore/xyops-nginx:latest
-	init: true
-	environment:
-	  XYOPS_masters: xyops01.yourcompany.com,xyops02.yourcompany.com
-	  XYOPS_port: 5522
-	volumes:
-	  - "./tls.crt:/etc/tls.crt:ro"
-	  - "./tls.key:/etc/tls.key:ro"
-	ports:
-	  - "443:443"
+    image: ghcr.io/pixlcore/xyops-nginx:latest
+    init: true
+    environment:
+      XYOPS_masters: xyops01.yourcompany.com,xyops02.yourcompany.com
+      XYOPS_port: 5522
+    volumes:
+      - "./tls.crt:/etc/tls.crt:ro"
+      - "./tls.key:/etc/tls.key:ro"
+    ports:
+      - "443:443"
 ```
 
 Let's talk about the Nginx setup.  We are pulling in our own Docker image here ([xyops-nginx](https://github.com/pixlcore/xyops-nginx)).  This is a wrapper around the official Nginx docker image, but it includes our [xyOps Health Check](https://github.com/pixlcore/xyops-healthcheck) daemon.  The health check monitors which conductor server is currently primary, and dynamically reconfigures Nginx on-the-fly as needed (so Nginx always routes to the current primary server only).  The image also comes with a fully preconfigured Nginx.  To use this image you will need to provide:
@@ -255,19 +255,19 @@ And here it is as a docker compose file.
 ```yaml
 services:
   xyops1:
-	image: ghcr.io/pixlcore/xyops:latest
-	hostname: xyops01.yourcompany.com # change this per conductor server
-	init: true
-	environment:
-	  XYOPS_masters: xyops01.yourcompany.com,xyops02.yourcompany.com
-	  TZ: America/Los_Angeles
-	volumes:
-	  - "./config.json:/opt/xyops/conf/config.json:ro"
-	  - "./sso.json:/opt/xyops/conf/sso.json:ro"
-	  - "/var/run/docker.sock:/var/run/docker.sock"
-	ports:
-	  - "5522:5522"
-	  - "5523:5523"
+    image: ghcr.io/pixlcore/xyops:latest
+    hostname: xyops01.yourcompany.com # change this per conductor server
+    init: true
+    environment:
+      XYOPS_masters: xyops01.yourcompany.com,xyops02.yourcompany.com
+      TZ: America/Los_Angeles
+    volumes:
+      - "./config.json:/opt/xyops/conf/config.json:ro"
+      - "./sso.json:/opt/xyops/conf/sso.json:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    ports:
+      - "5522:5522"
+      - "5523:5523"
 ```
 
 For additional conductor servers you can simply duplicate the command and change the hostname.
