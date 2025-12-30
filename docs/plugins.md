@@ -910,7 +910,7 @@ All Plugin Parameter string values support inline macro expansion using the comm
 This data object is then passed into the next job's input (either by workflow or run event action).  You could access the data directly in your Plugin by parsing the JSON from STDIN and looking in `input.data`.  However, the idea with macro expansion is that user can reroute data values into Plugin parameters.  Let's say your Plugin has a text field parameter, and the user populated it in the event configuration like this:
 
 ```
-My favorite animal is {{ data.animal }}, and my favorite color is {{ data.green }}.
+My favorite animal is {{ data.animal }}, and my favorite color is {{ data.color }}.
 ```
 
 When the job runs, those `{{ mustache }}` placeholders are automatically expanded using the [Job](data.md#job) object as the context.  In addition, the [Job.input](data.md#job-input) sub-object is "flattened" into the outer context for convenience (just so you can skip the `input` prefix in the macros).  This allows you to access all the output data from the previous job in the current job, and copy it into Plugin parameters.
