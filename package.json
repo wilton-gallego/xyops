@@ -1,6 +1,6 @@
 {
 	"name": "xyops",
-	"version": "0.9.0",
+	"version": "0.9.1",
 	"private": true,
 	"description": "A complete workflow automation and server monitoring system.",
 	"author": "Joseph Huckaby <jhuckaby@pixlcore.com>",
@@ -12,7 +12,8 @@
 		"debug": "bin/control.sh debug",
 		"boot": "pixl-boot install --script bin/control.sh",
 		"unboot": "pixl-boot uninstall",
-		"test": "pixl-unit test/test.js"
+		"test": "pixl-unit test/test.js",
+		"changelog": "auto-changelog --commit-limit false --release-summary --issue-pattern DO_NOT_USE --hide-credit --ignore-commit-pattern CHANGELOG"
 	},
 	"repository": {
 		"type": "git",
@@ -75,6 +76,7 @@
 		"zeroupload": "^1.0.0"
 	},
 	"devDependencies": {
+		"auto-changelog": "2.5.0",
 		"pixl-unit": "^2.0.0"
 	}
 }
