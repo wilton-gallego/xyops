@@ -75,9 +75,6 @@ VOLUME /opt/xyops/data
 
 RUN mkdir -p logs
 RUN mkdir -p temp
-RUN chown -R node:node .
-
-USER node
 
 EXPOSE 5522/tcp
 EXPOSE 5523/tcp
