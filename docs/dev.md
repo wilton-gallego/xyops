@@ -143,7 +143,7 @@ xyOps comes with a full unit test suite, which runs via the [pixl-unit](https://
 npm test
 ```
 
-If any tests fail, please open a [GitHub Issue](https://github.com/pixlcore/xyops/issues) and include the full unit test log, which can be found in `./logs/unit.log`.
+If any tests fail, please open a [GitHub Issue](https://github.com/pixlcore/xyops/issues) and include any relevant unit test logs, which can be found in `./test/logs/`.
 
 ## Self-Signed Certificates
 
