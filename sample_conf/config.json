@@ -123,6 +123,11 @@
 		}
 	},
 	
+	"marketplace": {
+		"enabled": true,
+		"base_url": "https://xyops.io/api/marketplace"
+	},
+	
 	"quick_monitors": [
 		{ "id": "_qm_cpu_load", "title": "CPU Load Average", "source": "cpu.avgLoad", "type": "float", "suffix": "", "min_vert_scale": 1.0 },
 		{ "id": "_qm_cpu_usage", "title": "CPU Usage %", "source": "cpu.currentLoad", "type": "float", "suffix": "%", "min_vert_scale": 100 },
