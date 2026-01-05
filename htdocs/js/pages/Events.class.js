@@ -2794,7 +2794,7 @@ Page.Events = class Events extends Page.PageUtils {
 			
 			var tag = { title, enabled: true };
 			
-			app.api.post( 'app/create_tag', tag, function() {
+			app.api.post( 'app/create_tag', tag, function(resp) {
 				app.cacheBust = hires_time_now();
 				app.showMessage('success', "The new tag was created successfully.");
 				
