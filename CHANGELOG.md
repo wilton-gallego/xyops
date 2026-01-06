@@ -1,5 +1,23 @@
 # xyOps Changelog
 
+## Version v0.9.9
+
+> January 5, 2026
+
+- [d8ab7cb](https://github.com/pixlcore/xyops/commit/d8ab7cba2ccbd4aa5dcbffbfa818cdd5d4cfa71d): Version 0.9.9
+- [6a7cedf](https://github.com/pixlcore/xyops/commit/6a7cedf29172aaec6b7f31d90b3676e57ec4b271): Improved user notification for saving / deleting plugins.
+- [7e3cb28](https://github.com/pixlcore/xyops/commit/7e3cb28794b9f28bf43b58860b39c489b02b8286): Added a note on using job data in web hook macros
+- [9b32d06](https://github.com/pixlcore/xyops/commit/9b32d067b605fa24ea889279032e775462d11042): Wording
+- [6a4e4ee](https://github.com/pixlcore/xyops/commit/6a4e4ee97a32e1de9dcb428caf1d04666fab8da3): Added note regarding using an actual hostname that resolves on your network
+- [7e7141d](https://github.com/pixlcore/xyops/commit/7e7141db99ec1d3002afa89ae53c7f1a0e4e73d7): Fix cosmetic issue where server group list is rendered incorrectly (rogue "true" is displayed instead of the comma separator).
+- [575aabd](https://github.com/pixlcore/xyops/commit/575aabd08530370006205d065c76c540a8457900): Fix issue where quick-added tag isn't added to the menu right away.
+- [501cefa](https://github.com/pixlcore/xyops/commit/501cefa0bce63a24e86ce0a63f1293ebba65e6f0): Fix issue with cloning events, where plugin resets back to shell.  Fixes #22
+- [9191365](https://github.com/pixlcore/xyops/commit/91913653fc6cd9cc27ab4cbcca047a1cd6215ba6): When jobs change, sync all data to master peers right away (don't wait for next tick).
+- [22316a2](https://github.com/pixlcore/xyops/commit/22316a2305d452e48ee08aaa10bfa3422e2b2b8f): Add blurb on starting xyops automatically on server reboot
+- [323a0aa](https://github.com/pixlcore/xyops/commit/323a0aa40b7d4dfcc1e246370ea22383e9ef4904): Fix issue with load avg display when zero, and page desc disappearing when info refreshes
+- [b50e99f](https://github.com/pixlcore/xyops/commit/b50e99f26bcfe23eb5e4cbf1b5585b6221c8942f): Add python3-setuptools to apt-get install (for sqlite3 install)
+- [3374f07](https://github.com/pixlcore/xyops/commit/3374f073a68b02572b873da4a57119c9b7e25d25): Added note regarding compiler tools for manual install
+
 ## Version v0.9.8
 
 > January 4, 2026
