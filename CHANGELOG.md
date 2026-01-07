@@ -1,5 +1,14 @@
 # xyOps Changelog
 
+## Version v0.9.11
+
+> January 6, 2026
+
+- [c70ccb6](https://github.com/pixlcore/xyops/commit/c70ccb60986edda674e9e5fc0e96185db3a49a1d): Version 0.9.11
+- [2d6b1e6](https://github.com/pixlcore/xyops/commit/2d6b1e60428d38508d8018ec0862c3cb095f1355): Add user content to job success/fail emails.
+- [27d5f37](https://github.com/pixlcore/xyops/commit/27d5f37a0e0f3ad423d80e36a177d128de5a29c5): Suppress upgrade finish notifications, as the operations run in the background
+- [acd75a9](https://github.com/pixlcore/xyops/commit/acd75a9637d9e4d9309175b6c18508f2237ea1e0): multiSetup: If current hostID is not found in master list, add it back in (and log a loud warning)
+
 ## Version v0.9.10
 
 > January 6, 2026
