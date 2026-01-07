@@ -26,9 +26,9 @@ This object configures the email transport and is passed verbatim to Nodemailer 
 
 ```json
 {
-  "host": "localhost",
-  "port": 25,
-  "auth": { "user": "", "pass": "" }
+	"host": "localhost",
+	"port": 25,
+	"auth": { "user": "", "pass": "" }
 }
 ```
 
@@ -38,18 +38,29 @@ Example (basic SMTP on localhost):
 
 ```json
 "mail_settings": {
-  "host": "localhost",
-  "port": 25
+	"host": "localhost",
+	"port": 25
 }
 ```
 
-Example (sendmail):
+Example (local sendmail):
 
 ```json
 "mail_settings": {
-  "sendmail": true,
-  "newline": "unix",
-  "path": "/usr/sbin/sendmail"
+	"sendmail": true,
+	"newline": "unix",
+	"path": "/usr/sbin/sendmail"
+}
+```
+
+Example (Fastmail):
+
+```json
+"mail_settings": {
+	"host": "smtp.fastmail.com",
+	"port": 465,
+	"auth": { "user": "youremail@fastmail.com", "pass": "YOUR_PASSWORD" },
+	"secure": true
 }
 ```
 
