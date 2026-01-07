@@ -483,6 +483,7 @@ Page.Marketplace = class Marketplace extends Page.PageUtils {
 		html += '<div class="box">';
 		
 		html += '<div class="box_content">';
+		html += '<div class="button secondary right" onClick="$P().doVisitRepo()"><i class="mdi mdi-open-in-new">&nbsp;</i>Visit Repo...</div>';
 		html += '<div class="markdown-body doc-body" style="margin-top:0px; margin-bottom:15px;">';
 		
 		html += marked.parse(text, config.ui.marked_config);
@@ -514,6 +515,13 @@ Page.Marketplace = class Marketplace extends Page.PageUtils {
 				$this.attr({ 'href': repo_base_url + href, 'target': '_blank' }).append('<i style="padding-left:3px" class="mdi mdi-open-in-new"></i>');
 			}
 		} );
+	}
+	
+	doVisitRepo() {
+		// open new window to plugin's repo
+		// future-proofing, default to github for v1
+		var repo_base_url = this.product.repo_url || `https://github.com/${this.product.id}`;
+		window.open( repo_base_url );
 	}
 	
 	findInstalledProduct(product) {
