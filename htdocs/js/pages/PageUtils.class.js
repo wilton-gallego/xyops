@@ -743,41 +743,14 @@ Page.PageUtils = class PageUtils extends Page.Base {
 		var self = this;
 		if (!events) events = app.events;
 		
-		// pre-scan events for plugin-based and continuous scheduler modes
-		var extra_rows = [];
-		var final_events = [];
-		
-		events.forEach( function(event) {
-			var plugin_trigger = find_object( event.triggers, { type: 'plugin', enabled: true } );
-			if (plugin_trigger) {
-				extra_rows.push({
-					event: event.id,
-					type: 'plugin',
-					plugin: plugin_trigger.plugin_id
-				});
-				return;
-			}
-			
-			var cont_trigger = find_object( event.triggers, { type: 'continuous', enabled: true } );
-			if (cont_trigger) {
-				extra_rows.push({
-					event: event.id,
-					type: 'continuous'
-				});
-				return;
-			}
-			
-			final_events.push(event);
-		} ); // foreach event
-		
 		var opts = {
-			events: final_events,
+			events: events,
 			duration: 86400 * 32,
 			burn: 16,
 			max: 1000,
 			progress: null,
 			callback: function(jobs) {
-				self.upcomingJobs = [ ...extra_rows, ...jobs ];
+				self.upcomingJobs = jobs;
 				self.renderUpcomingJobs();
 			}
 		};
@@ -816,43 +789,33 @@ Page.PageUtils = class PageUtils extends Page.Base {
 			var nice_countdown = '';
 			var nice_skip = '';
 			
-			if (job.type == 'plugin') {
-				// special phantom row, for plugin-based schedules
+			// take over source if plugin modifier
+			if (job.plugin) {
 				var plugin = find_object( app.plugins, { id: job.plugin } ) || { title: job.plugin };
 				nice_source = `<i class="mdi mdi-${plugin.icon || 'power-plug'}">&nbsp;</i>${plugin.title}`;
-				nice_date_time = '(Unknown)';
-				nice_countdown = '(Unknown)';
-				nice_skip = 'n/a';
 			}
-			else if (job.type == 'continuous') {
-				// special phantom row, for continuously running events
-				nice_date_time = '(Continuous)';
-				nice_countdown = 'n/a';
-				nice_skip = 'n/a';
+			
+			// optionally vary date/time prediction display based on precision or interval
+			var countdown = 0;
+			
+			if (precision && precision.seconds && precision.seconds.length) {
+				job.seconds = precision.seconds;
+			}
+			
+			if (job.seconds) {
+				// precision or interval job
+				nice_date_time = self.getRelativeDateTime( job.epoch + job.seconds[0], true );
+				if (job.seconds.length > 1) nice_date_time += ' (+' + Math.floor(job.seconds.length - 1) + ')';
+				countdown = Math.max( 60, Math.abs((job.epoch + job.seconds[0]) - app.epoch) );
 			}
 			else {
-				// optionally vary date/time prediction display based on precision or interval
-				var countdown = 0;
-				
-				if (precision && precision.seconds && precision.seconds.length) {
-					job.seconds = precision.seconds;
-				}
-				
-				if (job.seconds) {
-					// precision or interval job
-					nice_date_time = self.getRelativeDateTime( job.epoch + job.seconds[0], true );
-					if (job.seconds.length > 1) nice_date_time += ' (+' + Math.floor(job.seconds.length - 1) + ')';
-					countdown = Math.max( 60, Math.abs((job.epoch + job.seconds[0]) - app.epoch) );
-				}
-				else {
-					// normal scheduled job
-					nice_date_time = self.getRelativeDateTime( job.epoch );
-					countdown = Math.max( 60, Math.abs(job.epoch - app.epoch) );
-				}
-				
-				nice_countdown = '<i class="mdi mdi-clock-outline">&nbsp;</i>' + get_text_from_seconds_round( countdown );
-				nice_skip = '<button class="link danger" onClick="$P().doSkipUpcomingJob(' + idx + ')"><b>Skip Job...</b></button>';
+				// normal scheduled job
+				nice_date_time = self.getRelativeDateTime( job.epoch );
+				countdown = Math.max( 60, Math.abs(job.epoch - app.epoch) );
 			}
+			
+			nice_countdown = '<i class="mdi mdi-clock-outline">&nbsp;</i>' + get_text_from_seconds_round( countdown );
+			nice_skip = '<button class="link danger" onClick="$P().doSkipUpcomingJob(' + idx + ')"><b>Skip Job...</b></button>';
 			
 			var tds = [
 				'<b>' + self.getNiceEvent(job.event, true) + '</b>',

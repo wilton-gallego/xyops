@@ -1976,6 +1976,7 @@ Page.Base = class Base extends Page {
 			// store some props for fast access below
 			event.schedules = schedules;
 			event.ranges = triggers.filter( function(trigger) { return (trigger.type == 'range') || (trigger.type == 'blackout'); } );
+			event.plugin_trigger = find_object( triggers, { type: 'plugin', enabled: true } );
 			return true;
 		} ); // filter events
 		
@@ -2073,6 +2074,9 @@ Page.Base = class Base extends Page {
 				} );
 				
 				if (!scheduled) return;
+				
+				// add plugin modifier if applicable
+				if (event.plugin_trigger) extras.plugin = event.plugin_trigger.plugin_id;
 				
 				// add job!
 				opts.jobs.push({ event: event.id, epoch: opts.epoch, type: scheduled, ...extras });
