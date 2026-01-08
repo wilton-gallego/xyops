@@ -50,7 +50,7 @@ tags.forEach( function(tag, idx) {
 			first = false;
 		}
 		
-		md += `- [${matches[1]}](${url}): ` + matches[4] + "\n";
+		md += `- [\`${matches[1]}\`](${url}): ` + matches[4] + "\n";
 	} );
 } );
 
