@@ -5257,28 +5257,28 @@ Page.PageUtils = class PageUtils extends Page.Base {
 			deps.events.forEach( function(id) {
 				md += '- **' + self.getNiceEvent(id, true) + "**\n";
 			} );
-			md += "\n";
+			// md += "\n";
 		}
 		if (deps.workflows.length) {
 			// md += `\n#### Workflows:\n\n`;
 			deps.workflows.forEach( function(id) {
 				md += '- **' + self.getNiceEvent(id, true) + "**\n";
 			} );
-			md += "\n";
+			// md += "\n";
 		}
 		if (deps.categories.length) {
 			// md += `\n#### Categories:\n\n`;
 			deps.categories.forEach( function(id) {
 				md += '- **' + self.getNiceCategory(id, true) + "**\n";
 			} );
-			md += "\n";
+			// md += "\n";
 		}
 		if (deps.groups.length) {
 			// md += `\n#### Groups:\n\n`;
 			deps.groups.forEach( function(id) {
 				md += '- **' + self.getNiceGroup(id, true) + "**\n";
 			} );
-			md += "\n";
+			// md += "\n";
 		}
 		
 		return md;
