@@ -1,5 +1,14 @@
 # xyOps Changelog
 
+## Version v0.9.15
+
+> January 8, 2026
+
+- [`d480269`](https://github.com/pixlcore/xyops/commit/d4802698297637eba6b3e14a270484b1a09f3a57): Version 0.9.15
+- [`266b729`](https://github.com/pixlcore/xyops/commit/266b7295bab868df24c8efdf9b36580bd7ef0e06): Fix: Crasher race condition when workflow is aborted on start due to event being disbled at the same time.  Fixes #34.
+- [`d6d2f49`](https://github.com/pixlcore/xyops/commit/d6d2f49b757af4e266af9b080b3ab4bc429cae22): Test Event: Allow user to disable ALL actions and limits, even inherited ones -- for test jobs only.
+- [`6f1c4aa`](https://github.com/pixlcore/xyops/commit/6f1c4aa6616218da953ff18080d8351d0f44ebfe): Marketplace: Tweak button style depending on installation status.
+
 ## Version v0.9.14
 
 > January 7, 2026
