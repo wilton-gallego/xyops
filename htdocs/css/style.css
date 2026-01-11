@@ -911,6 +911,13 @@ body.dark .fr_caption code {
 	font-weight: bold;
 }
 
+.markdown-inline a {
+	color: var(--blue);
+}
+.markdown-inline a:hover {
+	color: var(--theme-color);
+}
+
 /* Swatch / Table Row Colors */
 
 .clr_red, ul.clr_red > div { background-color: rgba(255, 0, 0, 0.1) !important; }

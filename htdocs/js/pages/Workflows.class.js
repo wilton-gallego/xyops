@@ -2229,7 +2229,7 @@ Page.Workflows = class Workflows extends Page.Events {
 				case 'decision': $('#d_wfd_if, #d_wfd_title, #d_wfd_icon').show(); break;
 			}
 			
-			$('#d_wfd_desc .fr_content').html( inline_marked(config.ui.workflow_controller_descriptions[type]) );
+			$('#d_wfd_desc .fr_content').html( '<span class="markdown-inline">' + inline_marked(config.ui.workflow_controller_descriptions[type]) + '</span>' );
 			Dialog.autoResize();
 		}
 		
