@@ -1,5 +1,14 @@
 # xyOps Changelog
 
+## Version v0.9.21
+
+> January 12, 2026
+
+- [`5513116`](https://github.com/pixlcore/xyops/commit/55131169a947306e7d4ae8b38ae261b0fd99b836): Version 0.9.21
+- [`3dd571d`](https://github.com/pixlcore/xyops/commit/3dd571d9437b58cd2d2b61b58a776ee2786c0256): Marketplace: Show plugin installed status (up-to-date, outdated, not installed) on the marketplace listing page.  Fixes #40.
+- [`60d0e0a`](https://github.com/pixlcore/xyops/commit/60d0e0af11678b6d74b455bee643039f59018abf): Fix: Satellite and Conductor upgrades fail if any version other than "latest" is selected.
+- [`2d564d3`](https://github.com/pixlcore/xyops/commit/2d564d3d3ed56f85a28d15a9143fb3eeee272335): README: Change main heading text.
+
 ## Version v0.9.20
 
 > January 11, 2026
