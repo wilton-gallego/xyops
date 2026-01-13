@@ -275,6 +275,8 @@ This object defines system-wide web hook triggers that can fire on any logged ac
 { "job_complete": "wmhv3s16ymk" }
 ```
 
+See [System Hooks](syshooks.md) for more details.
+
 
 
 ## hook_text_templates
