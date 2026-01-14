@@ -216,6 +216,8 @@ Example:
 }
 ```
 
+The command always runs on the primary conductor server, so please use with extreme caution.  To debug these, grep for `System Shell Hook` in the the `/opt/xyops/logs/Action.log` log.  Increase your global [debug_level](config.md#debug_level) to `9` for more verbose logging.
+
 ### Send Email
 
 The `email` action sends a generic activity summary email. It includes the activity summary, full payload (JSON), and any details if provided (common for `notice`, `warning`, `error`, `critical`). Multiple recipients may be specified as a comma-separated list.
