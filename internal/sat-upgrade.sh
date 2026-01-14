@@ -17,7 +17,7 @@ if [ ! -f "$INSTALL_DIR/package.json" ]; then
     exit 1
 fi
 
-# unset daemon flag
+# unset daemon flag (pixl-server)
 unset __daemon
 
 # Make sure we're logging everything
