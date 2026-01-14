@@ -1210,9 +1210,11 @@ Parameters (core):
 | `params` | Object | Optional overrides for [Event.params](data.md#event-params). Missing keys fall back to the event's saved params. |
 | `input` | Object | Optional input object; may include `data` and/or `files` (see [Job.input](data.md#job-input)). Uploaded files are appended to `input.files`. |
 | `test` | Boolean | If `true`, bypasses manual-trigger and enabled checks and marks the job as a test. |
+| `tags` | Array | Optionally override tags set in the event.  Specify one or more [Tag.id](data.md#tag-id)s in the array. |
 
 Additional behaviors:
 
+- Any properties from the event are overridable here.  See the [Event](data.md#event) data structure for details.
 - Nested keys using `parent/child` can be supplied as flat parameters (e.g. `params/foo=bar`).
 - When using multipart uploads, the `json` field should contain the exact JSON you would otherwise POST.
 - If the `post_data` query parameter is present, all raw POST fields are placed under `post_data` instead of being merged (advanced usage).
