@@ -122,6 +122,18 @@ Page.MySettings = class MySettings extends Page.Base {
 			caption: 'Select your desired hour cycle format for displaying hours of the day.'
 		});
 		
+		// milliseconds
+		html += this.getFormRow({
+			label: 'Precision:',
+			content: this.getFormCheckbox({
+				id: 'fe_ms_milliseconds',
+				label: 'Show Milliseconds',
+				checked: !!user.milliseconds,
+				onChange: '$P().update_date_time_preview(true)'
+			}),
+			caption: 'Enable or disable millisecond precision when showing dates/times (when available).'
+		});
+		
 		// preview
 		html += this.getFormRow({
 			label: 'Preview:',
@@ -484,6 +496,8 @@ Page.MySettings = class MySettings extends Page.Base {
 			weekday: 'long',
 			hour: 'numeric',
 			minute: '2-digit',
+			second: '2-digit',
+			fractionalSecondDigits: json.milliseconds ? 3 : undefined,
 			locale: lang + '-' + reg,
 			timeZone: json.timezone || ropts.timeZone,
 			numberingSystem: json.num_format || ropts.numberingSystem,
@@ -725,6 +739,7 @@ Page.MySettings = class MySettings extends Page.Base {
 			timezone: this.div.find('#fe_ms_tz').val(),
 			num_format: this.div.find('#fe_ms_numformat').val(),
 			hour_cycle: this.div.find('#fe_ms_hrcycle').val(),
+			milliseconds: this.div.find('#fe_ms_milliseconds').is(':checked'),
 			volume: parseInt( this.div.find('#fe_ms_volume').val() ),
 			motion: this.div.find('#fe_ms_motionacc').val(),
 			contrast: this.div.find('#fe_ms_contrastacc').val(),

@@ -791,6 +791,11 @@ app.extend({
 		if (opts.numberingSystem === false) delete opts.numberingSystem;
 		if (opts.hourCycle === false) delete opts.hourCycle;
 		if (!opts.second) delete opts.second;
+		else {
+			// has seconds -- does user want milliseconds too?
+			if (user.milliseconds) opts.fractionalSecondDigits = 3;
+			else delete opts.fractionalSecondDigits;
+		}
 		
 		return opts;
 	},
