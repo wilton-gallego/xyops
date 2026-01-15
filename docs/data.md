@@ -1899,8 +1899,22 @@ A unique lowercase alphanumeric ID which is automatically assigned when the acti
 
 A string identifying the action which took place.  Here is the list of possible actions, along with a template string used to generate an action summary in the UI:
 
-| Action ID | Summary Template |
+| Action ID | Description / Template |
 |-----------|------------------|
+| `notice` | General notice, e.g. "Background server upgrade completed". |
+| `warning` | General warning, e.g. "Server connecting with duplicate hostname...". |
+| `error` | General error (not currently used: for future use). |
+| `critical` | General critical, e.g. "Crash log found at startup". |
+| `job_start` | Job started (before remote launch). |
+| `job_complete` | Job completed, regardless of outcome. |
+| `job_success` | Job completed successfully (`code` is `0` or `false`). |
+| `job_error` | Job completed with any error (`code` is non-zero/non-false). |
+| `job_warning` | Job completed with `code` set to `warning`. |
+| `job_critical` | Job completed with `code` set to `critical`. |
+| `job_abort` | Job was aborted (user or failure condition). |
+| `job_tag:TAGID` | Job completed and has the specified tag. |
+| `alert_new` | Alert fired on a server. |
+| `alert_cleared` | Alert cleared on a server. |
 | `alert_create` | `Alert definition created: [description] ([alert.id])` |
 | `alert_update` | `Alert definition updated: [description] ([alert.id])` |
 | `alert_delete` | `Alert definition deleted: [description] ([alert.id])` |
