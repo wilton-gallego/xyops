@@ -105,6 +105,11 @@ Edit existing monitors, including expressions, matching rules, and settings.
 ### delete_monitors
 Delete monitors from the system.
 
+## OpenTelemetry
+
+### ingest_otel
+Ingest OpenTelemetry metrics via OTLP/HTTP JSON into the monitoring pipeline.
+
 ## Plugins
 
 ### create_plugins

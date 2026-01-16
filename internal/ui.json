@@ -35,6 +35,7 @@
 		{ "id": "create_monitors", "title": "Create Monitors", "icon": "chart-areaspline" },
 		{ "id": "edit_monitors", "title": "Edit Monitors", "icon": "chart-areaspline" },
 		{ "id": "delete_monitors", "title": "Delete Monitors", "icon": "chart-areaspline" },
+		{ "id": "ingest_otel", "title": "Ingest OpenTelemetry", "icon": "chart-areaspline" },
 		
 		{ "id": "create_plugins", "title": "Create Plugins", "icon": "power-plug-outline" },
 		{ "id": "edit_plugins", "title": "Edit Plugins", "icon": "power-plug-outline" },

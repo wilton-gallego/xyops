@@ -2598,6 +2598,69 @@ See [Monitors](monitors.md) for more details on the monitoring subsystem.
 
 
 
+## OpenTelemetry
+
+### otel_ingest
+
+```
+POST /api/app/otel_ingest/v1
+```
+
+Receive OpenTelemetry metrics via OTLP/HTTP JSON and merge them into the next minute of xyOps monitoring data for the target server. Requires an API Key or session with the `ingest_otel` privilege.
+
+Parameters:
+
+| Property Name | Type | Description |
+|---------------|------|-------------|
+| `server_id` | String | Optional server ID to associate the metrics with (may also be provided via query param or `X-XYOPS-Server-Id` header). |
+| (OTLP JSON) | Object | The OTLP/HTTP JSON payload containing `resourceMetrics`. |
+
+Example request:
+
+```http
+POST /api/app/otel_ingest/v1?server_id=srv01
+X-API-Key: YOUR_XYOPS_API_KEY
+Content-Type: application/json
+
+{
+  "resourceMetrics": [
+    {
+      "resource": {
+        "attributes": [
+          { "key": "service.name", "value": { "stringValue": "checkout" } }
+        ]
+      },
+      "scopeMetrics": [
+        {
+          "scope": { "name": "otel-demo" },
+          "metrics": [
+            {
+              "name": "http.server.duration",
+              "unit": "ms",
+              "summary": {
+                "dataPoints": [
+                  { "count": 1, "sum": 12, "timeUnixNano": "1700000000000000000" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+Example response:
+
+```json
+{
+  "code": 0,
+  "server_id": "srv01",
+  "received": 1754876000
+}
+```
+
 ## Plugins
 
 Plugin APIs manage extensions that implement custom behavior in xyOps (event runners, monitors, actions, and scheduler triggers). Use them to list, fetch, create, update, and delete plugins. Plugins encapsulate executables and parameters and can receive secrets; they are referenced by events and the monitoring system. Creating/updating plugins requires privileges; list/fetch requires a valid session or API Key.
